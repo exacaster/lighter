@@ -1,28 +1,41 @@
 package com.exacaster.lighter.batch;
 
+import com.exacaster.lighter.storage.Storage;
 import java.util.List;
+import java.util.UUID;
 import javax.inject.Singleton;
 
 @Singleton
 public class BatchService {
 
+    private final Storage storage;
+
+    public BatchService(Storage storage) {
+        this.storage = storage;
+    }
+
     public List<Batch> fetch(Integer from, Integer size) {
-        return null;
+        return storage.findMany(from, size, BatchData.class).stream()
+                .map(this::toBatch)
+                .toList();
     }
 
-    public Batch create(Batch batch) {
-        return null;
+    public Batch create(BatchConfiguration batch) {
+        var entity = new BatchData(UUID.randomUUID().toString(), null, "", BatchState.not_started, batch);
+        return toBatch(storage.storeEntity(entity));
     }
 
-    public Batch fetchOne(Long id) {
-        return null;
+    public Batch fetchOne(String id) {
+        return storage.findEntity(id, BatchData.class)
+                .map(this::toBatch)
+                .orElse(null);
     }
 
-    public BatchState fetchState(Long id) {
-        return null;
+    public void deleteOne(String id) {
+        storage.deleteOne(id, BatchData.class);
     }
 
-    public void deleteOne(Long id) {
-
+    private Batch toBatch(BatchData data) {
+        return new Batch(data.id(), data.appId(), data.appInfo(), data.state());
     }
 }

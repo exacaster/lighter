@@ -23,14 +23,23 @@ dependencies {
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
 
     implementation "io.micronaut:micronaut-validation"
+    implementation "io.swagger.core.v3:swagger-annotations"
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
+    runtimeOnly "io.micronaut:micronaut-management"
+
+    runtimeOnly 'ch.qos.logback:logback-classic:1.3.0-alpha5'
+
 
     testImplementation 'io.micronaut:micronaut-inject-groovy'
     testImplementation 'io.micronaut.test:micronaut-test-spock'
 }
+tasks.withType(JavaCompile) {
+    options.fork = true
+    options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop'
 
+}
 test {
     useJUnitPlatform()
 }

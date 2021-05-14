@@ -1,5 +1,13 @@
 package com.exacaster.lighter.batch;
 
-public record BatchState(Long batchId, String state) {
-
+public enum BatchState {
+    not_started,
+    starting,
+    idle,
+    busy,
+    shutting_down,
+    error,
+    dead,
+    killed,
+    success
 }

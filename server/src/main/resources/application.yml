@@ -1,1 +1,17 @@
-lighter:
+micronaut:
+    application:
+        name: lighter
+
+    router:
+        static-resources:
+            swagger:
+                paths: classpath:META-INF/swagger
+                mapping: /swagger/**
+
+    metrics:
+        enabled: true
+        export:
+            prometheus:
+                enabled: true
+                step: PT1M
+                descriptions: true

@@ -1,9 +1,9 @@
 package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.batch.Batch;
+import com.exacaster.lighter.batch.BatchConfiguration;
 import com.exacaster.lighter.batch.BatchList;
 import com.exacaster.lighter.batch.BatchService;
-import com.exacaster.lighter.batch.BatchState;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import io.micronaut.http.annotation.Body;
@@ -29,7 +29,7 @@ public class BatchController {
     }
 
     @Post
-    public Batch create(@Valid @Body Batch batch) {
+    public Batch create(@Valid @Body BatchConfiguration batch) {
         return batchService.create(batch);
     }
 
@@ -40,18 +40,19 @@ public class BatchController {
     }
 
     @Get("/{id}")
-    public Batch get(@PathVariable Long id) {
+    public Batch get(@PathVariable String id) {
         return batchService.fetchOne(id);
     }
 
     @Delete("/{id}")
-    public void delete(@PathVariable Long id) {
+    public void delete(@PathVariable String id) {
         batchService.deleteOne(id);
     }
 
+    // For backwards copatibility with livy
     @Get("/{id}/state")
-    public BatchState getState(@PathVariable Long id) {
-        return batchService.fetchState(id);
+    public Batch getState(@PathVariable String id) {
+        return batchService.fetchOne(id);
     }
 
     @Get("/{id}/log")
