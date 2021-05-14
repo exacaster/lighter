@@ -1,0 +1,36 @@
+plugins {
+    id 'java'
+    id 'groovy'
+    id 'io.micronaut.application' version '1.4.2'
+}
+
+group 'org.example'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+micronaut {
+    version = "2.5.1"
+    runtime "netty"
+}
+mainClassName = 'com.exacaster.lighter.Application'
+
+
+dependencies {
+    annotationProcessor "io.micronaut:micronaut-validation"
+    annotationProcessor "io.micronaut.openapi:micronaut-openapi"
+
+    implementation "io.micronaut:micronaut-validation"
+
+    runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
+    runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
+
+    testImplementation 'io.micronaut:micronaut-inject-groovy'
+    testImplementation 'io.micronaut.test:micronaut-test-spock'
+}
+
+test {
+    useJUnitPlatform()
+}
