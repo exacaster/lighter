@@ -4,6 +4,9 @@ micronaut:
 
     router:
         static-resources:
+            ui:
+                paths: file:frontend/build
+                mapping: /**
             swagger:
                 paths: classpath:META-INF/swagger
                 mapping: /swagger/**

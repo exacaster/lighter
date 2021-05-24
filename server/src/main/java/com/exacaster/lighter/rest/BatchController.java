@@ -17,7 +17,7 @@ import io.micronaut.validation.Validated;
 import javax.validation.Valid;
 
 @Validated
-@Controller("/batches")
+@Controller("/api/batches")
 public class BatchController {
 
     private final BatchService batchService;

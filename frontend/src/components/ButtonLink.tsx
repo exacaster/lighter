@@ -1,12 +1,13 @@
-import {Button, ButtonProps, Link} from '@chakra-ui/react';
+import {Button, ButtonProps} from '@chakra-ui/react';
 import React from 'react';
+import {Link} from 'react-router-dom';
 
 interface ButtonLinkProps extends ButtonProps {
-  href: string;
+  to: string;
 }
 
-const ButtonLink: React.FC<ButtonLinkProps> = ({href, children, ...props}) => {
-  return <Link href={href}>
+const ButtonLink: React.FC<ButtonLinkProps> = ({to, children, ...props}) => {
+  return <Link to={to}>
     <Button colorScheme="teal" variant="ghost" {...props}>
       {children}
     </Button>

@@ -3,6 +3,8 @@ package com.exacaster.lighter.backend.kubernetes;
 import static java.util.Objects.requireNonNull;
 
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.batch.Batch;
+import com.exacaster.lighter.spark.SubmitParams;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import java.util.Map;
@@ -22,6 +24,11 @@ public class KubernetesBackend implements Backend {
     public void configure(Map<String, String> configs) {
         this.client = new DefaultKubernetesClient();
         this.namespace = requireNonNull(configs.get("namespace"));
+    }
+
+    @Override
+    public SubmitParams getSubmitParamas(Batch batch) {
+        return null;
     }
 
     public void getProcessStatus(String appIdentifier) {
