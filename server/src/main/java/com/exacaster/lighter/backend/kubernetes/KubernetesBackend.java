@@ -1,27 +1,37 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import static java.util.Objects.requireNonNull;
+
 import com.exacaster.lighter.backend.Backend;
-import io.kubernetes.client.PodLogs;
-import io.kubernetes.client.openapi.ApiClient;
-import io.kubernetes.client.openapi.Configuration;
-import io.kubernetes.client.openapi.apis.CoreV1Api;
-import io.kubernetes.client.openapi.models.V1Pod;
-import io.kubernetes.client.util.Config;
+import io.fabric8.kubernetes.client.DefaultKubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClient;
+import java.util.Map;
 
 public class KubernetesBackend implements Backend {
 
-    private final CoreV1Api api;
+    private final static String SPARK_APP_TAG_LABEL = "spark-app-tag";
+
+    private KubernetesClient client;
+    private String namespace;
 
     public KubernetesBackend() {
-        ApiClient client = Config.defaultClient();
-        Configuration.setDefaultApiClient(client);
 
-        this.api = new CoreV1Api();
     }
 
-    public void getProcess() {
-        this.api.connectGetNamespacedPodAttach();
-        PodLogs logs = new PodLogs();
-        V1Pod pod = api.listNamespacedPod("default", )
+    @Override
+    public void configure(Map<String, String> configs) {
+        this.client = new DefaultKubernetesClient();
+        this.namespace = requireNonNull(configs.get("namespace"));
+    }
+
+    public void getProcessStatus(String appIdentifier) {
+        var labeledPods = this.client.pods().inNamespace(this.namespace).withLabel(SPARK_APP_TAG_LABEL, appIdentifier)
+                .list()
+                .getItems();
+        labeledPods.stream().findFirst().map(pod -> pod);
+    }
+
+    public void getProessLogs(String todo) {
+        this.client.pods().inNamespace(this.namespace).withName("").getLog();
     }
 }

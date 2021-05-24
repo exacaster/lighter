@@ -26,7 +26,7 @@ dependencies {
     implementation "io.swagger.core.v3:swagger-annotations"
 
     implementation 'org.apache.spark:spark-launcher_2.12:3.1.1'
-    implementation 'io.kubernetes:client-java:12.0.1'
+    implementation 'io.fabric8:kubernetes-client:5.4.0'
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"

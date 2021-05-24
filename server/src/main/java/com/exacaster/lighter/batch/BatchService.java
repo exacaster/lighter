@@ -9,9 +9,11 @@ import javax.inject.Singleton;
 public class BatchService {
 
     private final Storage storage;
+    private final List<OnBatchCreate> createObservers;
 
-    public BatchService(Storage storage) {
+    public BatchService(Storage storage, List<OnBatchCreate> createObservers) {
         this.storage = storage;
+        this.createObservers = createObservers;
     }
 
     public List<Batch> fetch(Integer from, Integer size) {
@@ -22,7 +24,9 @@ public class BatchService {
 
     public Batch create(BatchConfiguration batch) {
         var entity = new BatchData(UUID.randomUUID().toString(), null, "", BatchState.not_started, batch);
-        return toBatch(storage.storeEntity(entity));
+        var created = toBatch(storage.storeEntity(entity));
+        createObservers.forEach(ob -> ob.onBatchCreate(created));
+        return created;
     }
 
     public Batch fetchOne(String id) {
