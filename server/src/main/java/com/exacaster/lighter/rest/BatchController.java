@@ -5,6 +5,7 @@ import com.exacaster.lighter.batch.BatchList;
 import com.exacaster.lighter.batch.BatchService;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
+import com.exacaster.lighter.spark.SubmitParams;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -28,7 +29,7 @@ public class BatchController {
     }
 
     @Post
-    public Batch create(@Valid @Body BatchConfiguration batch) {
+    public Batch create(@Valid @Body SubmitParams batch) {
         return batchService.create(batch);
     }
 

@@ -1,5 +1,6 @@
 package com.exacaster.lighter.batch;
 
+import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Storage;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public class BatchService {
         return storage.findMany(from, size, Batch.class);
     }
 
-    public Batch create(BatchConfiguration batch) {
+    public Batch create(SubmitParams batch) {
         var entity = new Batch(UUID.randomUUID().toString(), null, "", BatchState.not_started, batch);
         return storage.storeEntity(entity);
     }
