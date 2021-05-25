@@ -37,15 +37,16 @@ dependencies {
 
     runtimeOnly 'ch.qos.logback:logback-classic:1.3.0-alpha5'
 
-
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     testImplementation 'io.micronaut:micronaut-inject-groovy'
     testImplementation 'io.micronaut.test:micronaut-test-spock'
 }
+
 tasks.withType(JavaCompile) {
     options.fork = true
     options.forkOptions.jvmArgs << '-Dmicronaut.openapi.views.spec=swagger-ui.enabled=true,swagger-ui.theme=flattop'
-
 }
+
 test {
     useJUnitPlatform()
 }
