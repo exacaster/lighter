@@ -20,41 +20,46 @@ public class KubernetesBackend implements Backend {
 
     private KubernetesClient client;
     private String namespace;
+    private Integer maxLogSize;
 
     @Override
     public void configure(Map<String, String> configs) {
         this.client = new DefaultKubernetesClient();
         this.namespace = configs.getOrDefault("namespace", "default");
+        this.maxLogSize = Integer.valueOf(configs.getOrDefault("logSize", "500"));
     }
 
     @Override
     public Map<String, String> getSubmitConfiguration(Batch batch) {
         return Map.of(
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, batch.appId(),
-                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, batch.appId(),
-                );
+                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, batch.appId()
+        );
     }
 
     @Override
     public Optional<BatchInfo> getInfo(String appIdentifier) {
         return getDriverPod(appIdentifier).map(pod -> new BatchInfo(mapStatus(pod.getStatus()),
-                pod.getMetadata().getLabels().get(SPARK_APP_TAG_LABEL)));
+                pod.getMetadata().getLabels().get(SPARK_APP_ID_LABEL)));
     }
 
     private BatchState mapStatus(PodStatus status) {
         return switch (status.getPhase()) {
-            case "Pending", "Unknown" -> BatchState.starting;
-            case "Running" -> BatchState.busy;
-            case "Succeeded" -> BatchState.success;
-            case "Failed" -> BatchState.dead;
+            case "Pending", "Unknown" -> BatchState.STARTING;
+            case "Running" -> BatchState.BUSY;
+            case "Succeeded" -> BatchState.SUCCESS;
+            case "Failed" -> BatchState.DEAD;
             default -> throw new IllegalStateException("Unexpected phase: " + status.getPhase());
         };
     }
 
-    public Optional<String> getProessLogs(String appIdentifier) {
+    @Override
+    public Optional<String> getLogs(String appIdentifier) {
         return this.getDriverPod(appIdentifier)
                 .map(pod -> this.client.pods().inNamespace(this.namespace)
-                        .withName(pod.getMetadata().getName()).getLog(true));
+                        .withName(pod.getMetadata().getName())
+                        .tailingLines(maxLogSize)
+                        .getLog(true));
     }
 
     private Optional<Pod> getDriverPod(String appIdentifier) {

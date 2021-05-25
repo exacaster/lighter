@@ -15,7 +15,7 @@ class InMemoryStorageTest extends Specification {
         def batch = BatchBuilder.builder()
                 .id("1")
                 .appId("app_123")
-                .state(BatchState.error)
+                .state(BatchState.ERROR)
                 .build()
 
         when: "storing entity"
@@ -37,13 +37,13 @@ class InMemoryStorageTest extends Specification {
         findResult.isEmpty()
 
         when: "searching by status"
-        def statusResult = storage.findManyByField("state", Batch.class, BatchState.error)
+        def statusResult = storage.findManyByField("state", Batch.class, BatchState.ERROR)
 
         then: "returns results"
         statusResult.get(0).appId() == "app_123"
 
         when: "searching by not existing status"
-        statusResult = storage.findManyByField("state", Batch.class, BatchState.killed)
+        statusResult = storage.findManyByField("state", Batch.class, BatchState.KILLED)
 
         then: "returns empty list"
         statusResult.isEmpty()

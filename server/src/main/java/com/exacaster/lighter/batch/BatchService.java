@@ -20,7 +20,7 @@ public class BatchService {
     }
 
     public Batch create(SubmitParams batch) {
-        var entity = new Batch(UUID.randomUUID().toString(), null, "", BatchState.not_started, batch);
+        var entity = new Batch(UUID.randomUUID().toString(), null, "", BatchState.NOT_STARTED, batch);
         return storage.storeEntity(entity);
     }
 

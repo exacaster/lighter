@@ -3,6 +3,7 @@ package com.exacaster.lighter.batch;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
 import java.io.IOException;
@@ -14,11 +15,13 @@ public class BatchHandler {
     private static final Logger LOG = getLogger(BatchHandler.class);
 
     private final Backend backend;
-    private final BatchService service;
+    private final BatchService batchService;
+    private final LogService logService;
 
-    public BatchHandler(Backend backend, BatchService service) {
+    public BatchHandler(Backend backend, BatchService batchService, LogService logService) {
         this.backend = backend;
-        this.service = service;
+        this.batchService = batchService;
+        this.logService = logService;
     }
 
     public BatchState launch(Batch batch) {
@@ -27,30 +30,32 @@ public class BatchHandler {
             app.launch(backend.getSubmitConfiguration(batch));
         } catch (IOException | IllegalArgumentException e) {
             LOG.error("Error launching");
-            return BatchState.error;
+            return BatchState.ERROR;
         }
-        return BatchState.starting;
+        return BatchState.STARTING;
     }
 
     @Scheduled(fixedRate = "1m")
     public void processScheduledBatches() {
-        service.fetchByState(BatchState.not_started)
+        batchService.fetchByState(BatchState.NOT_STARTED)
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
                     var state = launch(batch);
-                    service.update(BatchBuilder.builder(batch).state(state).build());
+                    batchService.update(BatchBuilder.builder(batch).state(state).build());
                 });
     }
 
     @Scheduled(fixedRate = "2m")
     public void processNonFinalBatches() {
-        service.fetchNonFinished()
+        batchService.fetchNonFinished()
                 .forEach(batch -> {
                     backend.getInfo(batch.id()).ifPresentOrElse(info -> {
-                        BatchBuilder.builder(batch).state(BatchState.starting).build();
                         LOG.info("Tracking {}, info: {}", batch, info);
                         // TODO: Store logs
-                        service.update(BatchBuilder.builder(batch)
+                        if (info.state().isComplete()) {
+                            backend.getLogs(batch.id()).ifPresent(log -> logService.save(batch.id(), log));
+                        }
+                        batchService.update(BatchBuilder.builder(batch)
                                 .state(info.state())
                                 .appId(info.applicationId())
                                 .build());

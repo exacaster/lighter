@@ -8,4 +8,8 @@ public class LogService {
     public Log fetch(String batch, Long id, Integer from, Integer size) {
         return null;
     }
+
+    public void save(String id, String log) {
+
+    }
 }
