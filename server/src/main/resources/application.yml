@@ -1,10 +1,9 @@
 micronaut:
     application:
         name: lighter
-
     router:
         static-resources:
-            ui:
+            default:
                 paths: file:frontend/build
                 mapping: /**
             swagger:
