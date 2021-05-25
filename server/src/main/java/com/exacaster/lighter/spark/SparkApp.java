@@ -1,5 +1,6 @@
 package com.exacaster.lighter.spark;
 
+import java.io.IOException;
 import javax.inject.Singleton;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkAppHandle.Listener;
@@ -15,7 +16,7 @@ public class SparkApp {
     }
 
     // TODO: fill missing configs
-    public void launch() {
+    public void launch() throws IOException {
         var launcehr = new SparkLauncher()
                 .setAppName(submitParams.name())
                 .setDeployMode("cluster")
@@ -26,6 +27,7 @@ public class SparkApp {
         submitParams.files().forEach(launcehr::addFile);
         submitParams.pyFiles().forEach(launcehr::addPyFile);
         submitParams.conf().forEach(launcehr::setConf);
+        launcehr.launch();
 //        launcehr.startApplication(new Listener() {
 //            @Override
 //            public void stateChanged(SparkAppHandle handle) {

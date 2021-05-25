@@ -7,6 +7,7 @@ import com.exacaster.lighter.backend.BatchInfo;
 import com.exacaster.lighter.batch.Batch;
 import com.exacaster.lighter.batch.BatchState;
 import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.spark.SubmitParamsBuilder;
 import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
@@ -31,8 +32,9 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
+    // TODO
     public SubmitParams getSubmitParamas(Batch batch) {
-        return null;
+        return SubmitParamsBuilder.builder().build();
     }
 
     @Override

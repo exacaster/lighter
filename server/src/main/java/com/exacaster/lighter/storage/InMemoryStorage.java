@@ -53,9 +53,10 @@ public class InMemoryStorage implements Storage {
         }
 
         try {
-            Field entityField = clazz.getField(field);
+            Field entityField = clazz.getDeclaredField(field);
             return all.values().stream().filter(val -> {
                 try {
+                    entityField.trySetAccessible();
                     var entityFieldValue = entityField.get(val);
                     return Arrays.stream(values).anyMatch(queryVal -> queryVal.equals(entityFieldValue));
                 } catch (IllegalAccessException e) {

@@ -5,6 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
+import java.io.IOException;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 
@@ -20,9 +21,15 @@ public class BatchHandler {
         this.service = service;
     }
 
-    public void launch(Batch batch) {
+    public BatchState launch(Batch batch) {
         var app = new SparkApp(backend.getSubmitParamas(batch));
-        app.launch();
+        try {
+            app.launch();
+        } catch (IOException | IllegalArgumentException e) {
+            LOG.error("Error launching");
+            return BatchState.error;
+        }
+        return BatchState.starting;
     }
 
     @Scheduled(fixedRate = "1m")
@@ -30,8 +37,8 @@ public class BatchHandler {
         service.fetchByState(BatchState.not_started)
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
-                    launch(batch);
-                    service.update(BatchBuilder.builder(batch).state(BatchState.starting).build());
+                    var state = launch(batch);
+                    service.update(BatchBuilder.builder(batch).state(state).build());
                 });
     }
 
