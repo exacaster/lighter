@@ -8,4 +8,5 @@ public interface Storage {
     <T extends Entity> Optional<T> findEntity(String id, Class<T> clazz);
     <T extends Entity> List<T> findMany(Integer from, Integer size, Class<T> clazz);
     <T extends Entity> void deleteOne(String id, Class<T> clazz);
+    <T extends Entity> List<T> findManyByField(String field, Class<T> clazz, Object... values);
 }

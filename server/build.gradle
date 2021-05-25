@@ -21,6 +21,9 @@ mainClassName = 'com.exacaster.lighter.Application'
 dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
+    annotationProcessor "io.soabase.record-builder:record-builder-processor:1.19"
+
+    compileOnly 'io.soabase.record-builder:record-builder-core:1.19'
 
     implementation "io.micronaut:micronaut-validation"
     implementation "io.swagger.core.v3:swagger-annotations"

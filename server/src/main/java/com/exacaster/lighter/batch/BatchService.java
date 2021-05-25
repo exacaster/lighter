@@ -9,37 +9,35 @@ import javax.inject.Singleton;
 public class BatchService {
 
     private final Storage storage;
-    private final List<OnBatchCreate> createObservers;
 
-    public BatchService(Storage storage, List<OnBatchCreate> createObservers) {
+    public BatchService(Storage storage) {
         this.storage = storage;
-        this.createObservers = createObservers;
     }
 
     public List<Batch> fetch(Integer from, Integer size) {
-        return storage.findMany(from, size, BatchData.class).stream()
-                .map(this::toBatch)
-                .toList();
+        return storage.findMany(from, size, Batch.class);
     }
 
     public Batch create(BatchConfiguration batch) {
-        var entity = new BatchData(UUID.randomUUID().toString(), null, "", BatchState.not_started, batch);
-        var created = toBatch(storage.storeEntity(entity));
-        createObservers.forEach(ob -> ob.onBatchCreate(created));
-        return created;
+        var entity = new Batch(UUID.randomUUID().toString(), null, "", BatchState.not_started, batch);
+        return storage.storeEntity(entity);
+    }
+
+    public Batch update(Batch batch) {
+        return storage.storeEntity(batch);
+    }
+
+    public List<Batch> fetchByState(BatchState state) {
+        return storage.findManyByField("state", Batch.class, state);
     }
 
     public Batch fetchOne(String id) {
-        return storage.findEntity(id, BatchData.class)
-                .map(this::toBatch)
+        return storage.findEntity(id, Batch.class)
                 .orElse(null);
     }
 
     public void deleteOne(String id) {
-        storage.deleteOne(id, BatchData.class);
+        storage.deleteOne(id, Batch.class);
     }
 
-    private Batch toBatch(BatchData data) {
-        return new Batch(data.id(), data.appId(), data.appInfo(), data.state());
-    }
 }

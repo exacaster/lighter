@@ -1,5 +1,7 @@
 package com.exacaster.lighter.storage;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,6 +42,28 @@ public class InMemoryStorage implements Storage {
         var all = storage.get(clazz);
         if (all != null) {
             all.remove(id);
+        }
+    }
+
+    @Override
+    public <T extends Entity> List<T> findManyByField(String field, Class<T> clazz, Object... values) {
+        var all = storage.get(clazz);
+        if (all == null) {
+            return List.of();
+        }
+
+        try {
+            Field entityField = clazz.getField(field);
+            return all.values().stream().filter(val -> {
+                try {
+                    var entityFieldValue = entityField.get(val);
+                    return Arrays.stream(values).anyMatch(queryVal -> queryVal.equals(entityFieldValue));
+                } catch (IllegalAccessException e) {
+                    return false;
+                }
+            }).map(clazz::cast).toList();
+        } catch (NoSuchFieldException e) {
+            throw new InvalidQueryException("Invalid field filter for " + field, e);
         }
     }
 }
