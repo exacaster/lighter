@@ -22,9 +22,9 @@ public class BatchHandler {
     }
 
     public BatchState launch(Batch batch) {
-        var app = new SparkApp(backend.getSubmitParamas(batch));
+        var app = new SparkApp(batch.submitParams());
         try {
-            app.launch();
+            app.launch(backend.getSubmitConfiguration(batch));
         } catch (IOException | IllegalArgumentException e) {
             LOG.error("Error launching");
             return BatchState.error;

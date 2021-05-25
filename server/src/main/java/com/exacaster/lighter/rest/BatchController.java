@@ -1,7 +1,6 @@
 package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.batch.Batch;
-import com.exacaster.lighter.batch.BatchConfiguration;
 import com.exacaster.lighter.batch.BatchList;
 import com.exacaster.lighter.batch.BatchService;
 import com.exacaster.lighter.log.Log;

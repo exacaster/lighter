@@ -9,7 +9,9 @@ public interface Backend {
 
     void configure(Map<String, String> configs);
 
-    SubmitParams getSubmitParamas(Batch batch);
-
     Optional<BatchInfo> getInfo(String appIdentifier);
+
+    default Map<String, String> getSubmitConfiguration(Batch batch) {
+        return Map.of();
+    }
 }

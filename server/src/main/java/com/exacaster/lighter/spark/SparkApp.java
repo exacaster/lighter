@@ -1,9 +1,11 @@
 package com.exacaster.lighter.spark;
 
+import static org.apache.spark.launcher.SparkLauncher.DRIVER_MEMORY;
+import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_CORES;
+import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_MEMORY;
+
 import java.io.IOException;
-import javax.inject.Singleton;
-import org.apache.spark.launcher.SparkAppHandle;
-import org.apache.spark.launcher.SparkAppHandle.Listener;
+import java.util.Map;
 import org.apache.spark.launcher.SparkLauncher;
 
 
@@ -15,8 +17,7 @@ public class SparkApp {
         this.submitParams = submitParams;
     }
 
-    // TODO: fill missing configs
-    public void launch() throws IOException {
+    public void launch(Map<String, String> extraConfiguration) throws IOException {
         var launcehr = new SparkLauncher()
                 .setAppName(submitParams.name())
                 .setDeployMode("cluster")
@@ -27,18 +28,13 @@ public class SparkApp {
         submitParams.files().forEach(launcehr::addFile);
         submitParams.pyFiles().forEach(launcehr::addPyFile);
         submitParams.conf().forEach(launcehr::setConf);
-        launcehr.launch();
-//        launcehr.startApplication(new Listener() {
-//            @Override
-//            public void stateChanged(SparkAppHandle handle) {
-//
-//            }
-//
-//            @Override
-//            public void infoChanged(SparkAppHandle handle) {
-//
-//            }
-//        })
+        extraConfiguration.forEach(launcehr::setConf);
+        launcehr.setConf(DRIVER_MEMORY, submitParams.driverMemory())
+                .setConf("spark.driver.cores", String.valueOf(submitParams.driverCores()))
+                .setConf(EXECUTOR_CORES, String.valueOf(submitParams.executorCores()))
+                .setConf(EXECUTOR_MEMORY, submitParams.executorMemory())
+                .setConf("spark.executor.instances", String.valueOf(submitParams.numExecutors()));
+        launcehr.startApplication().disconnect();
     }
 
 }
