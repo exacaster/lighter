@@ -50,8 +50,10 @@ public class BatchHandler {
                         BatchBuilder.builder(batch).state(BatchState.starting).build();
                         LOG.info("Tracking {}, info: {}", batch, info);
                         // TODO: Store logs
-                        // TODO: Get appId
-                        service.update(BatchBuilder.builder(batch).state(info.state()).build());
+                        service.update(BatchBuilder.builder(batch)
+                                .state(info.state())
+                                .appId(info.applicationId())
+                                .build());
                     }, () -> LOG.info("No info for {}", batch));
                 });
     }
