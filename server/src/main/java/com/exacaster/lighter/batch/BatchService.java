@@ -31,6 +31,10 @@ public class BatchService {
         return storage.findManyByField("state", Batch.class, state);
     }
 
+    public List<Batch> fetchNonFinished() {
+        return storage.findManyByField("state", Batch.class, BatchState.incompleteStates());
+    }
+
     public Batch fetchOne(String id) {
         return storage.findEntity(id, Batch.class)
                 .orElse(null);
