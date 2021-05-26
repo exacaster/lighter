@@ -1,9 +1,10 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import com.exacaster.lighter.backend.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.backend.BatchInfo;
-import com.exacaster.lighter.batch.Batch;
-import com.exacaster.lighter.batch.BatchState;
+import com.exacaster.lighter.backend.ApplicationInfo;
+import com.exacaster.lighter.backend.Application;
+import com.exacaster.lighter.log.Log;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
@@ -17,7 +18,6 @@ public class KubernetesBackend implements Backend {
     private static final String SPARK_ROLE_LABEL = "spark-role";
     private static final String SPARK_APP_ID_LABEL = "spark-app-selector";
 
-
     private KubernetesClient client;
     private String namespace;
     private Integer maxLogSize;
@@ -30,36 +30,37 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
-    public Map<String, String> getSubmitConfiguration(Batch batch) {
+    public Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of(
-                "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, batch.appId(),
-                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, batch.appId()
+                "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.id(),
+                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.id()
         );
     }
 
     @Override
-    public Optional<BatchInfo> getInfo(String appIdentifier) {
-        return getDriverPod(appIdentifier).map(pod -> new BatchInfo(mapStatus(pod.getStatus()),
+    public Optional<ApplicationInfo> getInfo(String internalApplicationId) {
+        return getDriverPod(internalApplicationId).map(pod -> new ApplicationInfo(mapStatus(pod.getStatus()),
                 pod.getMetadata().getLabels().get(SPARK_APP_ID_LABEL)));
     }
 
-    private BatchState mapStatus(PodStatus status) {
+    private ApplicationState mapStatus(PodStatus status) {
         return switch (status.getPhase()) {
-            case "Pending", "Unknown" -> BatchState.STARTING;
-            case "Running" -> BatchState.BUSY;
-            case "Succeeded" -> BatchState.SUCCESS;
-            case "Failed" -> BatchState.DEAD;
+            case "Pending", "Unknown" -> ApplicationState.STARTING;
+            case "Running" -> ApplicationState.BUSY;
+            case "Succeeded" -> ApplicationState.SUCCESS;
+            case "Failed" -> ApplicationState.DEAD;
             default -> throw new IllegalStateException("Unexpected phase: " + status.getPhase());
         };
     }
 
     @Override
-    public Optional<String> getLogs(String appIdentifier) {
-        return this.getDriverPod(appIdentifier)
+    public Optional<Log> getLogs(String internalApplicationId) {
+        return this.getDriverPod(internalApplicationId)
                 .map(pod -> this.client.pods().inNamespace(this.namespace)
                         .withName(pod.getMetadata().getName())
                         .tailingLines(maxLogSize)
-                        .getLog(true));
+                        .getLog(true))
+                .map(log -> new Log(internalApplicationId, log));
     }
 
     private Optional<Pod> getDriverPod(String appIdentifier) {

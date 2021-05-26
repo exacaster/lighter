@@ -1,6 +1,6 @@
 package com.exacaster.lighter.backend;
 
-import com.exacaster.lighter.batch.Batch;
+import com.exacaster.lighter.log.Log;
 import java.util.Map;
 import java.util.Optional;
 
@@ -8,11 +8,11 @@ public interface Backend {
 
     void configure(Map<String, String> configs);
 
-    Optional<BatchInfo> getInfo(String appIdentifier);
+    Optional<ApplicationInfo> getInfo(String internalApplicationId);
 
-    Optional<String> getLogs(String appIdentifier);
+    Optional<Log> getLogs(String internalApplicationId);
 
-    default Map<String, String> getSubmitConfiguration(Batch batch) {
+    default Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of();
     }
 }

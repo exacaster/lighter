@@ -1,6 +1,6 @@
 package com.exacaster.lighter.rest;
 
-import com.exacaster.lighter.batch.Batch;
+import com.exacaster.lighter.backend.Application;
 import com.exacaster.lighter.batch.BatchList;
 import com.exacaster.lighter.batch.BatchService;
 import com.exacaster.lighter.log.Log;
@@ -14,6 +14,7 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.validation.Validated;
+import java.util.Optional;
 import javax.validation.Valid;
 
 @Validated
@@ -29,7 +30,7 @@ public class BatchController {
     }
 
     @Post
-    public Batch create(@Valid @Body SubmitParams batch) {
+    public Application create(@Valid @Body SubmitParams batch) {
         return batchService.create(batch);
     }
 
@@ -40,7 +41,7 @@ public class BatchController {
     }
 
     @Get("/{id}")
-    public Batch get(@PathVariable String id) {
+    public Optional<Application> get(@PathVariable String id) {
         return batchService.fetchOne(id);
     }
 
@@ -51,12 +52,12 @@ public class BatchController {
 
     // For backwards copatibility with livy
     @Get("/{id}/state")
-    public Batch getState(@PathVariable String id) {
+    public Optional<Application> getState(@PathVariable String id) {
         return batchService.fetchOne(id);
     }
 
     @Get("/{id}/log")
-    public Log getLog(@PathVariable Long id, @QueryValue(defaultValue = "0") Integer from, @QueryValue(defaultValue = "100") Integer size) {
-        return logService.fetch("batch", id, from, size);
+    public Optional<Log> getLog(@PathVariable String id) {
+        return logService.fetch(id);
     }
 }

@@ -1,8 +1,8 @@
 package com.exacaster.lighter.storage
 
-import com.exacaster.lighter.batch.Batch
-import com.exacaster.lighter.batch.BatchBuilder
-import com.exacaster.lighter.batch.BatchState
+import com.exacaster.lighter.backend.ApplicationBuilder
+import com.exacaster.lighter.backend.ApplicationType
+import com.exacaster.lighter.backend.ApplicationState
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -12,38 +12,39 @@ class InMemoryStorageTest extends Specification {
 
     def "storage"() {
         given:
-        def batch = BatchBuilder.builder()
+        def batch = ApplicationBuilder.builder()
                 .id("1")
                 .appId("app_123")
-                .state(BatchState.ERROR)
+                .state(ApplicationState.ERROR)
+                .type(ApplicationType.BATCH)
                 .build()
 
         when: "storing entity"
-        def result = storage.storeEntity(batch)
+        def result = storage.saveApplication(batch)
 
         then: "returns stored entity"
         result.appId() == "app_123"
 
         when: "searching by id"
-        def findResult = storage.findEntity(result.id(), Batch.class)
+        def findResult = storage.findApplication(result.id())
 
         then: "returns by id"
         findResult.get().appId() == "app_123"
 
         when: "searching by wrong id"
-        findResult = storage.findEntity("unknown", Batch.class)
+        findResult = storage.findApplication("unknown")
 
         then: "returns empty"
         findResult.isEmpty()
 
         when: "searching by status"
-        def statusResult = storage.findManyByField("state", Batch.class, BatchState.ERROR)
+        def statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.ERROR])
 
         then: "returns results"
         statusResult.get(0).appId() == "app_123"
 
         when: "searching by not existing status"
-        statusResult = storage.findManyByField("state", Batch.class, BatchState.KILLED)
+        statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.KILLED])
 
         then: "returns empty list"
         statusResult.isEmpty()

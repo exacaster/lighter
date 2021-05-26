@@ -18,23 +18,23 @@ public class SparkApp {
     }
 
     public void launch(Map<String, String> extraConfiguration) throws IOException {
-        var launcehr = new SparkLauncher()
+        var launcher = new SparkLauncher()
                 .setAppName(submitParams.name())
                 .setDeployMode("cluster")
                 .setMaster(submitParams.master())
                 .setMainClass(submitParams.mainClass());
-        submitParams.args().forEach(launcehr::addAppArgs);
-        submitParams.jars().forEach(launcehr::addJar);
-        submitParams.files().forEach(launcehr::addFile);
-        submitParams.pyFiles().forEach(launcehr::addPyFile);
-        submitParams.conf().forEach(launcehr::setConf);
-        extraConfiguration.forEach(launcehr::setConf);
-        launcehr.setConf(DRIVER_MEMORY, submitParams.driverMemory())
+        submitParams.args().forEach(launcher::addAppArgs);
+        submitParams.jars().forEach(launcher::addJar);
+        submitParams.files().forEach(launcher::addFile);
+        submitParams.pyFiles().forEach(launcher::addPyFile);
+        submitParams.conf().forEach(launcher::setConf);
+        extraConfiguration.forEach(launcher::setConf);
+        launcher.setConf(DRIVER_MEMORY, submitParams.driverMemory())
                 .setConf("spark.driver.cores", String.valueOf(submitParams.driverCores()))
                 .setConf(EXECUTOR_CORES, String.valueOf(submitParams.executorCores()))
                 .setConf(EXECUTOR_MEMORY, submitParams.executorMemory())
                 .setConf("spark.executor.instances", String.valueOf(submitParams.numExecutors()));
-        launcehr.startApplication().disconnect();
+        launcher.startApplication().disconnect();
     }
 
 }

@@ -1,15 +1,23 @@
 package com.exacaster.lighter.log;
 
+import com.exacaster.lighter.storage.Storage;
+import java.util.Optional;
 import javax.inject.Singleton;
 
 @Singleton
 public class LogService {
 
-    public Log fetch(String batch, Long id, Integer from, Integer size) {
-        return null;
+    private final Storage storage;
+
+    public LogService(Storage storage) {
+        this.storage = storage;
     }
 
-    public void save(String id, String log) {
+    public Optional<Log> fetch(String internalApplicationId) {
+        return storage.findApplicationLog(internalApplicationId);
+    }
 
+    public void save(Log log) {
+        storage.saveApplicationLog(log);
     }
 }

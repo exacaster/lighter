@@ -1,5 +1,7 @@
 package com.exacaster.lighter.log;
 
-public record Log(Long id, Integer from, Integer size, String log) {
+import com.exacaster.lighter.storage.Entity;
+
+public record Log(String id, String log) implements Entity {
 
 }

@@ -1,8 +1,9 @@
-package com.exacaster.lighter.batch;
+package com.exacaster.lighter.backend;
 
 import java.util.Arrays;
+import java.util.List;
 
-public enum BatchState {
+public enum ApplicationState {
     NOT_STARTED,
     STARTING,
     IDLE,
@@ -13,19 +14,19 @@ public enum BatchState {
     KILLED(true),
     SUCCESS(true);
 
-    private static final BatchState[] INCOMPLETE_STATES = Arrays.stream(values()).filter(val -> !val.isComplete).toArray(BatchState[]::new);
+    private static final List<ApplicationState> INCOMPLETE_STATES = Arrays.stream(values()).filter(val -> !val.isComplete).toList();
 
     private final boolean isComplete;
 
-    BatchState(boolean isComplete) {
+    ApplicationState(boolean isComplete) {
         this.isComplete = isComplete;
     }
 
-    BatchState() {
+    ApplicationState() {
         this(false);
     }
 
-    public static BatchState[] incompleteStates() {
+    public static List<ApplicationState> incompleteStates() {
         return INCOMPLETE_STATES;
     }
 

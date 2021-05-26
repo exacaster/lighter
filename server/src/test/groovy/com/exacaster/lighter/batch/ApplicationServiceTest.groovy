@@ -1,11 +1,13 @@
 package com.exacaster.lighter.batch
 
+import com.exacaster.lighter.backend.ApplicationBuilder
+import com.exacaster.lighter.backend.ApplicationState
 import com.exacaster.lighter.spark.SubmitParamsBuilder
 import com.exacaster.lighter.storage.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
 
-class BatchServiceTest extends Specification {
+class ApplicationServiceTest extends Specification {
     @Subject
     BatchService service = new BatchService(new InMemoryStorage())
 
@@ -23,10 +25,10 @@ class BatchServiceTest extends Specification {
         result.submitParams().name() == params.name()
 
         when: "updating"
-        result = service.update(BatchBuilder.builder(result).state(BatchState.DEAD).build())
+        result = service.update(ApplicationBuilder.builder(result).state(ApplicationState.DEAD).build())
 
         then: "returns updated"
-        result.state() == BatchState.DEAD
+        result.state() == ApplicationState.DEAD
 
         when: "fetching list"
         def resultList = service.fetch(0, 1)
@@ -35,13 +37,13 @@ class BatchServiceTest extends Specification {
         resultList.size() == 1
 
         when: "fetch by status"
-        resultList = service.fetchByState(BatchState.DEAD)
+        resultList = service.fetchByState(ApplicationState.DEAD)
 
         then: "returns list"
         resultList.size() == 1
 
         when: "fetch by missing status"
-        resultList = service.fetchByState(BatchState.SUCCESS)
+        resultList = service.fetchByState(ApplicationState.SUCCESS)
 
         then: "returns empty list"
         resultList.isEmpty()
