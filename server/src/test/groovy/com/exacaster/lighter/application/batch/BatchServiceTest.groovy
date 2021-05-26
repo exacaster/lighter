@@ -7,7 +7,7 @@ import com.exacaster.lighter.storage.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
 
-class ApplicationServiceTest extends Specification {
+class BatchServiceTest extends Specification {
     @Subject
     BatchService service = new BatchService(new InMemoryStorage())
 
