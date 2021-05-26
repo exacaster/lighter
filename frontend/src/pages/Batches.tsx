@@ -10,10 +10,14 @@ import {
   Td,
 } from "@chakra-ui/react";
 import {generatePath} from 'react-router';
-import {Link} from 'react-router-dom';
+import {useQueryString} from '../hooks/common';
+import {pageSize} from '../configuration/consts';
+import Pagination from '../components/Pagination';
+import Link from '../components/Link';
 
 const Batches: React.FC = () => {
-  const {data} = useBatches();
+  const from = Number(useQueryString().from) || 0;
+  const {data} = useBatches(pageSize, from);
 
   return <>
     <PageHeading>Batches</PageHeading>
@@ -31,6 +35,7 @@ const Batches: React.FC = () => {
         </Tr>)}
       </Tbody>
     </Table>
+    <Pagination path="/" from={from} size={pageSize} visibleSize={data?.applications?.length || 0} />
   </>;
 };
 

@@ -1,9 +1,9 @@
 import {useApi} from '../client/hooks';
 import {useQuery} from 'react-query';
 
-export function useBatches() {
+export function useBatches(size: number, from: number) {
   const api = useApi();
-  return useQuery("batches", () => api.fetchBatches());
+  return useQuery(["batches", size, from], () => api.fetchBatches(size, from));
 }
 
 export function useApplicationLog(id: string) {

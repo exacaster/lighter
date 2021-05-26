@@ -12,13 +12,8 @@ export class Api {
     return this.client.get(url).then((resp) => resp.data);
   }
 
-  private post<T>(url: string, data: T) {
-    return this.client.post(url, data).then((resp) => resp.data);
-  }
-
-  // TODO: PAgination
-  fetchBatches(): Promise<BatchPage> {
-    return this.get('/api/batches');
+  fetchBatches(size: number, from: number): Promise<BatchPage> {
+    return this.get(`/api/batches?size=${size}&from=${from}`);
   }
 
   fetchApplicationLog(id: string): Promise<ApplicationLog> {
