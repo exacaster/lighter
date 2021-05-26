@@ -9,6 +9,7 @@ import Batches from './pages/Batches';
 import {ChakraProvider} from '@chakra-ui/react';
 import Layout from './components/Layout';
 import {QueryCache, QueryClient, QueryClientProvider} from 'react-query';
+import Batch from './pages/Batch';
 
 
 const queryCache = new QueryCache();
@@ -33,9 +34,13 @@ function App() {
               <Route path="/sessions">
                 <Sessions />
               </Route>
+              <Route path="/batches/:id">
+                <Batch />
+              </Route>
               <Route path="/">
                 <Batches />
               </Route>
+              
             </Switch>
           </Layout>
 

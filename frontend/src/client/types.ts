@@ -1,11 +1,15 @@
 
-export type Batch = {
+export type Application = {
   id: string;
   state: string;
 };
 
+export type ApplicationLog = {
+  log: string;
+};
+
 export type BatchPage = {
-  batches?: Batch[];
+  applications?: Application[];
   from: number;
   total: number;
 };

@@ -6,6 +6,7 @@ import com.exacaster.lighter.backend.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.Application;
 import com.exacaster.lighter.backend.ApplicationBuilder;
+import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -27,15 +28,15 @@ public class BatchHandler {
         this.logService = logService;
     }
 
-    public ApplicationState launch(Application application) {
+    public LaunchResult launch(Application application) {
         var app = new SparkApp(application.submitParams());
         try {
             app.launch(backend.getSubmitConfiguration(application));
         } catch (IOException | IllegalArgumentException e) {
             LOG.error("Error launching");
-            return ApplicationState.ERROR;
+            return new LaunchResult(ApplicationState.ERROR, e);
         }
-        return ApplicationState.STARTING;
+        return new LaunchResult(ApplicationState.STARTING, null);
     }
 
     @Scheduled(fixedRate = "1m")
@@ -44,7 +45,10 @@ public class BatchHandler {
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
                     var state = launch(batch);
-                    batchService.update(ApplicationBuilder.builder(batch).state(state).build());
+                    batchService.update(ApplicationBuilder.builder(batch).state(state.state()).build());
+                    if (state.exception() != null) {
+                        logService.save(new Log(batch.id(), state.exception().toString()));
+                    }
                 });
     }
 

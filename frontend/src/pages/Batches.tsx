@@ -9,6 +9,8 @@ import {
   Th,
   Td,
 } from "@chakra-ui/react";
+import {generatePath} from 'react-router';
+import {Link} from 'react-router-dom';
 
 const Batches: React.FC = () => {
   const {data} = useBatches();
@@ -23,8 +25,8 @@ const Batches: React.FC = () => {
         </Tr>
       </Thead>
       <Tbody>
-        {data?.batches?.map((batch) => <Tr key={batch.id}>
-          <Td>{batch.id}</Td>
+        {data?.applications?.map((batch) => <Tr key={batch.id}>
+          <Td><Link to={generatePath('/batches/:id', {id: batch.id})}>{batch.id}</Link></Td>
           <Td>{batch.state}</Td>
         </Tr>)}
       </Tbody>

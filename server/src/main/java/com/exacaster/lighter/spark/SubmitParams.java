@@ -1,9 +1,11 @@
 package com.exacaster.lighter.spark;
 
+import io.micronaut.core.annotation.Introspected;
 import io.soabase.recordbuilder.core.RecordBuilder;
 import java.util.List;
 import java.util.Map;
 
+@Introspected
 @RecordBuilder
 public record SubmitParams(String name,
                            String master,
