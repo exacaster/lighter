@@ -1,3 +1,4 @@
+import {Code} from '@chakra-ui/layout';
 import React from 'react';
 import {useParams} from 'react-router';
 import PageHeading from '../components/PageHeading';
@@ -9,7 +10,7 @@ const Batch: React.FC = () => {
 
   return <>
     <PageHeading>Batch {id}</PageHeading>
-    {logs?.log}
+    <Code>{logs?.log}</Code>
   </>;
 };
 
