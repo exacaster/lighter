@@ -1,8 +1,8 @@
 package com.exacaster.lighter.storage
 
-import com.exacaster.lighter.backend.ApplicationBuilder
-import com.exacaster.lighter.backend.ApplicationType
-import com.exacaster.lighter.backend.ApplicationState
+import com.exacaster.lighter.application.ApplicationBuilder
+import com.exacaster.lighter.application.ApplicationState
+import com.exacaster.lighter.application.ApplicationType
 import spock.lang.Specification
 import spock.lang.Subject
 

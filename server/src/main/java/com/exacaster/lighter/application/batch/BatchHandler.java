@@ -1,11 +1,11 @@
-package com.exacaster.lighter.batch;
+package com.exacaster.lighter.application.batch;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
-import com.exacaster.lighter.backend.ApplicationState;
+import com.exacaster.lighter.application.ApplicationBuilder;
+import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.backend.Application;
-import com.exacaster.lighter.backend.ApplicationBuilder;
+import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;

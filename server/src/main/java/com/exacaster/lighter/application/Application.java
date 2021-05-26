@@ -1,4 +1,4 @@
-package com.exacaster.lighter.backend;
+package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Entity;

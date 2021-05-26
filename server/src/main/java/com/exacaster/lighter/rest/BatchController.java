@@ -1,8 +1,8 @@
 package com.exacaster.lighter.rest;
 
-import com.exacaster.lighter.backend.Application;
-import com.exacaster.lighter.batch.BatchList;
-import com.exacaster.lighter.batch.BatchService;
+import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.batch.BatchList;
+import com.exacaster.lighter.application.batch.BatchService;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SubmitParams;

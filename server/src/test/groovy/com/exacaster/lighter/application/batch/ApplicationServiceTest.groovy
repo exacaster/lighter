@@ -1,7 +1,7 @@
-package com.exacaster.lighter.batch
+package com.exacaster.lighter.application.batch
 
-import com.exacaster.lighter.backend.ApplicationBuilder
-import com.exacaster.lighter.backend.ApplicationState
+import com.exacaster.lighter.application.ApplicationBuilder
+import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.spark.SubmitParamsBuilder
 import com.exacaster.lighter.storage.InMemoryStorage
 import spock.lang.Specification

@@ -1,9 +1,9 @@
 package com.exacaster.lighter.backend.kubernetes;
 
-import com.exacaster.lighter.backend.ApplicationState;
+import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.backend.ApplicationInfo;
-import com.exacaster.lighter.backend.Application;
+import com.exacaster.lighter.application.ApplicationInfo;
+import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.log.Log;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;

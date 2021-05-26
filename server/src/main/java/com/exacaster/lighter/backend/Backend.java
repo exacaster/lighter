@@ -1,5 +1,7 @@
 package com.exacaster.lighter.backend;
 
+import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.log.Log;
 import java.util.Map;
 import java.util.Optional;

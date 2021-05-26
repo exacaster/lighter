@@ -1,8 +1,8 @@
-package com.exacaster.lighter.batch;
+package com.exacaster.lighter.application.batch;
 
-import com.exacaster.lighter.backend.Application;
-import com.exacaster.lighter.backend.ApplicationState;
-import com.exacaster.lighter.backend.ApplicationType;
+import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationState;
+import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Storage;
 import java.util.List;

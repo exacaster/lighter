@@ -1,8 +1,8 @@
 package com.exacaster.lighter.storage;
 
-import com.exacaster.lighter.backend.Application;
-import com.exacaster.lighter.backend.ApplicationState;
-import com.exacaster.lighter.backend.ApplicationType;
+import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationState;
+import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.log.Log;
 import java.util.List;
 import java.util.Optional;

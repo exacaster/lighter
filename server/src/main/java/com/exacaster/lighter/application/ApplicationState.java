@@ -1,4 +1,4 @@
-package com.exacaster.lighter.backend;
+package com.exacaster.lighter.application;
 
 import java.util.Arrays;
 import java.util.List;
