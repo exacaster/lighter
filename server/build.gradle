@@ -4,7 +4,7 @@ plugins {
     id 'io.micronaut.application' version '1.4.2'
 }
 
-group 'org.example'
+group 'org.exacaster.lighter'
 version '1.0-SNAPSHOT'
 
 repositories {
@@ -40,6 +40,18 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
     testImplementation 'io.micronaut:micronaut-inject-groovy'
     testImplementation 'io.micronaut.test:micronaut-test-spock'
+}
+
+dockerfile {
+    baseImage = "dckregistry.exacaster.com:5000/docker/java/16-jre-alpine:master"
+}
+
+dockerBuild {
+    images = ["exacaster/lighter-server:${getTag()}"]
+}
+
+def getTag() {
+    return findProperty('TAG') ?: 'latest'
 }
 
 tasks.withType(JavaCompile) {

@@ -7,7 +7,7 @@ micronaut:
     router:
         static-resources:
             default:
-                paths: file:../frontend/build
+                paths: file:${FRONTEND_PATH:../frontend/build}
                 mapping: /**
             swagger:
                 paths: classpath:META-INF/swagger
