@@ -19,13 +19,11 @@ public class KubernetesBackend implements Backend {
     private static final String SPARK_APP_ID_LABEL = "spark-app-selector";
 
     private final KubernetesClient client;
-    private final String namespace;
-    private final Integer maxLogSize;
+    private final KubernetesProperties properties;
 
-    public KubernetesBackend(String namespace, Integer maxLogSize) {
+    public KubernetesBackend(KubernetesProperties properties) {
+        this.properties = properties;
         this.client = new DefaultKubernetesClient();
-        this.namespace = namespace;
-        this.maxLogSize = maxLogSize;
     }
 
     @Override
@@ -55,15 +53,15 @@ public class KubernetesBackend implements Backend {
     @Override
     public Optional<Log> getLogs(String internalApplicationId) {
         return this.getDriverPod(internalApplicationId)
-                .map(pod -> this.client.pods().inNamespace(this.namespace)
+                .map(pod -> this.client.pods().inNamespace(properties.namespace())
                         .withName(pod.getMetadata().getName())
-                        .tailingLines(maxLogSize)
+                        .tailingLines(properties.maxLogSize())
                         .getLog(true))
                 .map(log -> new Log(internalApplicationId, log));
     }
 
     private Optional<Pod> getDriverPod(String appIdentifier) {
-        return this.client.pods().inNamespace(this.namespace)
+        return this.client.pods().inNamespace(properties.namespace())
                 .withLabel(SPARK_APP_TAG_LABEL, appIdentifier)
                 .withLabel(SPARK_ROLE_LABEL, "driver")
                 .list()

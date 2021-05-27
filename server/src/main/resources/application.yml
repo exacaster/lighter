@@ -1,3 +1,8 @@
+lighter:
+    kubernetes:
+        enabled: true
+        namespace: default
+        max-log-size: 500
 micronaut:
     server:
         cors:
