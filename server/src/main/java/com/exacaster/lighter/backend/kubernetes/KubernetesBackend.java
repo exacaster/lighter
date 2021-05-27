@@ -18,15 +18,14 @@ public class KubernetesBackend implements Backend {
     private static final String SPARK_ROLE_LABEL = "spark-role";
     private static final String SPARK_APP_ID_LABEL = "spark-app-selector";
 
-    private KubernetesClient client;
-    private String namespace;
-    private Integer maxLogSize;
+    private final KubernetesClient client;
+    private final String namespace;
+    private final Integer maxLogSize;
 
-    @Override
-    public void configure(Map<String, String> configs) {
+    public KubernetesBackend(String namespace, Integer maxLogSize) {
         this.client = new DefaultKubernetesClient();
-        this.namespace = configs.getOrDefault("namespace", "default");
-        this.maxLogSize = Integer.valueOf(configs.getOrDefault("logSize", "500"));
+        this.namespace = namespace;
+        this.maxLogSize = maxLogSize;
     }
 
     @Override

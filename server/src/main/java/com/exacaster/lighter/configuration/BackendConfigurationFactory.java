@@ -11,9 +11,7 @@ public class BackendConfigurationFactory {
 
     @Singleton
     public Backend backend() {
-        var backend = new KubernetesBackend();
         // TODO
-        backend.configure(Map.of("namespace", "spark"));
-        return backend;
+        return new KubernetesBackend("default", 500);
     }
 }

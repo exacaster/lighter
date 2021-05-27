@@ -8,8 +8,6 @@ import java.util.Optional;
 
 public interface Backend {
 
-    void configure(Map<String, String> configs);
-
     Optional<ApplicationInfo> getInfo(String internalApplicationId);
 
     Optional<Log> getLogs(String internalApplicationId);
