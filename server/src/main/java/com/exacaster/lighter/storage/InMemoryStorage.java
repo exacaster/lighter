@@ -4,17 +4,26 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.log.Log;
+import io.micronaut.caffeine.cache.Cache;
+import io.micronaut.caffeine.cache.Caffeine;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 public class InMemoryStorage implements Storage {
 
-    private final Map<Class<? extends Entity>, Map<String, Object>> storage = new ConcurrentHashMap<>();
+    private final Map<Class<? extends Entity>, Cache<String, Entity>> storage = new ConcurrentHashMap<>();
+    private final Integer maxSize;
+    private final Integer lifeSpanHours;
 
+    public InMemoryStorage(Integer maxSize, Integer lifeSpanHours) {
+        this.maxSize = maxSize;
+        this.lifeSpanHours = lifeSpanHours;
+    }
 
     @Override
     public Optional<Application> findApplication(String internalApplicationId) {
@@ -53,7 +62,7 @@ public class InMemoryStorage implements Storage {
     }
 
     public <T extends Entity> T storeEntity(T entity) {
-        var entityStore = storage.computeIfAbsent(entity.getClass(), key -> new ConcurrentHashMap<>());
+        var entityStore = storage.computeIfAbsent(entity.getClass(), key -> prepareCache());
         entityStore.put(entity.id(), entity);
         return entity;
     }
@@ -63,7 +72,7 @@ public class InMemoryStorage implements Storage {
         if (all == null) {
             return Optional.empty();
         }
-        return Optional.ofNullable((T) all.get(id));
+        return Optional.ofNullable((T) all.get(id, obj -> null));
     }
 
     private <T extends Entity> List<T> findMany(Predicate<T> filter, Class<T> clazz, Integer from, Integer size) {
@@ -81,13 +90,20 @@ public class InMemoryStorage implements Storage {
             return Stream.empty();
         }
 
-        return all.values().stream().map(clazz::cast).filter(filter);
+        return all.asMap().values().stream().map(clazz::cast).filter(filter);
     }
 
     private <T extends Entity> void deleteOne(String id, Class<T> clazz) {
         var all = storage.get(clazz);
         if (all != null) {
-            all.remove(id);
+            all.invalidate(id);
         }
+    }
+
+    private Cache<String, Entity> prepareCache() {
+        return Caffeine.newBuilder()
+                .maximumSize(maxSize)
+                .expireAfterWrite(lifeSpanHours, TimeUnit.HOURS)
+                .build();
     }
 }

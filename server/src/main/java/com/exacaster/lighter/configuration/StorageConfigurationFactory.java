@@ -11,6 +11,6 @@ public class StorageConfigurationFactory {
     @Singleton
     public Storage storage() {
         // TODO: LOAD by config
-        return new InMemoryStorage();
+        return new InMemoryStorage(1000, 24);
     }
 }

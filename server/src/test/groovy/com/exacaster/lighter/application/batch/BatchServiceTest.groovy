@@ -9,7 +9,7 @@ import spock.lang.Subject
 
 class BatchServiceTest extends Specification {
     @Subject
-    BatchService service = new BatchService(new InMemoryStorage())
+    BatchService service = new BatchService(new InMemoryStorage(100, 1))
 
     def "BatchService"() {
         given:

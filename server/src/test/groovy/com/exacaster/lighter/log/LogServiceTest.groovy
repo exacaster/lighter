@@ -7,7 +7,7 @@ import spock.lang.Subject
 
 class LogServiceTest extends Specification {
     @Subject
-    LogService service = new LogService(new InMemoryStorage())
+    LogService service = new LogService(new InMemoryStorage(10, 10))
 
     def "LogService"() {
         given:
