@@ -10,4 +10,4 @@ cd server
 cd ..
 
 echo -e "${BOLDGREEN}Building docker with frontend${ENDCOLOR}"
-docker build . -t exacaster/lighter:latest
+docker build . -t exacaster/lighter:latest --network host
