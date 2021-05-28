@@ -13,5 +13,5 @@ To build Docker image, containing application, you need to run
 ## Structure
 
 Project consists of two modules:
-- [server](./server/README.md) - REST API for submitting Apache Spark applications
-- [frontend](./frontend/README.md) - frontend application for reading Apache Spark application logs and tracking history.
+- [server](./server/) - REST API for submitting Apache Spark applications
+- [frontend](./frontend/) - frontend application for reading Apache Spark application logs and tracking history.
