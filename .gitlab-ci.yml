@@ -1,7 +1,7 @@
 stages:
   - buildServer
   - publish
-  - publishExternal
+  - publish-ecr
 
 workflow:
   rules:
@@ -17,7 +17,7 @@ variables:
     CDP_TRIGGER: 'false'
 
 include:
-  - 'http://exagit.exacaster.com/exacaster/ci-commons/raw/master/.scarabs-template.yml'
+  - https://exagit.exacaster.com/exacaster/ci-commons/-/raw/master/.cdp-publish-ecr.yml
 
 
 buildServer:
@@ -41,5 +41,10 @@ publishInternal:
     docker push $CI_REGISTRY_IMAGE:${TAG}
     docker rmi $CI_REGISTRY_IMAGE:${TAG}
 
-publishECR:
-  only: []
+publish-ecr:
+  variables:
+    AWS_ACCESS_KEY_ID: $ECR_SCARABS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $ECR_SCARABS_ACCESS_KEY
+    AWS_DEFAULT_REGION: $ECR_SCARABS_DEFAULT_REGION
+    TAG: ${CI_COMMIT_TAG}
+  needs: []
