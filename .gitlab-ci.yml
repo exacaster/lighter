@@ -18,6 +18,9 @@ variables:
 include:
   - 'http://exagit.exacaster.com/exacaster/ci-commons/raw/master/.scarabs-template.yml'
 
+publishECR:
+  only: []
+
 publishInternal:
   interruptible: true
   stage: publish
