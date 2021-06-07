@@ -7,8 +7,9 @@ REST API for submitting Apache Spark applications on Kubernetes.
 To build Docker image, containing application, you need to run
 
 ```
-./build_docker.sh
+./build_docker.sh full
 ```
+
 
 ## Structure
 

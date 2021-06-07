@@ -1,4 +1,5 @@
 stages:
+  - buildServer
   - publish
   - publishExternal
 
@@ -18,15 +19,21 @@ variables:
 include:
   - 'http://exagit.exacaster.com/exacaster/ci-commons/raw/master/.scarabs-template.yml'
 
-publishECR:
-  only: []
+buildServer:
+  stage: buildServer
+  image: 'dckregistry.exacaster.com:5000/docker/java/16-jre-alpine:master'
+  script:
+    export TAG=${CI_COMMIT_TAG}
+    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}-server"
+    ./build_docker.sh
+    ./gradlew dockerPush -PIMAGE=${IMAGE} -PTAG=${TAG}
 
 publishInternal:
   interruptible: true
   stage: publish
   script: |
     export TAG=${CI_COMMIT_TAG}
-    ./build_docker.sh
-    docker tag exacaster/lighter:${TAG} $CI_REGISTRY_IMAGE:${TAG}
+    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}-server"
+    docker build . -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} --network host
     docker push $CI_REGISTRY_IMAGE:${TAG}
     docker rmi $CI_REGISTRY_IMAGE:${TAG}

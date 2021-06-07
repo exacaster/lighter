@@ -47,11 +47,15 @@ dockerfile {
 }
 
 dockerBuild {
-    images = ["exacaster/lighter-server:${getTag()}"]
+    images = ["${getImage()}:${getTag()}"]
 }
 
 def getTag() {
     return findProperty('TAG') ?: 'latest'
+}
+
+def getImage() {
+    return findProperty('IMAGE') ?: 'exacaster/lighter-server'
 }
 
 tasks.withType(JavaCompile) {
