@@ -22,11 +22,13 @@ include:
 buildServer:
   stage: buildServer
   image: 'dckregistry.exacaster.com:5000/docker/java/16-jre-alpine:master'
-  script:
+  script: |
     export TAG=${CI_COMMIT_TAG}
     export SERVER_IMAGE="${CI_REGISTRY_IMAGE}-server"
     ./build_docker.sh
+    cd server/
     ./gradlew dockerPush -PIMAGE=${IMAGE} -PTAG=${TAG}
+
 
 publishInternal:
   interruptible: true
