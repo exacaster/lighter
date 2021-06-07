@@ -36,6 +36,6 @@ publishInternal:
   script: |
     export TAG=${CI_COMMIT_TAG}
     export SERVER_IMAGE="${CI_REGISTRY_IMAGE}/server"
-    docker build . -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} --network host
+    docker build . -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} --network host --build-arg SERVER_IMAGE=${SERVER_IMAGE} --build-arg SERVER_TAG=${TAG}
     docker push $CI_REGISTRY_IMAGE:${TAG}
     docker rmi $CI_REGISTRY_IMAGE:${TAG}
