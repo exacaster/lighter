@@ -8,7 +8,7 @@ interface ButtonLinkProps extends ButtonProps {
 
 const ButtonLink: React.FC<ButtonLinkProps> = ({to, children, ...props}) => {
   return <Link to={to}>
-    <Button colorScheme="teal" variant="ghost" {...props}>
+    <Button variant="ghost" colorScheme="purple" {...props}>
       {children}
     </Button>
   </Link>;

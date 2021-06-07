@@ -15,7 +15,7 @@ const Layout: React.FC = ({children}: Props) => {
     <Flex p="10" direction="column" alignItems="stretch" minH="100vh">
     <header>
       <Stack direction="row" spacing={4} align="center">
-        <Image src="https://upload.wikimedia.org/wikipedia/commons/f/f3/Apache_Spark_logo.svg" width="100px"/>
+        <Image src={`${process.env.PUBLIC_URL}/images/logo.svg`} width="150px"/>
         <ButtonLink to="/" isActive={match.pathname === '/'}>
           Batches
         </ButtonLink>
