@@ -1,0 +1,29 @@
+stages:
+  - publish
+  - publishExternal
+
+workflow:
+  rules:
+    - if: $CI_COMMIT_TAG
+
+default:
+  tags:
+    - docker_image
+  image: dckregistry.exacaster.com:5000/docker/exagit-runner-artifactory:latest
+
+variables:
+    ECR: 'true'
+    CDP_TRIGGER: 'false'
+
+include:
+  - 'http://exagit.exacaster.com/exacaster/ci-commons/raw/master/.scarabs-template.yml'
+
+publishInternal:
+  interruptible: true
+  stage: publish
+  script: |
+    export TAG=${CI_COMMIT_TAG}
+    ./build_docker.sh
+    docker tag exacaster/lighter:${TAG} $CI_REGISTRY_IMAGE:${TAG}
+    docker push $CI_REGISTRY_IMAGE:${TAG}
+    docker rmi $CI_REGISTRY_IMAGE:${TAG}
