@@ -24,7 +24,7 @@ buildServer:
   image: 'dckregistry.exacaster.com:5000/docker/java/16-jdk-alpine-slim:master'
   script: |
     export TAG=${CI_COMMIT_TAG}
-    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}-server"
+    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}/server"
     cd server/
     ./gradlew dockerBuild -PIMAGE=${SERVER_IMAGE} -PTAG=${TAG}
     ./gradlew dockerPush -PIMAGE=${SERVER_IMAGE} -PTAG=${TAG}
@@ -35,7 +35,7 @@ publishInternal:
   stage: publish
   script: |
     export TAG=${CI_COMMIT_TAG}
-    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}-server"
+    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}/server"
     docker build . -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} --network host
     docker push $CI_REGISTRY_IMAGE:${TAG}
     docker rmi $CI_REGISTRY_IMAGE:${TAG}

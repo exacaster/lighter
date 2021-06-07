@@ -5,7 +5,7 @@ BOLDGREEN="\e[1;${GREEN}m"
 ENDCOLOR="\e[0m"
 
 TAG=${TAG:-latest}
-SERVER_IMAGE=${SERVER_IMAGE:-exacaster/lighter-server}
+SERVER_IMAGE=${SERVER_IMAGE:-exacaster/lighter/server}
 
 echo -e "${BOLDGREEN}Building server${ENDCOLOR}"
 cd server
