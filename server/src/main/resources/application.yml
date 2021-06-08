@@ -13,7 +13,7 @@ micronaut:
         static-resources:
             default:
                 paths: file:${FRONTEND_PATH:../frontend/build}
-                mapping: /**
+                mapping: /lighter/**
             swagger:
                 paths: classpath:META-INF/swagger
                 mapping: /swagger/**
