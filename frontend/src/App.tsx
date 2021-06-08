@@ -27,7 +27,7 @@ function App() {
   return (
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
-        <Router>
+        <Router basename={process.env.PUBLIC_URL}>
           <Layout>
 
             <Switch>

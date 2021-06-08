@@ -16,10 +16,10 @@ const Layout: React.FC = ({children}: Props) => {
     <header>
       <Stack direction="row" spacing={4} align="center">
         <Image src={`${process.env.PUBLIC_URL}/images/logo.svg`} width="150px"/>
-        <ButtonLink to="/" isActive={match.pathname === '/'}>
+        <ButtonLink to="./" isActive={match.pathname === '/'}>
           Batches
         </ButtonLink>
-        <ButtonLink to="/sessions" isActive={match.pathname === '/sessions'}>
+        <ButtonLink to="./sessions" isActive={match.pathname === '/sessions'}>
           Sessions
         </ButtonLink>
       </Stack>

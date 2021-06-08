@@ -1,6 +1,7 @@
 {
   "name": "lighter",
   "version": "0.1.0",
+  "homepage": "/lighter",
   "private": true,
   "dependencies": {
     "@chakra-ui/react": "^1.6.2",

@@ -4,7 +4,7 @@ FROM node:alpine3.13
 
 WORKDIR /home/app/
 
-ENV REACT_APP_API_BASE_URL=''
+ENV REACT_APP_API_BASE_URL='/lighter'
 COPY frontend/ ./frontend/
 RUN cd frontend && yarn install && yarn build
 

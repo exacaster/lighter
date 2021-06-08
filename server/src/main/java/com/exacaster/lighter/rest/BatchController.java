@@ -18,7 +18,7 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 @Validated
-@Controller("/api/batches")
+@Controller("/lighter/api/batches")
 public class BatchController {
 
     private final BatchService batchService;

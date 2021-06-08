@@ -30,7 +30,7 @@ const Batches: React.FC = () => {
       </Thead>
       <Tbody>
         {data?.applications?.map((batch) => <Tr key={batch.id}>
-          <Td><Link to={generatePath('/batches/:id', {id: batch.id})}>{batch.id}</Link></Td>
+          <Td><Link to={generatePath('./batches/:id', {id: batch.id})}>{batch.id}</Link></Td>
           <Td>{batch.state}</Td>
         </Tr>)}
       </Tbody>
