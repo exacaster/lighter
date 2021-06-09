@@ -3,13 +3,19 @@ package com.exacaster.lighter.spark;
 import static org.apache.spark.launcher.SparkLauncher.DRIVER_MEMORY;
 import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_CORES;
 import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_MEMORY;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.IOException;
 import java.util.Map;
+import org.apache.spark.launcher.SparkAppHandle;
+import org.apache.spark.launcher.SparkAppHandle.Listener;
 import org.apache.spark.launcher.SparkLauncher;
+import org.slf4j.Logger;
 
 
 public class SparkApp {
+
+    private static final Logger LOG = getLogger(SparkApp.class);
 
     private final SubmitParams submitParams;
 
@@ -37,7 +43,20 @@ public class SparkApp {
                 .setConf(EXECUTOR_CORES, String.valueOf(submitParams.executorCores()))
                 .setConf(EXECUTOR_MEMORY, submitParams.executorMemory())
                 .setConf("spark.executor.instances", String.valueOf(submitParams.numExecutors()));
-        launcher.startApplication().disconnect();
+        launcher.startApplication()
+                .addListener(new Listener() {
+
+                    @Override
+                    public void stateChanged(SparkAppHandle handle) {
+                        LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), handle.getState());
+                    }
+
+                    @Override
+                    public void infoChanged(SparkAppHandle handle) {
+                        LOG.info("Error: {}", handle.getError().map(Throwable::getMessage).orElse("not error"));
+                    }
+                });
+//                .disconnect();
     }
 
 }
