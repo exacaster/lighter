@@ -21,8 +21,10 @@ public class SparkApp {
         var launcher = new SparkLauncher()
                 .setAppName(submitParams.name())
                 .setDeployMode("cluster")
-                .setMaster(submitParams.master())
-                .setMainClass(submitParams.mainClass());
+                .setMaster(submitParams.master());
+        if (submitParams.mainClass() != null) {
+            launcher.setMainClass(submitParams.mainClass());
+        }
         submitParams.args().forEach(launcher::addAppArgs);
         submitParams.jars().forEach(launcher::addJar);
         submitParams.files().forEach(launcher::addFile);

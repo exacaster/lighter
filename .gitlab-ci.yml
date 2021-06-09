@@ -47,4 +47,5 @@ publish-ecr:
     AWS_SECRET_ACCESS_KEY: $ECR_SCARABS_ACCESS_KEY
     AWS_DEFAULT_REGION: $ECR_SCARABS_DEFAULT_REGION
     TAG: ${CI_COMMIT_TAG}
-  needs: []
+  needs:
+    - publishInternal
