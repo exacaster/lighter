@@ -56,6 +56,7 @@ public class SparkApp {
                                 handle.disconnect();
                             }
 
+                            // TODO: Fix error propagation
                             handle.getError().ifPresent(e -> {
                                 throw new SubmitException(e);
                             });
