@@ -1,5 +1,5 @@
 import {useLocation} from 'react-router';
-import queryString from 'query-string'
+import queryString from 'query-string';
 
 export function useQueryString() {
   const {search} = useLocation();

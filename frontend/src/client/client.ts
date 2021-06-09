@@ -1,5 +1,5 @@
 import {AxiosInstance} from 'axios';
-import {ApplicationLog, BatchPage} from './types';
+import {Application, ApplicationLog, BatchPage} from './types';
 
 export class Api {
   client: AxiosInstance;
@@ -14,6 +14,10 @@ export class Api {
 
   fetchBatches(size: number, from: number): Promise<BatchPage> {
     return this.get(`/api/batches?size=${size}&from=${from}`);
+  }
+
+  fetchBatch(id: string): Promise<Application> {
+    return this.get(`/api/batches/${id}`);
   }
 
   fetchApplicationLog(id: string): Promise<ApplicationLog> {

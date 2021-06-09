@@ -3,9 +3,11 @@ import React from 'react';
 import {Link as ReactLink, LinkProps} from 'react-router-dom';
 
 const Link: React.FC<LinkProps> = ({children, ...props}) => {
-  return <UILink as={ReactLink} {...props}>
-    {children}
-  </UILink>;
+  return (
+    <UILink as={ReactLink} {...props}>
+      {children}
+    </UILink>
+  );
 };
 
 export default Link;

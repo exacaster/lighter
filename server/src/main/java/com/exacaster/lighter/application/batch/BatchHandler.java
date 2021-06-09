@@ -53,13 +53,14 @@ public class BatchHandler {
                 .forEach(batch -> {
                     backend.getInfo(batch.getId()).ifPresentOrElse(info -> {
                         LOG.info("Tracking {}, info: {}", batch, info);
-                        if (info.getState().isComplete()) {
-                            backend.getLogs(batch.getId()).ifPresent(logService::save);
-                        }
                         batchService.update(ApplicationBuilder.builder(batch)
                                 .setState(info.getState())
                                 .setAppId(info.getApplicationId())
                                 .build());
+
+                        if (info.getState().isComplete()) {
+                            backend.getLogs(batch.getId()).ifPresent(logService::save);
+                        }
                     }, () -> LOG.info("No info for {}", batch));
                 });
     }
