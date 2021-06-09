@@ -16,3 +16,4 @@ ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
 COPY --from=0 /home/app/frontend/build/ ./frontend/
 COPY --from=0 /home/app/spark-3.0.2-bin-hadoop2.7/ ./spark/
+COPY k8s/ ./k8s/

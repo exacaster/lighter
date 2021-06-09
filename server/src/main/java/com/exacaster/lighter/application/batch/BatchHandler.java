@@ -9,6 +9,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
+import com.exacaster.lighter.spark.SubmitException;
 import io.micronaut.scheduling.annotation.Scheduled;
 import java.io.IOException;
 import javax.inject.Singleton;
@@ -32,8 +33,8 @@ public class BatchHandler {
         var app = new SparkApp(application.getSubmitParams());
         try {
             app.launch(backend.getSubmitConfiguration(application));
-        } catch (IOException | IllegalArgumentException e) {
-            LOG.error("Error launching");
+        } catch (SubmitException e) {
+            LOG.error("Error launching", e);
             return new LaunchResult(ApplicationState.ERROR, e);
         }
         return new LaunchResult(ApplicationState.STARTING, null);

@@ -24,44 +24,53 @@ public class SparkApp {
         this.submitParams = submitParams;
     }
 
-    public void launch(Map<String, String> extraConfiguration) throws IOException {
-        var launcher = new SparkLauncher()
-                .setAppName(submitParams.getName())
-                .setDeployMode("cluster")
-                .setAppResource(submitParams.getFile())
-                .setMaster(submitParams.getMaster());
-        if (submitParams.getMainClass() != null) {
-            launcher.setMainClass(submitParams.getMainClass());
-        }
-        submitParams.getArgs().forEach(launcher::addAppArgs);
-        submitParams.getJars().forEach(launcher::addJar);
-        submitParams.getFiles().forEach(launcher::addFile);
-        submitParams.getPyFiles().forEach(launcher::addPyFile);
-        submitParams.getConf().forEach(launcher::setConf);
-        extraConfiguration.forEach(launcher::setConf);
-        launcher.setConf(DRIVER_MEMORY, submitParams.getDriverMemory())
-                .setConf("spark.driver.cores", String.valueOf(submitParams.getDriverCores()))
-                .setConf(EXECUTOR_CORES, String.valueOf(submitParams.getExecutorCores()))
-                .setConf(EXECUTOR_MEMORY, submitParams.getExecutorMemory())
-                .setConf("spark.executor.instances", String.valueOf(submitParams.getNumExecutors()));
-        launcher.startApplication()
-                .addListener(new Listener() {
+    public void launch(Map<String, String> extraConfiguration) throws SubmitException {
+        try {
+            var launcher = new SparkLauncher()
+                    .setAppName(submitParams.getName())
+                    .setDeployMode("cluster")
+                    .setAppResource(submitParams.getFile())
+                    .setMaster(submitParams.getMaster());
+            if (submitParams.getMainClass() != null) {
+                launcher.setMainClass(submitParams.getMainClass());
+            }
+            submitParams.getArgs().forEach(launcher::addAppArgs);
+            submitParams.getJars().forEach(launcher::addJar);
+            submitParams.getFiles().forEach(launcher::addFile);
+            submitParams.getPyFiles().forEach(launcher::addPyFile);
+            submitParams.getConf().forEach(launcher::setConf);
+            extraConfiguration.forEach(launcher::setConf);
+            launcher.setConf(DRIVER_MEMORY, submitParams.getDriverMemory())
+                    .setConf("spark.driver.cores", String.valueOf(submitParams.getDriverCores()))
+                    .setConf(EXECUTOR_CORES, String.valueOf(submitParams.getExecutorCores()))
+                    .setConf(EXECUTOR_MEMORY, submitParams.getExecutorMemory())
+                    .setConf("spark.executor.instances", String.valueOf(submitParams.getNumExecutors()));
+            launcher.startApplication()
+                    .addListener(new Listener() {
 
-                    @Override
-                    public void stateChanged(SparkAppHandle handle) {
-                        LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), handle.getState());
-                        LOG.info("Error: {}", handle.getError().map(Throwable::getMessage).orElse("not error"));
-                        if (handle.getState().isFinal() || State.RUNNING.equals(handle.getState())) {
-                            handle.disconnect();
+                        @Override
+                        public void stateChanged(SparkAppHandle handle) {
+                            LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), handle.getState());
+                            LOG.info("Error: {}", handle.getError().map(Throwable::getMessage).orElse("not error"));
+                            if (handle.getState().isFinal() || State.RUNNING.equals(handle.getState())) {
+                                handle.disconnect();
+                            }
+
+                            handle.getError().ifPresent(e -> {
+                                throw new SubmitException(e);
+                            });
+
                         }
-                    }
 
-                    @Override
-                    public void infoChanged(SparkAppHandle handle) {
-                        LOG.info("Error: {}", handle.getError().map(Throwable::getMessage).orElse("not error"));
-                    }
-                });
-//                .disconnect();
+                        @Override
+                        public void infoChanged(SparkAppHandle handle) {
+                            LOG.info("Error: {}", handle.getError().map(Throwable::getMessage).orElse("not error"));
+                        }
+                    });
+
+        } catch (IOException | IllegalArgumentException e) {
+            throw new SubmitException(e);
+        }
     }
 
 }
