@@ -43,7 +43,7 @@ dependencies {
 }
 
 dockerfile {
-    baseImage = "dckregistry.exacaster.com:5000/docker/java/16-jre-alpine:master"
+    baseImage = "dckregistry.exacaster.com:5000/docker/java/16-jre-alpine-bash:master"
 }
 
 dockerBuild {
