@@ -1,7 +1,7 @@
 import React, {ReactNode} from 'react';
 import {Box, Divider, Flex, Stack, Image, Link} from '@chakra-ui/react';
 import ButtonLink from './ButtonLink';
-import {useLocation} from 'react-router';
+import {generatePath, useLocation} from 'react-router';
 
 type Props = {
   children?: ReactNode;
@@ -16,10 +16,10 @@ const Layout: React.FC = ({children}: Props) => {
     <header>
       <Stack direction="row" spacing={4} align="center">
         <Image src={`${process.env.PUBLIC_URL}/images/logo.svg`} width="150px"/>
-        <ButtonLink to="./" isActive={match.pathname === '/'}>
+        <ButtonLink to={generatePath('/batches')} isActive={match.pathname === '/' || match.pathname === '/batches'}>
           Batches
         </ButtonLink>
-        <ButtonLink to="./sessions" isActive={match.pathname === '/sessions'}>
+        <ButtonLink to={generatePath('/sessions')} isActive={match.pathname === '/sessions'}>
           Sessions
         </ButtonLink>
       </Stack>

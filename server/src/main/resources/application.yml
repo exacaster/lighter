@@ -2,7 +2,7 @@ lighter:
     frontend-path: file:${FRONTEND_PATH:../frontend/build}
     kubernetes:
         enabled: true
-        namespace: default
+        namespace: spark
         max-log-size: 500
 micronaut:
     server:
@@ -12,9 +12,6 @@ micronaut:
         name: lighter
     router:
         static-resources:
-#            default:
-#                paths: file:${FRONTEND_PATH:../frontend/build}
-#                mapping: /lighter/**
             swagger:
                 paths: classpath:META-INF/swagger
                 mapping: /swagger/**
