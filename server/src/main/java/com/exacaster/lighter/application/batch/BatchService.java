@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Storage;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -25,8 +26,12 @@ public class BatchService {
     }
 
     public Application create(SubmitParams batch) {
-        var entity = new ApplicationBuilder().setId(UUID.randomUUID().toString()).setType(ApplicationType.BATCH)
-                .setState(ApplicationState.NOT_STARTED).setSubmitParams(batch)
+        var entity = new ApplicationBuilder()
+                .setId(UUID.randomUUID().toString())
+                .setType(ApplicationType.BATCH)
+                .setState(ApplicationState.NOT_STARTED)
+                .setSubmitParams(batch)
+                .setCreatedAt(LocalDateTime.now())
                 .build();
         return storage.saveApplication(entity);
     }

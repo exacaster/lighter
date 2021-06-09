@@ -2,6 +2,7 @@ package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Entity;
+import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 public class Application implements Entity {
@@ -12,14 +13,17 @@ public class Application implements Entity {
     private final String appId;
     private final String appInfo;
     private final SubmitParams submitParams;
+    private final LocalDateTime createdAt;
 
-    public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo, SubmitParams submitParams) {
+    public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo, SubmitParams submitParams,
+            LocalDateTime createdAt) {
         this.id = id;
         this.type = type;
         this.state = state;
         this.appId = appId;
         this.appInfo = appInfo;
         this.submitParams = submitParams;
+        this.createdAt = createdAt;
     }
 
     @Override
@@ -47,6 +51,10 @@ public class Application implements Entity {
         return submitParams;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Application.class.getSimpleName() + "[", "]")
@@ -56,6 +64,7 @@ public class Application implements Entity {
                 .add("appId='" + appId + "'")
                 .add("appInfo='" + appInfo + "'")
                 .add("submitParams=" + submitParams)
+                .add("createdAt=" + createdAt)
                 .toString();
     }
 }

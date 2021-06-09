@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.spark.SubmitParams;
+import java.time.LocalDateTime;
 
 public class ApplicationBuilder {
 
@@ -10,6 +11,7 @@ public class ApplicationBuilder {
     private String appId;
     private String appInfo;
     private SubmitParams submitParams;
+    private LocalDateTime createdAt;
 
     public static ApplicationBuilder builder(Application batch) {
         var builder = new ApplicationBuilder();
@@ -19,6 +21,7 @@ public class ApplicationBuilder {
         builder.setState(batch.getState());
         builder.setType(batch.getType());
         builder.setId(batch.getId());
+        builder.setCreatedAt(batch.getCreatedAt());
         return builder;
     }
 
@@ -56,7 +59,12 @@ public class ApplicationBuilder {
         return this;
     }
 
+    public ApplicationBuilder setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+        return this;
+    }
+
     public Application build() {
-        return new Application(id, type, state, appId, appInfo, submitParams);
+        return new Application(id, type, state, appId, appInfo, submitParams, createdAt);
     }
 }

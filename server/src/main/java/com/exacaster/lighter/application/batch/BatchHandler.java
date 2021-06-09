@@ -10,6 +10,7 @@ import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
@@ -50,19 +51,36 @@ public class BatchHandler {
     @Scheduled(fixedRate = "2m")
     public void processNonFinalBatches() {
         batchService.fetchNonFinished()
-                .forEach(batch -> {
-                    backend.getInfo(batch.getId()).ifPresentOrElse(info -> {
-                        LOG.info("Tracking {}, info: {}", batch, info);
-                        batchService.update(ApplicationBuilder.builder(batch)
-                                .setState(info.getState())
-                                .setAppId(info.getApplicationId())
-                                .build());
+                .forEach(batch ->
+                        backend.getInfo(batch.getId()).ifPresentOrElse(
+                                info -> trackStatus(batch, info),
+                                () -> checkZombie(batch)
+                        )
+                );
+    }
 
-                        if (info.getState().isComplete()) {
-                            backend.getLogs(batch.getId()).ifPresent(logService::save);
-                        }
-                    }, () -> LOG.info("No info for {}", batch));
-                });
+    private void trackStatus(Application batch, com.exacaster.lighter.application.ApplicationInfo info) {
+        LOG.info("Tracking {}, info: {}", batch, info);
+        batchService.update(ApplicationBuilder.builder(batch)
+                .setState(info.getState())
+                .setAppId(info.getApplicationId())
+                .build());
+
+        if (info.getState().isComplete()) {
+            backend.getLogs(batch.getId()).ifPresent(logService::save);
+        }
+    }
+
+    private void checkZombie(Application batch) {
+        LOG.info("No info for {}", batch);
+        if (batch.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(10))) {
+            LOG.info("Assuming zombie ({})", batch.getId());
+            batchService.update(ApplicationBuilder.builder(batch)
+                    .setState(ApplicationState.ERROR)
+                    .build());
+            logService.save(new Log(batch.getId(),
+                    "Application was not reachable for 10 minutes, so we assume something went wrong"));
+        }
     }
 
 
