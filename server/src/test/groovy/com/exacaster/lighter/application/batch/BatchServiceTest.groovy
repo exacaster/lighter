@@ -2,7 +2,7 @@ package com.exacaster.lighter.application.batch
 
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
-import com.exacaster.lighter.spark.SubmitParamsBuilder
+import com.exacaster.lighter.spark.SubmitParams
 import com.exacaster.lighter.storage.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
@@ -13,22 +13,27 @@ class BatchServiceTest extends Specification {
 
     def "BatchService"() {
         given:
-        def params = SubmitParamsBuilder.builder()
-            .name("application1")
-            .build()
+        def params = new SubmitParams(
+                "application1",
+                "",
+                "",
+                "",
+                0,
+                null, null, null, null, null, null, null, null, null
+        )
 
         when: "creating application"
         def result = service.create(params)
 
         then: "returns batch"
-        result.id() != null
-        result.submitParams().name() == params.name()
+        result.getId() != null
+        result.getSubmitParams().getName() == params.getName()
 
         when: "updating"
-        result = service.update(ApplicationBuilder.builder(result).state(ApplicationState.DEAD).build())
+        result = service.update(ApplicationBuilder.builder(result).setState(ApplicationState.DEAD).build())
 
         then: "returns updated"
-        result.state() == ApplicationState.DEAD
+        result.getState() == ApplicationState.DEAD
 
         when: "fetching list"
         def resultList = service.fetch(0, 1)
@@ -49,7 +54,7 @@ class BatchServiceTest extends Specification {
         resultList.isEmpty()
 
         when: "delete"
-        service.deleteOne(result.id())
+        service.deleteOne(result.getId())
 
         then: "removes"
         noExceptionThrown()

@@ -21,9 +21,6 @@ mainClassName = 'com.exacaster.lighter.Application'
 dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
-    annotationProcessor "io.soabase.record-builder:record-builder-processor:1.19"
-
-    compileOnly 'io.soabase.record-builder:record-builder-core:1.19'
 
     implementation "io.micronaut:micronaut-validation"
     implementation "io.swagger.core.v3:swagger-annotations"
@@ -43,7 +40,7 @@ dependencies {
 }
 
 dockerfile {
-    baseImage = "dckregistry.exacaster.com:5000/docker/java/16-jre-alpine-bash:master"
+    baseImage = "dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master"
 }
 
 dockerBuild {

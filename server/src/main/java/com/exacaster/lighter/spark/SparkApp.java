@@ -26,24 +26,24 @@ public class SparkApp {
 
     public void launch(Map<String, String> extraConfiguration) throws IOException {
         var launcher = new SparkLauncher()
-                .setAppName(submitParams.name())
+                .setAppName(submitParams.getName())
                 .setDeployMode("cluster")
-                .setAppResource(submitParams.file())
-                .setMaster(submitParams.master());
-        if (submitParams.mainClass() != null) {
-            launcher.setMainClass(submitParams.mainClass());
+                .setAppResource(submitParams.getFile())
+                .setMaster(submitParams.getMaster());
+        if (submitParams.getMainClass() != null) {
+            launcher.setMainClass(submitParams.getMainClass());
         }
-        submitParams.args().forEach(launcher::addAppArgs);
-        submitParams.jars().forEach(launcher::addJar);
-        submitParams.files().forEach(launcher::addFile);
-        submitParams.pyFiles().forEach(launcher::addPyFile);
-        submitParams.conf().forEach(launcher::setConf);
+        submitParams.getArgs().forEach(launcher::addAppArgs);
+        submitParams.getJars().forEach(launcher::addJar);
+        submitParams.getFiles().forEach(launcher::addFile);
+        submitParams.getPyFiles().forEach(launcher::addPyFile);
+        submitParams.getConf().forEach(launcher::setConf);
         extraConfiguration.forEach(launcher::setConf);
-        launcher.setConf(DRIVER_MEMORY, submitParams.driverMemory())
-                .setConf("spark.driver.cores", String.valueOf(submitParams.driverCores()))
-                .setConf(EXECUTOR_CORES, String.valueOf(submitParams.executorCores()))
-                .setConf(EXECUTOR_MEMORY, submitParams.executorMemory())
-                .setConf("spark.executor.instances", String.valueOf(submitParams.numExecutors()));
+        launcher.setConf(DRIVER_MEMORY, submitParams.getDriverMemory())
+                .setConf("spark.driver.cores", String.valueOf(submitParams.getDriverCores()))
+                .setConf(EXECUTOR_CORES, String.valueOf(submitParams.getExecutorCores()))
+                .setConf(EXECUTOR_MEMORY, submitParams.getExecutorMemory())
+                .setConf("spark.executor.instances", String.valueOf(submitParams.getNumExecutors()));
         launcher.startApplication()
                 .addListener(new Listener() {
 

@@ -29,8 +29,8 @@ public class KubernetesBackend implements Backend {
     @Override
     public Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of(
-                "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.id(),
-                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.id()
+                "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
+                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId()
         );
     }
 
@@ -41,27 +41,33 @@ public class KubernetesBackend implements Backend {
     }
 
     private ApplicationState mapStatus(PodStatus status) {
-        return switch (status.getPhase()) {
-            case "Pending", "Unknown" -> ApplicationState.STARTING;
-            case "Running" -> ApplicationState.BUSY;
-            case "Succeeded" -> ApplicationState.SUCCESS;
-            case "Failed" -> ApplicationState.DEAD;
-            default -> throw new IllegalStateException("Unexpected phase: " + status.getPhase());
-        };
+        switch (status.getPhase()) {
+            case "Unknown":
+            case "Pending":
+                return ApplicationState.STARTING;
+            case "Running":
+                return ApplicationState.BUSY;
+            case "Succeeded":
+                return ApplicationState.SUCCESS;
+            case "Failed":
+                return ApplicationState.DEAD;
+            default:
+                throw new IllegalStateException("Unexpected phase: " + status.getPhase());
+        }
     }
 
     @Override
     public Optional<Log> getLogs(String internalApplicationId) {
         return this.getDriverPod(internalApplicationId)
-                .map(pod -> this.client.pods().inNamespace(properties.namespace())
+                .map(pod -> this.client.pods().inNamespace(properties.getNamespace())
                         .withName(pod.getMetadata().getName())
-                        .tailingLines(properties.maxLogSize())
+                        .tailingLines(properties.getMaxLogSize())
                         .getLog(true))
                 .map(log -> new Log(internalApplicationId, log));
     }
 
     private Optional<Pod> getDriverPod(String appIdentifier) {
-        return this.client.pods().inNamespace(properties.namespace())
+        return this.client.pods().inNamespace(properties.getNamespace())
                 .withLabel(SPARK_APP_TAG_LABEL, appIdentifier)
                 .withLabel(SPARK_ROLE_LABEL, "driver")
                 .list()

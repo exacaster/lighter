@@ -18,6 +18,6 @@ class LogServiceTest extends Specification {
         def result = service.fetch("1")
 
         then: "log saved"
-        result.get().log() == log
+        result.get().getLog() == log
     }
 }

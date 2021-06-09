@@ -2,9 +2,60 @@ package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Entity;
-import io.soabase.recordbuilder.core.RecordBuilder;
+import java.util.StringJoiner;
 
-@RecordBuilder
-public record Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo, SubmitParams submitParams) implements Entity {
+public class Application implements Entity {
 
+    private final String id;
+    private final ApplicationType type;
+    private final ApplicationState state;
+    private final String appId;
+    private final String appInfo;
+    private final SubmitParams submitParams;
+
+    public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo, SubmitParams submitParams) {
+        this.id = id;
+        this.type = type;
+        this.state = state;
+        this.appId = appId;
+        this.appInfo = appInfo;
+        this.submitParams = submitParams;
+    }
+
+    @Override
+    public String getId() {
+        return id;
+    }
+
+    public ApplicationType getType() {
+        return type;
+    }
+
+    public ApplicationState getState() {
+        return state;
+    }
+
+    public String getAppId() {
+        return appId;
+    }
+
+    public String getAppInfo() {
+        return appInfo;
+    }
+
+    public SubmitParams getSubmitParams() {
+        return submitParams;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Application.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("type=" + type)
+                .add("state=" + state)
+                .add("appId='" + appId + "'")
+                .add("appInfo='" + appInfo + "'")
+                .add("submitParams=" + submitParams)
+                .toString();
+    }
 }

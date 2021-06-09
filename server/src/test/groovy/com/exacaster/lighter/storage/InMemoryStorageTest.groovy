@@ -13,23 +13,23 @@ class InMemoryStorageTest extends Specification {
     def "storage"() {
         given:
         def batch = ApplicationBuilder.builder()
-                .id("1")
-                .appId("app_123")
-                .state(ApplicationState.ERROR)
-                .type(ApplicationType.BATCH)
+                .setId("1")
+                .setAppId("app_123")
+                .setState(ApplicationState.ERROR)
+                .setType(ApplicationType.BATCH)
                 .build()
 
         when: "storing entity"
         def result = storage.saveApplication(batch)
 
         then: "returns stored entity"
-        result.appId() == "app_123"
+        result.getAppId() == "app_123"
 
         when: "searching by id"
-        def findResult = storage.findApplication(result.id())
+        def findResult = storage.findApplication(result.getId())
 
         then: "returns by id"
-        findResult.get().appId() == "app_123"
+        findResult.get().getAppId() == "app_123"
 
         when: "searching by wrong id"
         findResult = storage.findApplication("unknown")
@@ -41,7 +41,7 @@ class InMemoryStorageTest extends Specification {
         def statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.ERROR])
 
         then: "returns results"
-        statusResult.get(0).appId() == "app_123"
+        statusResult.get(0).getAppId() == "app_123"
 
         when: "searching by not existing status"
         statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.KILLED])

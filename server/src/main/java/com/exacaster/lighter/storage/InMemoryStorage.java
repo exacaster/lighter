@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class InMemoryStorage implements Storage {
@@ -32,7 +33,7 @@ public class InMemoryStorage implements Storage {
 
     @Override
     public List<Application> findApplications(ApplicationType type, Integer from, Integer size) {
-        return findMany(job -> type.equals(job.type()), Application.class, from, size);
+        return findMany(job -> type.equals(job.getType()), Application.class, from, size);
     }
 
     @Override
@@ -48,7 +49,8 @@ public class InMemoryStorage implements Storage {
 
     @Override
     public List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states) {
-        return  findMany(job -> type.equals(job.type()) && states.contains(job.state()), Application.class).toList();
+        return  findMany(job -> type.equals(job.getType()) && states.contains(job.getState()), Application.class).collect(
+                Collectors.toList());
     }
 
     @Override
@@ -63,7 +65,7 @@ public class InMemoryStorage implements Storage {
 
     public <T extends Entity> T storeEntity(T entity) {
         var entityStore = storage.computeIfAbsent(entity.getClass(), key -> prepareCache());
-        entityStore.put(entity.id(), entity);
+        entityStore.put(entity.getId(), entity);
         return entity;
     }
 
@@ -81,7 +83,7 @@ public class InMemoryStorage implements Storage {
             return List.of();
         }
 
-        return findMany(filter, clazz).skip(from).limit(size).toList();
+        return findMany(filter, clazz).skip(from).limit(size).collect(Collectors.toList());
     }
 
     private <T extends Entity> Stream<T> findMany(Predicate<T> filter, Class<T> clazz) {

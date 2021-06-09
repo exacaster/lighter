@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application.batch;
 
 import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.spark.SubmitParams;
@@ -24,7 +25,9 @@ public class BatchService {
     }
 
     public Application create(SubmitParams batch) {
-        var entity = new Application(UUID.randomUUID().toString(), ApplicationType.BATCH, ApplicationState.NOT_STARTED, "", "", batch);
+        var entity = new ApplicationBuilder().setId(UUID.randomUUID().toString()).setType(ApplicationType.BATCH)
+                .setState(ApplicationState.NOT_STARTED).setSubmitParams(batch)
+                .build();
         return storage.saveApplication(entity);
     }
 

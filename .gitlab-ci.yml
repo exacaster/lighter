@@ -22,7 +22,7 @@ include:
 
 buildServer:
   stage: buildServer
-  image: 'dckregistry.exacaster.com:5000/docker/java/16-jdk-alpine-slim:master'
+  image: dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master
   script: |
     export TAG=${CI_COMMIT_TAG}
     export SERVER_IMAGE="${CI_REGISTRY_IMAGE}/server"

@@ -29,7 +29,7 @@ public class BatchHandler {
     }
 
     public LaunchResult launch(Application application) {
-        var app = new SparkApp(application.submitParams());
+        var app = new SparkApp(application.getSubmitParams());
         try {
             app.launch(backend.getSubmitConfiguration(application));
         } catch (IOException | IllegalArgumentException e) {
@@ -45,9 +45,9 @@ public class BatchHandler {
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
                     var state = launch(batch);
-                    batchService.update(ApplicationBuilder.builder(batch).state(state.state()).build());
-                    if (state.exception() != null) {
-                        logService.save(new Log(batch.id(), state.exception().toString()));
+                    batchService.update(ApplicationBuilder.builder(batch).setState(state.getState()).build());
+                    if (state.getException() != null) {
+                        logService.save(new Log(batch.getId(), state.getException().toString()));
                     }
                 });
     }
@@ -56,14 +56,14 @@ public class BatchHandler {
     public void processNonFinalBatches() {
         batchService.fetchNonFinished()
                 .forEach(batch -> {
-                    backend.getInfo(batch.id()).ifPresentOrElse(info -> {
+                    backend.getInfo(batch.getId()).ifPresentOrElse(info -> {
                         LOG.info("Tracking {}, info: {}", batch, info);
-                        if (info.state().isComplete()) {
-                            backend.getLogs(batch.id()).ifPresent(logService::save);
+                        if (info.getState().isComplete()) {
+                            backend.getLogs(batch.getId()).ifPresent(logService::save);
                         }
                         batchService.update(ApplicationBuilder.builder(batch)
-                                .state(info.state())
-                                .appId(info.applicationId())
+                                .setState(info.getState())
+                                .setAppId(info.getApplicationId())
                                 .build());
                     }, () -> LOG.info("No info for {}", batch));
                 });

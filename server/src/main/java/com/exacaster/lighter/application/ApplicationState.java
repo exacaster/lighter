@@ -2,6 +2,7 @@ package com.exacaster.lighter.application;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public enum ApplicationState {
     NOT_STARTED,
@@ -14,7 +15,8 @@ public enum ApplicationState {
     KILLED(true),
     SUCCESS(true);
 
-    private static final List<ApplicationState> INCOMPLETE_STATES = Arrays.stream(values()).filter(val -> !val.isComplete).toList();
+    private static final List<ApplicationState> INCOMPLETE_STATES = Arrays.stream(values()).filter(val -> !val.isComplete).collect(
+            Collectors.toList());
 
     private final boolean isComplete;
 

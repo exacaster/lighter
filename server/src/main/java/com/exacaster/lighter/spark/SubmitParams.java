@@ -3,46 +3,133 @@ package com.exacaster.lighter.spark;
 import static java.util.Optional.ofNullable;
 
 import io.micronaut.core.annotation.Introspected;
-import io.soabase.recordbuilder.core.RecordBuilder;
 import java.util.List;
 import java.util.Map;
+import java.util.StringJoiner;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Introspected
-@RecordBuilder
-public record SubmitParams(@NotBlank String name,
-                           @NotBlank String file,
-                           String master,
-                           String mainClass,
-                           Integer numExecutors,
-                           Integer executorCores,
-                           String executorMemory,
-                           Integer driverCores,
-                           String driverMemory,
-                           List<String> args,
-                           List<String> pyFiles,
-                           List<String> files,
-                           List<String> jars,
-                           Map<String, String> conf) {
+public class SubmitParams {
 
-    public List<String> args() {
-        return ofNullable(args).orElse(List.of());
+    private final String name;
+    private final String file;
+    private final String master;
+    private final String mainClass;
+    private final Integer numExecutors;
+    private final Integer executorCores;
+    private final String executorMemory;
+    private final Integer driverCores;
+    private final String driverMemory;
+    private final List<String> args;
+    private final List<String> pyFiles;
+    private final List<String> files;
+    private final List<String> jars;
+    private final Map<String, String> conf;
+
+    public SubmitParams(@NotBlank String name,
+            @NotBlank String file,
+            String master,
+            String mainClass,
+            Integer numExecutors,
+            Integer executorCores,
+            String executorMemory,
+            Integer driverCores,
+            String driverMemory,
+            List<String> args,
+            List<String> pyFiles,
+            List<String> files,
+            List<String> jars,
+            Map<String, String> conf) {
+        this.name = name;
+        this.file = file;
+        this.master = master;
+        this.mainClass = mainClass;
+        this.numExecutors = numExecutors;
+        this.executorCores = executorCores;
+        this.executorMemory = executorMemory;
+        this.driverCores = driverCores;
+        this.driverMemory = driverMemory;
+        this.args = ofNullable(args).orElse(List.of());
+        this.pyFiles = ofNullable(pyFiles).orElse(List.of());
+        this.files = ofNullable(files).orElse(List.of());
+        this.jars = ofNullable(jars).orElse(List.of());
+        this.conf = ofNullable(conf).orElse(Map.of());
     }
 
-    public List<String> pyFiles() {
-        return ofNullable(pyFiles).orElse(List.of());
+    public String getName() {
+        return name;
     }
 
-    public List<String> files() {
-        return ofNullable(files).orElse(List.of());
+    public String getFile() {
+        return file;
     }
 
-    public List<String> jars() {
-        return ofNullable(jars).orElse(List.of());
+    public String getMaster() {
+        return master;
     }
 
-    public Map<String, String> conf() {
-        return ofNullable(conf).orElse(Map.of());
+    public String getMainClass() {
+        return mainClass;
+    }
+
+    public Integer getNumExecutors() {
+        return numExecutors;
+    }
+
+    public Integer getExecutorCores() {
+        return executorCores;
+    }
+
+    public String getExecutorMemory() {
+        return executorMemory;
+    }
+
+    public Integer getDriverCores() {
+        return driverCores;
+    }
+
+    public String getDriverMemory() {
+        return driverMemory;
+    }
+
+    public List<String> getArgs() {
+        return args;
+    }
+
+    public List<String> getPyFiles() {
+        return pyFiles;
+    }
+
+    public List<String> getFiles() {
+        return files;
+    }
+
+    public List<String> getJars() {
+        return jars;
+    }
+
+    public Map<String, String> getConf() {
+        return conf;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", SubmitParams.class.getSimpleName() + "[", "]")
+                .add("name='" + name + "'")
+                .add("file='" + file + "'")
+                .add("master='" + master + "'")
+                .add("mainClass='" + mainClass + "'")
+                .add("numExecutors=" + numExecutors)
+                .add("executorCores=" + executorCores)
+                .add("executorMemory='" + executorMemory + "'")
+                .add("driverCores=" + driverCores)
+                .add("driverMemory='" + driverMemory + "'")
+                .add("args=" + args)
+                .add("pyFiles=" + pyFiles)
+                .add("files=" + files)
+                .add("jars=" + jars)
+                .add("conf=" + conf)
+                .toString();
     }
 }
