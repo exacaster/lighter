@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @Introspected
 @RecordBuilder
 public record SubmitParams(@NotBlank String name,
+                           @NotBlank String file,
                            String master,
                            String mainClass,
                            Integer numExecutors,
