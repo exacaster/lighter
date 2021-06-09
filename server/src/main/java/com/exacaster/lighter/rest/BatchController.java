@@ -58,6 +58,12 @@ public class BatchController {
 
     @Get("/{id}/log")
     public Optional<Log> getLog(@PathVariable String id) {
-        return logService.fetch(id);
+        return batchService.fetchOne(id).flatMap(batch -> {
+            if (batch.getState().isComplete()) {
+                return logService.fetch(id);
+            }
+
+            return logService.fetchLive(id);
+        });
     }
 }

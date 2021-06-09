@@ -10,7 +10,7 @@ public enum ApplicationState {
     IDLE,
     BUSY,
     SHUTTING_DOWN,
-    ERROR,
+    ERROR(true),
     DEAD(true),
     KILLED(true),
     SUCCESS(true);

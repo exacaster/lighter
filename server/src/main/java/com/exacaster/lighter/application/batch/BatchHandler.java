@@ -2,21 +2,21 @@ package com.exacaster.lighter.application.batch;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
+import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
-import com.exacaster.lighter.spark.SubmitException;
 import io.micronaut.scheduling.annotation.Scheduled;
-import java.io.IOException;
+import java.util.function.Consumer;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 
 @Singleton
 public class BatchHandler {
+
     private static final Logger LOG = getLogger(BatchHandler.class);
 
     private final Backend backend;
@@ -29,15 +29,9 @@ public class BatchHandler {
         this.logService = logService;
     }
 
-    public LaunchResult launch(Application application) {
-        var app = new SparkApp(application.getSubmitParams());
-        try {
-            app.launch(backend.getSubmitConfiguration(application));
-        } catch (SubmitException e) {
-            LOG.error("Error launching", e);
-            return new LaunchResult(ApplicationState.ERROR, e);
-        }
-        return new LaunchResult(ApplicationState.STARTING, null);
+    public void launch(Application application, Consumer<Throwable> errorHandler) {
+        var app = new SparkApp(application.getSubmitParams(), errorHandler);
+        app.launch(backend.getSubmitConfiguration(application));
     }
 
     @Scheduled(fixedRate = "1m")
@@ -45,11 +39,11 @@ public class BatchHandler {
         batchService.fetchByState(ApplicationState.NOT_STARTED)
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
-                    var state = launch(batch);
-                    batchService.update(ApplicationBuilder.builder(batch).setState(state.getState()).build());
-                    if (state.getException() != null) {
-                        logService.save(new Log(batch.getId(), state.getException().toString()));
-                    }
+                    batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.STARTING).build());
+                    launch(batch, error -> {
+                        batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.ERROR).build());
+                        logService.save(new Log(batch.getId(), error.toString()));
+                    });
                 });
     }
 
