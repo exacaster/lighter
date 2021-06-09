@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Map;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkAppHandle.Listener;
+import org.apache.spark.launcher.SparkAppHandle.State;
 import org.apache.spark.launcher.SparkLauncher;
 import org.slf4j.Logger;
 
@@ -49,6 +50,10 @@ public class SparkApp {
                     @Override
                     public void stateChanged(SparkAppHandle handle) {
                         LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), handle.getState());
+                        LOG.info("Error: {}", handle.getError().map(Throwable::getMessage).orElse("not error"));
+                        if (handle.getState().isFinal() || State.RUNNING.equals(handle.getState())) {
+                            handle.disconnect();
+                        }
                     }
 
                     @Override
