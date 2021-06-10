@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.log.Log;
 import io.micronaut.caffeine.cache.Cache;
 import io.micronaut.caffeine.cache.Caffeine;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -49,8 +50,8 @@ public class InMemoryStorage implements Storage {
 
     @Override
     public List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states) {
-        return  findMany(job -> type.equals(job.getType()) && states.contains(job.getState()), Application.class).collect(
-                Collectors.toList());
+        return  findMany(job -> type.equals(job.getType()) && states.contains(job.getState()), Application.class)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -92,7 +93,7 @@ public class InMemoryStorage implements Storage {
             return Stream.empty();
         }
 
-        return all.asMap().values().stream().map(clazz::cast).filter(filter);
+        return all.asMap().values().stream().sorted(Comparator.comparing(Entity::getCreatedAt)).map(clazz::cast).filter(filter);
     }
 
     private <T extends Entity> void deleteOne(String id, Class<T> clazz) {

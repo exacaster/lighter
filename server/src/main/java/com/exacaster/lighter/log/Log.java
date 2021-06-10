@@ -1,6 +1,7 @@
 package com.exacaster.lighter.log;
 
 import com.exacaster.lighter.storage.Entity;
+import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 public class Log implements Entity {
@@ -16,6 +17,11 @@ public class Log implements Entity {
     @Override
     public String getId() {
         return id;
+    }
+
+    @Override
+    public LocalDateTime getCreatedAt() {
+        return LocalDateTime.MIN;
     }
 
     public String getLog() {
