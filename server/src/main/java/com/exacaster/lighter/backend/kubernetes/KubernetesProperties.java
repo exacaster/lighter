@@ -11,11 +11,13 @@ public class KubernetesProperties{
 
     private final String namespace;
     private final Integer maxLogSize;
+    private final String master;
 
     @ConfigurationInject
-    public KubernetesProperties(String namespace, Integer maxLogSize) {
+    public KubernetesProperties(String namespace, Integer maxLogSize, String master) {
         this.namespace = namespace;
         this.maxLogSize = maxLogSize;
+        this.master = master;
     }
 
     public String getNamespace() {
@@ -26,11 +28,16 @@ public class KubernetesProperties{
         return maxLogSize;
     }
 
+    public String getMaster() {
+        return master;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", KubernetesProperties.class.getSimpleName() + "[", "]")
                 .add("namespace='" + namespace + "'")
                 .add("maxLogSize=" + maxLogSize)
+                .add("master=" + master)
                 .toString();
     }
 }

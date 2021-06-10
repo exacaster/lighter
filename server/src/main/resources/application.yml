@@ -2,6 +2,7 @@ lighter:
     frontend-path: file:${FRONTEND_PATH:../frontend/build}
     kubernetes:
         enabled: true
+        master: k8s://kubernetes.default.svc.cluster.local:443
         namespace: spark
         max-log-size: 500
 micronaut:

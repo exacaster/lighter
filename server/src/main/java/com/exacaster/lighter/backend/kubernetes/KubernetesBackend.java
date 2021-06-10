@@ -29,6 +29,7 @@ public class KubernetesBackend implements Backend {
     @Override
     public Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of(
+                "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId()
         );
