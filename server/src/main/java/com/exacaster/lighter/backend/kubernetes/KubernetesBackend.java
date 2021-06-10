@@ -1,9 +1,9 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.application.ApplicationInfo;
-import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.log.Log;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;
@@ -65,6 +65,14 @@ public class KubernetesBackend implements Backend {
                         .tailingLines(properties.getMaxLogSize())
                         .getLog(true))
                 .map(log -> new Log(internalApplicationId, log));
+    }
+
+    @Override
+    public void kill(String internalApplicationId) {
+        this.getDriverPod(internalApplicationId)
+                .ifPresent(pod -> this.client.pods()
+                        .inNamespace(properties.getNamespace())
+                        .withName(pod.getMetadata().getName()).delete());
     }
 
     private Optional<Pod> getDriverPod(String appIdentifier) {

@@ -4,6 +4,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
+import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Storage;
 import java.time.LocalDateTime;
@@ -16,9 +17,11 @@ import javax.inject.Singleton;
 public class BatchService {
 
     private final Storage storage;
+    private final Backend backend;
 
-    public BatchService(Storage storage) {
+    public BatchService(Storage storage, Backend backend) {
         this.storage = storage;
+        this.backend = backend;
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -53,6 +56,7 @@ public class BatchService {
     }
 
     public void deleteOne(String id) {
+        backend.kill(id);
         storage.deleteApplication(id);
     }
 

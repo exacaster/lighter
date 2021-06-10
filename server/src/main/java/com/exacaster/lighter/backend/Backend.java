@@ -12,6 +12,8 @@ public interface Backend {
 
     Optional<Log> getLogs(String internalApplicationId);
 
+    void kill(String internalApplicationId);
+
     default Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of();
     }
