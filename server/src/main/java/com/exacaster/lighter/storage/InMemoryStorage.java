@@ -93,7 +93,10 @@ public class InMemoryStorage implements Storage {
             return Stream.empty();
         }
 
-        return all.asMap().values().stream().sorted(Comparator.comparing(Entity::getCreatedAt)).map(clazz::cast).filter(filter);
+        return all.asMap().values().stream()
+                .sorted(Comparator.comparing(Entity::getCreatedAt).reversed())
+                .map(clazz::cast)
+                .filter(filter);
     }
 
     private <T extends Entity> void deleteOne(String id, Class<T> clazz) {

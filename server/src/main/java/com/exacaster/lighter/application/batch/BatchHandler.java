@@ -43,7 +43,10 @@ public class BatchHandler {
                     batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.STARTING).build());
                     launch(batch, error -> {
                         batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.ERROR).build());
-                        logService.save(new Log(batch.getId(), error.toString()));
+                        backend.getLogs(batch.getId()).ifPresentOrElse(
+                                logService::save,
+                                () -> logService.save(new Log(batch.getId(), error.toString()))
+                        );
                     });
                 });
     }

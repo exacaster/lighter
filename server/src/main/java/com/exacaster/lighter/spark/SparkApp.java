@@ -49,7 +49,7 @@ public class SparkApp {
                         @Override
                         public void stateChanged(SparkAppHandle handle) {
                             LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), handle.getState());
-                            handle.getError().ifPresent(errorHandler::accept);
+                            handle.getError().ifPresent(errorHandler);
                         }
 
                         @Override
