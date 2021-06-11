@@ -8,7 +8,7 @@ import spock.lang.Subject
 
 class InMemoryStorageTest extends Specification {
     @Subject
-    Storage storage = new InMemoryStorage(10, 10)
+    ApplicationStorage storage = new InMemoryStorage(10, 10)
 
     def "storage"() {
         given:

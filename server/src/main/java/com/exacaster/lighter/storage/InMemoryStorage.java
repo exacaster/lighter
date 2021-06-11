@@ -16,7 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class InMemoryStorage implements Storage {
+public class InMemoryStorage implements ApplicationStorage, LogStorage {
 
     private final Map<Class<? extends Entity>, Cache<String, Entity>> storage = new ConcurrentHashMap<>();
     private final Integer maxSize;
