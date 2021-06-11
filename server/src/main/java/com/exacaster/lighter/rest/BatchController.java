@@ -50,7 +50,7 @@ public class BatchController {
         batchService.deleteOne(id);
     }
 
-    // For backwards copatibility with livy
+    // For backwards compatibility with livy
     @Get("/{id}/state")
     public Optional<Application> getState(@PathVariable String id) {
         return batchService.fetchOne(id);

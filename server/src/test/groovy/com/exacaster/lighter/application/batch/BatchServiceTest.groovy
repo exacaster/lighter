@@ -3,10 +3,11 @@ package com.exacaster.lighter.application.batch
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.backend.Backend
-import com.exacaster.lighter.spark.SubmitParams
 import com.exacaster.lighter.storage.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
+
+import static com.exacaster.lighter.test.Factories.submitParams
 
 class BatchServiceTest extends Specification {
     @Subject
@@ -14,14 +15,7 @@ class BatchServiceTest extends Specification {
 
     def "BatchService"() {
         given:
-        def params = new SubmitParams(
-                "application1",
-                "",
-                "",
-                "",
-                0,
-                null, null, null, null, null, null, null, null, null
-        )
+        def params = submitParams()
 
         when: "creating application"
         def result = service.create(params)

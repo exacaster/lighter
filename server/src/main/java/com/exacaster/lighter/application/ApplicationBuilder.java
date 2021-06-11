@@ -13,6 +13,10 @@ public class ApplicationBuilder {
     private SubmitParams submitParams;
     private LocalDateTime createdAt;
 
+    private ApplicationBuilder() {
+
+    }
+
     public static ApplicationBuilder builder(Application batch) {
         var builder = new ApplicationBuilder();
         builder.setAppId(batch.getAppId());

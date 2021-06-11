@@ -29,7 +29,7 @@ public class BatchService {
     }
 
     public Application create(SubmitParams batch) {
-        var entity = new ApplicationBuilder()
+        var entity = ApplicationBuilder.builder()
                 .setId(UUID.randomUUID().toString())
                 .setType(ApplicationType.BATCH)
                 .setState(ApplicationState.NOT_STARTED)
