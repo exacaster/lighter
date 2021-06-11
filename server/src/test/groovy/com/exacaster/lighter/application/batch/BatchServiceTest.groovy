@@ -43,13 +43,13 @@ class BatchServiceTest extends Specification {
         resultList.size() == 1
 
         when: "fetch by status"
-        resultList = service.fetchByState(ApplicationState.DEAD)
+        resultList = service.fetchByState(ApplicationState.DEAD, 10)
 
         then: "returns list"
         resultList.size() == 1
 
         when: "fetch by missing status"
-        resultList = service.fetchByState(ApplicationState.SUCCESS)
+        resultList = service.fetchByState(ApplicationState.SUCCESS, 10)
 
         then: "returns empty list"
         resultList.isEmpty()

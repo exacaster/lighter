@@ -12,7 +12,7 @@ public interface Storage {
     List<Application> findApplications(ApplicationType type, Integer from, Integer size);
     void deleteApplication(String internalApplicationId);
     Application saveApplication(Application application);
-    List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states);
+    List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, Integer limit);
 
     Optional<Log> findApplicationLog(String internalApplicationId);
     Log saveApplicationLog(Log log);

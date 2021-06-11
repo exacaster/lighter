@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
@@ -23,11 +24,13 @@ public class BatchHandler {
     private final Backend backend;
     private final BatchService batchService;
     private final LogService logService;
+    private final AppConfiguration appConfiguration;
 
-    public BatchHandler(Backend backend, BatchService batchService, LogService logService) {
+    public BatchHandler(Backend backend, BatchService batchService, LogService logService, AppConfiguration appConfiguration) {
         this.backend = backend;
         this.batchService = batchService;
         this.logService = logService;
+        this.appConfiguration = appConfiguration;
     }
 
     public void launch(Application application, Consumer<Throwable> errorHandler) {
@@ -37,7 +40,9 @@ public class BatchHandler {
 
     @Scheduled(fixedRate = "1m")
     public void processScheduledBatches() {
-        batchService.fetchByState(ApplicationState.NOT_STARTED)
+        var emptySlots = countEmptySlots();
+        LOG.info("Processing scheduled batches, found empty slots: {}", emptySlots);
+        batchService.fetchByState(ApplicationState.NOT_STARTED, emptySlots)
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
                     batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.STARTING).build());
@@ -72,6 +77,10 @@ public class BatchHandler {
         if (info.getState().isComplete()) {
             backend.getLogs(batch.getId()).ifPresent(logService::save);
         }
+    }
+
+    private Integer countEmptySlots() {
+        return Math.max(this.appConfiguration.getMaxRunningJobs() - this.batchService.fetchNonFinished().size(), 0);
     }
 
     private void checkZombie(Application batch) {

@@ -1,4 +1,5 @@
 lighter:
+    max-running-jobs: 5
     frontend-path: file:${FRONTEND_PATH:../frontend/build}
     kubernetes:
         enabled: true

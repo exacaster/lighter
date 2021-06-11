@@ -49,8 +49,9 @@ public class InMemoryStorage implements Storage {
     }
 
     @Override
-    public List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states) {
+    public List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, Integer limit) {
         return  findMany(job -> type.equals(job.getType()) && states.contains(job.getState()), Application.class)
+                .limit(limit)
                 .collect(Collectors.toList());
     }
 

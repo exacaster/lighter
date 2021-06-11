@@ -43,12 +43,12 @@ public class BatchService {
         return storage.saveApplication(application);
     }
 
-    public List<Application> fetchByState(ApplicationState state) {
-        return storage.findApplicationsByStates(ApplicationType.BATCH, List.of(state));
+    public List<Application> fetchByState(ApplicationState state, Integer limit) {
+        return storage.findApplicationsByStates(ApplicationType.BATCH, List.of(state), limit);
     }
 
     public List<Application> fetchNonFinished() {
-        return storage.findApplicationsByStates(ApplicationType.BATCH, ApplicationState.incompleteStates());
+        return storage.findApplicationsByStates(ApplicationType.BATCH, ApplicationState.incompleteStates(), Integer.MAX_VALUE);
     }
 
     public Optional<Application> fetchOne(String id) {

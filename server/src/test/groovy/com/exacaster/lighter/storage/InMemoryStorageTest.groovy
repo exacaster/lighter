@@ -38,13 +38,13 @@ class InMemoryStorageTest extends Specification {
         findResult.isEmpty()
 
         when: "searching by status"
-        def statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.ERROR])
+        def statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.ERROR], 10)
 
         then: "returns results"
         statusResult.get(0).getAppId() == "app_123"
 
         when: "searching by not existing status"
-        statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.KILLED])
+        statusResult = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.KILLED], 10)
 
         then: "returns empty list"
         statusResult.isEmpty()
