@@ -16,8 +16,8 @@ public class LogService {
         this.backend = backend;
     }
 
-    public Optional<Log> fetch(String internalApplicationId) {
-        return logStorage.findApplicationLog(internalApplicationId);
+    public Optional<Log> fetch(String applicationId) {
+        return logStorage.findApplicationLog(applicationId);
     }
 
     public void save(Log log) {
