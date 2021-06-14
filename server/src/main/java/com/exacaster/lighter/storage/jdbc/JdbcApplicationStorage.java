@@ -53,8 +53,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
         return jdbi.withHandle(handle -> handle
                 .createQuery("SELECT * FROM application WHERE type=:type ORDER BY created_at DESC LIMIT :limit OFFSET :from")
                 .bind("type", type.name())
-                .bind("from", from.toString())
-                .bind("limit", size.toString())
+                .bind("from", from)
+                .bind("limit", size)
                 .map(this)
                 .list()
         );
@@ -112,7 +112,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) LIMIT :limit")
                 .bind("type", type.name())
                 .bindList("states", states.stream().map(ApplicationState::name).collect(Collectors.toList()))
-                .bind("limit", limit.toString())
+                .bind("limit", limit)
                 .map(this)
                 .list()
         );
