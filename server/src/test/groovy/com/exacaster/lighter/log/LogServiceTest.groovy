@@ -1,13 +1,13 @@
 package com.exacaster.lighter.log
 
 import com.exacaster.lighter.backend.Backend
-import com.exacaster.lighter.storage.InMemoryStorage
+import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
 
 class LogServiceTest extends Specification {
     @Subject
-    LogService service = new LogService(new InMemoryStorage(10, 10), Mock(Backend))
+    LogService service = new LogService(new InMemoryStorage(), Mock(Backend))
 
     def "LogService"() {
         given:

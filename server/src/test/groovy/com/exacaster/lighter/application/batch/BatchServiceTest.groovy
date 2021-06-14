@@ -3,7 +3,7 @@ package com.exacaster.lighter.application.batch
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.backend.Backend
-import com.exacaster.lighter.storage.InMemoryStorage
+import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -11,7 +11,7 @@ import static com.exacaster.lighter.test.Factories.submitParams
 
 class BatchServiceTest extends Specification {
     @Subject
-    BatchService service = new BatchService(new InMemoryStorage(100, 1), Mock(Backend))
+    BatchService service = new BatchService(new InMemoryStorage(), Mock(Backend))
 
     def "BatchService"() {
         given:
