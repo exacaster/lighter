@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import javax.inject.Singleton;
 import javax.sql.DataSource;
+import javax.transaction.Transactional;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -23,6 +24,7 @@ public class JdbcLogStorage implements LogStorage, RowMapper<Log> {
     }
 
     @Override
+    @Transactional
     public Optional<Log> findApplicationLog(String applicationId) {
         return jdbi.withHandle(handle -> handle
                 .createQuery("SELECT * FROM application_log WHERE application_id=:id LIMIT 1")
@@ -33,6 +35,7 @@ public class JdbcLogStorage implements LogStorage, RowMapper<Log> {
     }
 
     @Override
+    @Transactional
     public Log saveApplicationLog(Log log) {
         return jdbi.withHandle(handle -> {
 

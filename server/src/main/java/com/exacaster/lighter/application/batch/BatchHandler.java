@@ -14,6 +14,7 @@ import io.micronaut.scheduling.annotation.Scheduled;
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import javax.inject.Singleton;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 
 @Singleton
@@ -39,6 +40,7 @@ public class BatchHandler {
     }
 
     @Scheduled(fixedRate = "1m")
+    @Transactional
     public void processScheduledBatches() {
         var emptySlots = countEmptySlots();
         LOG.info("Processing scheduled batches, found empty slots: {}", emptySlots);
@@ -57,6 +59,7 @@ public class BatchHandler {
     }
 
     @Scheduled(fixedRate = "2m")
+    @Transactional
     public void processNonFinalBatches() {
         batchService.fetchNonFinished()
                 .forEach(batch ->
