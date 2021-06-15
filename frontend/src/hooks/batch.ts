@@ -1,5 +1,5 @@
 import {useApi} from '../client/hooks';
-import {useQuery} from 'react-query';
+import {useMutation, useQuery, useQueryClient} from 'react-query';
 
 export function useBatches(size: number, from: number) {
   const api = useApi();
@@ -8,7 +8,13 @@ export function useBatches(size: number, from: number) {
 
 export function useBatch(id: string) {
   const api = useApi();
-  return useQuery(['batch', id], () => api.fetchBatch(id));
+  return useQuery(['batch_by_id', id], () => api.fetchBatch(id));
+}
+
+export function useBatchDelete() {
+  const api = useApi();
+  const client = useQueryClient();
+  return useMutation((id: string) => api.deleteBatch(id), {onSuccess: (_) => client.refetchQueries(['batches'])});
 }
 
 export function useApplicationLog(id: string) {
