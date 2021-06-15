@@ -1,6 +1,7 @@
 export type Application = {
   id: string;
   state: string;
+  createdAt: string;
   submitParams: {
     name: string;
     file: string;

@@ -12,12 +12,20 @@ export class Api {
     return this.client.get(url).then((resp) => resp.data);
   }
 
+  private delete(url: string) {
+    return this.client.delete(url);
+  }
+
   fetchBatches(size: number, from: number): Promise<BatchPage> {
     return this.get(`/api/batches?size=${size}&from=${from}`);
   }
 
   fetchBatch(id: string): Promise<Application> {
     return this.get(`/api/batches/${id}`);
+  }
+
+  deleteBatch(id: string) {
+    return this.delete(`/api/batches/${id}`);
   }
 
   fetchApplicationLog(id: string): Promise<ApplicationLog> {
