@@ -1,5 +1,6 @@
 lighter:
     max-running-jobs: 5
+    spark-history-server-url: http://localhost/spark-history/
     frontend-path: file:${FRONTEND_PATH:../frontend/build}
     kubernetes:
         enabled: true
