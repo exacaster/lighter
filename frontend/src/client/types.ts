@@ -2,6 +2,7 @@ export type Application = {
   id: string;
   state: string;
   createdAt: string;
+  appId?: string;
   submitParams: {
     name: string;
     file: string;
@@ -23,4 +24,8 @@ export type BatchPage = {
   applications?: Application[];
   from: number;
   total: number;
+};
+
+export type Configuration = {
+  sparkHistoryServerUrl?: string;
 };

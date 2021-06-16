@@ -1,5 +1,5 @@
 import {AxiosInstance} from 'axios';
-import {Application, ApplicationLog, BatchPage} from './types';
+import {Application, ApplicationLog, BatchPage, Configuration} from './types';
 
 export class Api {
   client: AxiosInstance;
@@ -30,5 +30,9 @@ export class Api {
 
   fetchApplicationLog(id: string): Promise<ApplicationLog> {
     return this.get(`/api/batches/${id}/log`);
+  }
+
+  fetchConfiguration(): Promise<Configuration> {
+    return this.get('/api/configuration');
   }
 }

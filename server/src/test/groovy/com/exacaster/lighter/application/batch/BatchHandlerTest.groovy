@@ -19,7 +19,7 @@ class BatchHandlerTest extends Specification {
 
     LogService logService = Mock()
 
-    AppConfiguration config = new AppConfiguration(1)
+    AppConfiguration config = new AppConfiguration(1, sparkHistoryServerUrl)
 
     @Subject
     def handler = Spy(new BatchHandler(backend, service, logService, config))

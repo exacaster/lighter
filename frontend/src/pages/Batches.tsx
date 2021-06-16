@@ -1,18 +1,20 @@
 import React from 'react';
 import PageHeading from '../components/PageHeading';
 import {useBatchDelete, useBatches} from '../hooks/batch';
-import {Table, Thead, Tbody, Tr, Th, Td, IconButton, Spinner} from '@chakra-ui/react';
+import {Table, Thead, Tbody, Tr, Th, Td, IconButton, Spinner, Link as ExLink, ButtonGroup, HStack} from '@chakra-ui/react';
 import {generatePath} from 'react-router';
 import {useQueryString} from '../hooks/common';
 import {pageSize} from '../configuration/consts';
 import Pagination from '../components/Pagination';
 import Link from '../components/Link';
-import {CloseIcon} from '@chakra-ui/icons';
+import {CloseIcon, ExternalLinkIcon} from '@chakra-ui/icons';
+import {useConfiguration} from '../hooks/configuration';
 
 const Batches: React.FC = () => {
   const from = Number(useQueryString().from) || 0;
   const {data, isLoading} = useBatches(pageSize, from);
   const {mutate: doDelete, isLoading: isDeleting} = useBatchDelete();
+  const {data: conf} = useConfiguration();
 
   if (isLoading || isDeleting) {
     return <Spinner />;
@@ -41,7 +43,19 @@ const Batches: React.FC = () => {
               <Td>{batch.createdAt}</Td>
               <Td>{batch.state}</Td>
               <Td>
-                <IconButton aria-label="Delete" onClick={() => doDelete(batch.id)} icon={<CloseIcon />} />
+                <HStack>
+                  {!!conf?.sparkHistoryServerUrl && !!batch.appId && (
+                    <IconButton
+                      icon={<ExternalLinkIcon />}
+                      title="History"
+                      aria-label="History"
+                      as={ExLink}
+                      target="_blank"
+                      href={`${conf?.sparkHistoryServerUrl}/history/${batch.appId}/jobs`}
+                    />
+                  )}
+                  <IconButton title="Delete" aria-label="Delete" onClick={() => doDelete(batch.id)} icon={<CloseIcon />} />
+                </HStack>
               </Td>
             </Tr>
           ))}
