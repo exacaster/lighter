@@ -4,6 +4,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
+import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
@@ -49,7 +50,14 @@ public class BatchHandler {
                     LOG.info("Launching {}", batch);
                     batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.STARTING).build());
                     launch(batch, error -> {
-                        batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.ERROR).build());
+                        var appId = backend.getInfo(batch.getId()).map(ApplicationInfo::getApplicationId)
+                                .orElse(null);
+                        batchService.update(
+                                ApplicationBuilder.builder(batch)
+                                        .setState(ApplicationState.ERROR)
+                                        .setAppId(appId)
+                                        .build());
+
                         backend.getLogs(batch.getId()).ifPresentOrElse(
                                 logService::save,
                                 () -> logService.save(new Log(batch.getId(), error.toString()))
