@@ -4,7 +4,7 @@ import Moment from 'react-moment';
 const DateTime: React.FC<{children: string}> = ({children}) => {
   return (
     <span title={children}>
-      <Moment utc local format="YYYY-MM-DD HH:mm:ss">
+      <Moment utc local format="YYYY-MM-DD HH:mm:ss (Z)">
         {children}
       </Moment>
     </span>
