@@ -1,7 +1,7 @@
 import React from 'react';
 import PageHeading from '../components/PageHeading';
 import {useBatchDelete, useBatches} from '../hooks/batch';
-import {Table, Thead, Tbody, Tr, Th, Td, IconButton, Spinner, Link as ExLink, ButtonGroup, HStack} from '@chakra-ui/react';
+import {Table, Thead, Tbody, Tr, Th, Td, IconButton, Spinner, Link as ExLink, HStack} from '@chakra-ui/react';
 import {generatePath} from 'react-router';
 import {useQueryString} from '../hooks/common';
 import {pageSize} from '../configuration/consts';
@@ -9,6 +9,8 @@ import Pagination from '../components/Pagination';
 import Link from '../components/Link';
 import {CloseIcon, ExternalLinkIcon} from '@chakra-ui/icons';
 import {useConfiguration} from '../hooks/configuration';
+import AppStatus from '../components/AppStatus';
+import DateTime from '../components/DateTime';
 
 const Batches: React.FC = () => {
   const from = Number(useQueryString().from) || 0;
@@ -23,7 +25,7 @@ const Batches: React.FC = () => {
   return (
     <>
       <PageHeading>Batches</PageHeading>
-      <Table variant="simple">
+      <Table variant="simple" size="sm">
         <Thead>
           <Tr>
             <Th>Id</Th>
@@ -40,12 +42,17 @@ const Batches: React.FC = () => {
                 <Link to={generatePath('./batches/:id', {id: batch.id})}>{batch.id}</Link>
               </Td>
               <Td>{batch.submitParams.name}</Td>
-              <Td>{batch.createdAt}</Td>
-              <Td>{batch.state}</Td>
+              <Td>
+                <DateTime>{batch.createdAt}</DateTime>
+              </Td>
+              <Td>
+                <AppStatus status={batch.state} />
+              </Td>
               <Td>
                 <HStack>
                   {!!conf?.sparkHistoryServerUrl && !!batch.appId && (
                     <IconButton
+                      size="sm"
                       icon={<ExternalLinkIcon />}
                       title="History"
                       aria-label="History"
@@ -54,7 +61,7 @@ const Batches: React.FC = () => {
                       href={`${conf?.sparkHistoryServerUrl}/history/${batch.appId}/jobs`}
                     />
                   )}
-                  <IconButton title="Delete" aria-label="Delete" onClick={() => doDelete(batch.id)} icon={<CloseIcon />} />
+                  <IconButton size="sm" title="Delete" aria-label="Delete" onClick={() => doDelete(batch.id)} icon={<CloseIcon />} />
                 </HStack>
               </Td>
             </Tr>

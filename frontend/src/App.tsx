@@ -7,6 +7,18 @@ import Layout from './components/Layout';
 import {QueryCache, QueryClient, QueryClientProvider} from 'react-query';
 import Batch from './pages/Batch';
 
+import {extendTheme} from '@chakra-ui/react';
+import '@fontsource/open-sans/700.css';
+import '@fontsource/open-sans/600.css';
+import '@fontsource/open-sans';
+
+const theme = extendTheme({
+  fonts: {
+    heading: 'Open Sans',
+    body: 'Open Sans',
+  },
+});
+
 const queryCache = new QueryCache();
 const queryClient = new QueryClient({
   queryCache,
@@ -19,7 +31,7 @@ const queryClient = new QueryClient({
 
 function App() {
   return (
-    <ChakraProvider>
+    <ChakraProvider theme={theme}>
       <QueryClientProvider client={queryClient}>
         <Router basename={process.env.PUBLIC_URL}>
           <Layout>

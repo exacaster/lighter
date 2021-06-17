@@ -1,5 +1,7 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
@@ -9,10 +11,13 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
+import io.fabric8.kubernetes.client.KubernetesClientException;
 import java.util.Map;
 import java.util.Optional;
+import org.slf4j.Logger;
 
 public class KubernetesBackend implements Backend {
+    private static final Logger LOG = getLogger(KubernetesBackend.class);
 
     private static final String SPARK_APP_TAG_LABEL = "spark-app-tag";
     private static final String SPARK_ROLE_LABEL = "spark-role";
@@ -44,10 +49,17 @@ public class KubernetesBackend implements Backend {
     @Override
     public Optional<Log> getLogs(String internalApplicationId) {
         return this.getDriverPod(internalApplicationId)
-                .map(pod -> this.client.pods().inNamespace(properties.getNamespace())
-                        .withName(pod.getMetadata().getName())
-                        .tailingLines(properties.getMaxLogSize())
-                        .getLog(true))
+                .flatMap(pod -> {
+                    String log = null;
+                    try {
+                        log = this.client.pods().inNamespace(properties.getNamespace())
+                                .withName(pod.getMetadata().getName())
+                                .tailingLines(properties.getMaxLogSize()).getLog(true);
+                    } catch (KubernetesClientException e) {
+                        LOG.debug("Error Retrieving logs: {}", e.getStatus());
+                    }
+                    return Optional.ofNullable(log);
+                })
                 .map(log -> new Log(internalApplicationId, log));
     }
 
