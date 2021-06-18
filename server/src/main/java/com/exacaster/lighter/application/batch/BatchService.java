@@ -47,9 +47,9 @@ public class BatchService {
         return applicationStorage.findApplicationsByStates(ApplicationType.BATCH, List.of(state), limit);
     }
 
-    public List<Application> fetchNonFinished() {
+    public List<Application> fetchRunning() {
         return applicationStorage
-                .findApplicationsByStates(ApplicationType.BATCH, ApplicationState.incompleteStates(), Integer.MAX_VALUE);
+                .findApplicationsByStates(ApplicationType.BATCH, ApplicationState.runningStates(), Integer.MAX_VALUE);
     }
 
     public Optional<Application> fetchOne(String id) {

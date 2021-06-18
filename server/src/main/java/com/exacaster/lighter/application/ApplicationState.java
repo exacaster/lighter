@@ -15,8 +15,13 @@ public enum ApplicationState {
     KILLED(true),
     SUCCESS(true);
 
-    private static final List<ApplicationState> INCOMPLETE_STATES = Arrays.stream(values()).filter(val -> !val.isComplete).collect(
-            Collectors.toList());
+    private static final List<ApplicationState> INCOMPLETE_STATES = Arrays.stream(values())
+            .filter(val -> !val.isComplete)
+            .collect(Collectors.toList());
+
+    private static final List<ApplicationState> RUNNING_STATES = Arrays.stream(values())
+            .filter(val -> !val.isComplete && !val.equals(NOT_STARTED))
+            .collect(Collectors.toList());
 
     private final boolean isComplete;
 
@@ -30,6 +35,10 @@ public enum ApplicationState {
 
     public static List<ApplicationState> incompleteStates() {
         return INCOMPLETE_STATES;
+    }
+
+    public static List<ApplicationState> runningStates() {
+        return RUNNING_STATES;
     }
 
     public boolean isComplete() {

@@ -19,7 +19,7 @@ class BatchHandlerTest extends Specification {
 
     LogService logService = Mock()
 
-    AppConfiguration config = new AppConfiguration(1, sparkHistoryServerUrl)
+    AppConfiguration config = new AppConfiguration(1, null)
 
     @Subject
     def handler = Spy(new BatchHandler(backend, service, logService, config))
@@ -31,10 +31,10 @@ class BatchHandlerTest extends Specification {
         def log = logs(app.id)
 
         when:
-        handler.processNonFinalBatches()
+        handler.processRunningBatches()
 
         then: "updates job status"
-        1 * service.fetchNonFinished() >> [app]
+        1 * service.fetchRunning() >> [app]
         1 * backend.getInfo(app.id) >> Optional.of(appInfo)
         1 * service.update({ it.id == app.id && it.state == appInfo.getState()})
 
@@ -51,7 +51,7 @@ class BatchHandlerTest extends Specification {
         handler.processScheduledBatches()
 
         then:
-        _ * service.fetchNonFinished() >> []
+        _ * service.fetchRunning() >> []
         1 * service.fetchByState(ApplicationState.NOT_STARTED, _) >> [app]
         1 * handler.launch(app, _) >> {  }
     }
@@ -64,7 +64,7 @@ class BatchHandlerTest extends Specification {
         handler.processScheduledBatches()
 
         then:
-        _ * service.fetchNonFinished() >> [app]
+        _ * service.fetchRunning() >> [app]
         _ * service.fetchByState(ApplicationState.NOT_STARTED, 0) >> []
         0 * handler.launch(app, _) >> {  }
     }

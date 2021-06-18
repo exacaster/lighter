@@ -68,8 +68,8 @@ public class BatchHandler {
 
     @Scheduled(fixedRate = "2m")
     @Transactional
-    public void processNonFinalBatches() {
-        batchService.fetchNonFinished()
+    public void processRunningBatches() {
+        batchService.fetchRunning()
                 .forEach(batch ->
                         backend.getInfo(batch.getId()).ifPresentOrElse(
                                 info -> trackStatus(batch, info),
@@ -91,7 +91,7 @@ public class BatchHandler {
     }
 
     private Integer countEmptySlots() {
-        return Math.max(this.appConfiguration.getMaxRunningJobs() - this.batchService.fetchNonFinished().size(), 0);
+        return Math.max(this.appConfiguration.getMaxRunningJobs() - this.batchService.fetchRunning().size(), 0);
     }
 
     private void checkZombie(Application batch) {
