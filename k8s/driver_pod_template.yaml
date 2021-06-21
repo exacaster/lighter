@@ -4,5 +4,5 @@ spec:
   tolerations:
     - key: dedicated
       operator: Equal
-      value: spark
+      value: spark-driver
       effect: NoSchedule
