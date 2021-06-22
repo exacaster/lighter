@@ -48,7 +48,10 @@ public class BatchHandler {
         batchService.fetchByState(ApplicationState.NOT_STARTED, emptySlots)
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
-                    batchService.update(ApplicationBuilder.builder(batch).setState(ApplicationState.STARTING).build());
+                    batchService.update(ApplicationBuilder.builder(batch)
+                            .setState(ApplicationState.STARTING)
+                            .setContactedAt(LocalDateTime.now())
+                            .build());
                     launch(batch, error -> {
                         var appId = backend.getInfo(batch.getId()).map(ApplicationInfo::getApplicationId)
                                 .orElse(null);
@@ -56,6 +59,7 @@ public class BatchHandler {
                                 ApplicationBuilder.builder(batch)
                                         .setState(ApplicationState.ERROR)
                                         .setAppId(appId)
+                                        .setContactedAt(LocalDateTime.now())
                                         .build());
 
                         backend.getLogs(batch.getId()).ifPresentOrElse(
@@ -82,6 +86,7 @@ public class BatchHandler {
         LOG.info("Tracking {}, info: {}", batch, info);
         batchService.update(ApplicationBuilder.builder(batch)
                 .setState(info.getState())
+                .setContactedAt(LocalDateTime.now())
                 .setAppId(info.getApplicationId())
                 .build());
 
@@ -96,7 +101,7 @@ public class BatchHandler {
 
     private void checkZombie(Application batch) {
         LOG.info("No info for {}", batch);
-        if (batch.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(10))) {
+        if (batch.getContactedAt() != null && batch.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(15))) {
             LOG.info("Assuming zombie ({})", batch.getId());
             batchService.update(ApplicationBuilder.builder(batch)
                     .setState(ApplicationState.ERROR)

@@ -14,9 +14,11 @@ public class Application implements Entity {
     private final String appInfo;
     private final SubmitParams submitParams;
     private final LocalDateTime createdAt;
+    private final LocalDateTime contactedAt;
 
-    public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo, SubmitParams submitParams,
-            LocalDateTime createdAt) {
+    public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo,
+            SubmitParams submitParams,
+            LocalDateTime createdAt, LocalDateTime contactedAt) {
         this.id = id;
         this.type = type;
         this.state = state;
@@ -24,6 +26,7 @@ public class Application implements Entity {
         this.appInfo = appInfo;
         this.submitParams = submitParams;
         this.createdAt = createdAt;
+        this.contactedAt = contactedAt;
     }
 
     @Override
@@ -56,6 +59,10 @@ public class Application implements Entity {
         return createdAt;
     }
 
+    public LocalDateTime getContactedAt() {
+        return contactedAt;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Application.class.getSimpleName() + "[", "]")
@@ -66,6 +73,7 @@ public class Application implements Entity {
                 .add("appInfo='" + appInfo + "'")
                 .add("submitParams=" + submitParams)
                 .add("createdAt=" + createdAt)
+                .add("contactedAt=" + contactedAt)
                 .toString();
     }
 }

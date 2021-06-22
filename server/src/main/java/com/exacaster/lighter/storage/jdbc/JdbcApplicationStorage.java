@@ -51,7 +51,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     public List<Application> findApplications(ApplicationType type,
             Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application WHERE type=:type ORDER BY created_at DESC LIMIT :limit OFFSET :from")
+                .createQuery(
+                        "SELECT * FROM application WHERE type=:type ORDER BY created_at DESC LIMIT :limit OFFSET :from")
                 .bind("type", type.name())
                 .bind("from", from)
                 .bind("limit", size)
@@ -78,11 +79,16 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                     } catch (JsonProcessingException e) {
                         // TODO
                     }
-                    var updated = handle.createUpdate("UPDATE application SET app_id=:app_id, app_info=:app_info, state=:state WHERE id=:id")
+                    var updated = handle.createUpdate("UPDATE application SET "
+                            + "app_id=:app_id, "
+                            + "app_info=:app_info, "
+                            + "state=:state, "
+                            + "contacted_at=:contacted_at WHERE id=:id")
                             .bind("state", application.getState().name())
                             .bind("app_id", application.getAppId())
                             .bind("app_info", application.getAppInfo())
                             .bind("id", application.getId())
+                            .bind("contacted_at", application.getContactedAt())
                             .execute();
                     // Not all SQL databases support ON CONFLICT syntax, so doing fallback if nothing updated
                     if (updated == 0) {
@@ -126,6 +132,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
         } catch (JsonProcessingException e) {
             // TODO
         }
+
+        var contactedAt = rs.getTimestamp("contacted_at") != null ? rs.getTimestamp("contacted_at").toLocalDateTime() : null;
         return ApplicationBuilder.builder()
                 .setId(rs.getString("id"))
                 .setType(ApplicationType.valueOf(rs.getString("type")))
@@ -134,6 +142,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .setAppInfo(rs.getString("app_info"))
                 .setSubmitParams(params)
                 .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
+                .setContactedAt(contactedAt)
                 .build();
     }
 }
