@@ -12,6 +12,7 @@ public class ApplicationBuilder {
     private String appInfo;
     private SubmitParams submitParams;
     private LocalDateTime createdAt;
+    private LocalDateTime contactedAt;
 
     private ApplicationBuilder() {
 
@@ -26,6 +27,8 @@ public class ApplicationBuilder {
         builder.setType(batch.getType());
         builder.setId(batch.getId());
         builder.setCreatedAt(batch.getCreatedAt());
+        builder.setContactedAt(batch.getContactedAt());
+
         return builder;
     }
 
@@ -68,7 +71,12 @@ public class ApplicationBuilder {
         return this;
     }
 
+    public ApplicationBuilder setContactedAt(LocalDateTime contactedAt) {
+        this.contactedAt = contactedAt;
+        return this;
+    }
+
     public Application build() {
-        return new Application(id, type, state, appId, appInfo, submitParams, createdAt);
+        return new Application(id, type, state, appId, appInfo, submitParams, createdAt, contactedAt);
     }
 }
