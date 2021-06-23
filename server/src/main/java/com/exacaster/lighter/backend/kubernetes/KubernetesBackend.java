@@ -36,7 +36,8 @@ public class KubernetesBackend implements Backend {
         return Map.of(
                 "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
-                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId()
+                "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
+                "spark.kubernetes.submission.waitAppCompletion", "false"
         );
     }
 
