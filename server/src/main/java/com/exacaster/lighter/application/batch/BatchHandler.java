@@ -101,7 +101,7 @@ public class BatchHandler {
 
     private void checkZombie(Application batch) {
         LOG.info("No info for {}", batch);
-        if (batch.getContactedAt() != null && batch.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(15))) {
+        if (batch.getContactedAt() != null && batch.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
             LOG.info("Assuming zombie ({})", batch.getId());
             batchService.update(ApplicationBuilder.builder(batch)
                     .setState(ApplicationState.ERROR)
