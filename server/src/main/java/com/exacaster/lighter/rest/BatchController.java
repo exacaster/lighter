@@ -1,7 +1,7 @@
 package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.application.Application;
-import com.exacaster.lighter.application.batch.BatchList;
+import com.exacaster.lighter.application.ApplicationList;
 import com.exacaster.lighter.application.batch.BatchService;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
@@ -35,9 +35,9 @@ public class BatchController {
     }
 
     @Get
-    public BatchList get(@QueryValue(defaultValue = "0") Integer from, @QueryValue(defaultValue = "100") Integer size) {
+    public ApplicationList get(@QueryValue(defaultValue = "0") Integer from, @QueryValue(defaultValue = "100") Integer size) {
         var batches = batchService.fetch(from, size);
-        return new BatchList(from, batches.size(), batches);
+        return new ApplicationList(from, batches.size(), batches);
     }
 
     @Get("/{id}")

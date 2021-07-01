@@ -1,16 +1,15 @@
-package com.exacaster.lighter.application.batch;
+package com.exacaster.lighter.application;
 
-import com.exacaster.lighter.application.Application;
 import java.util.List;
 import java.util.StringJoiner;
 
-public class BatchList {
+public class ApplicationList {
 
     private final Integer from;
     private final Integer total;
     private final List<Application> applications;
 
-    public BatchList(Integer from, Integer total, List<Application> applications) {
+    public ApplicationList(Integer from, Integer total, List<Application> applications) {
         this.from = from;
         this.total = total;
         this.applications = applications;
@@ -30,7 +29,7 @@ public class BatchList {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", BatchList.class.getSimpleName() + "[", "]")
+        return new StringJoiner(", ", ApplicationList.class.getSimpleName() + "[", "]")
                 .add("from=" + from)
                 .add("total=" + total)
                 .add("applications=" + applications)
