@@ -44,8 +44,10 @@ public class SessionService {
     }
 
     public void deleteOne(String id) {
-        backend.kill(id);
-        applicationStorage.deleteApplication(id);
+        this.fetchOne(id).ifPresent(app -> {
+            backend.kill(app);
+            applicationStorage.deleteApplication(id);
+        });
     }
 
     public List<Statement> getStatements(String id) {

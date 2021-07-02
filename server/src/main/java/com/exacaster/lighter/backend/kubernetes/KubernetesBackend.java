@@ -42,13 +42,15 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
-    public Optional<ApplicationInfo> getInfo(String internalApplicationId) {
+    public Optional<ApplicationInfo> getInfo(Application application) {
+        var internalApplicationId = application.getId();
         return getDriverPod(internalApplicationId).map(pod -> new ApplicationInfo(mapStatus(pod.getStatus()),
                 pod.getMetadata().getLabels().get(SPARK_APP_ID_LABEL)));
     }
 
     @Override
-    public Optional<Log> getLogs(String internalApplicationId) {
+    public Optional<Log> getLogs(Application application) {
+        var internalApplicationId = application.getId();
         return this.getDriverPod(internalApplicationId)
                 .flatMap(pod -> {
                     String log = null;
@@ -65,7 +67,8 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
-    public void kill(String internalApplicationId) {
+    public void kill(Application application) {
+        var internalApplicationId = application.getId();
         this.getDriverPod(internalApplicationId)
                 .ifPresent(pod -> this.client.pods()
                         .inNamespace(properties.getNamespace())

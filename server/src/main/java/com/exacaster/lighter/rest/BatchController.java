@@ -63,7 +63,7 @@ public class BatchController {
                 return logService.fetch(id);
             }
 
-            return logService.fetchLive(id);
+            return logService.fetchLive(batch);
         });
     }
 }
