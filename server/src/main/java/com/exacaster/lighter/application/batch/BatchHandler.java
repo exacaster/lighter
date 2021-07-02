@@ -53,7 +53,7 @@ public class BatchHandler {
                             .setContactedAt(LocalDateTime.now())
                             .build());
                     launch(batch, error -> {
-                        var appId = backend.getInfo(batch.getId()).map(ApplicationInfo::getApplicationId)
+                        var appId = backend.getInfo(batch).map(ApplicationInfo::getApplicationId)
                                 .orElse(null);
                         batchService.update(
                                 ApplicationBuilder.builder(batch)
@@ -62,7 +62,7 @@ public class BatchHandler {
                                         .setContactedAt(LocalDateTime.now())
                                         .build());
 
-                        backend.getLogs(batch.getId()).ifPresentOrElse(
+                        backend.getLogs(batch).ifPresentOrElse(
                                 logService::save,
                                 () -> logService.save(new Log(batch.getId(), error.toString()))
                         );
@@ -75,7 +75,7 @@ public class BatchHandler {
     public void processRunningBatches() {
         batchService.fetchRunning()
                 .forEach(batch ->
-                        backend.getInfo(batch.getId()).ifPresentOrElse(
+                        backend.getInfo(batch).ifPresentOrElse(
                                 info -> trackStatus(batch, info),
                                 () -> checkZombie(batch)
                         )
@@ -91,7 +91,7 @@ public class BatchHandler {
                 .build());
 
         if (info.getState().isComplete()) {
-            backend.getLogs(batch.getId()).ifPresent(logService::save);
+            backend.getLogs(batch).ifPresent(logService::save);
         }
     }
 

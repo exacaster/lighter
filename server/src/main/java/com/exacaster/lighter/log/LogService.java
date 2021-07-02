@@ -1,5 +1,6 @@
 package com.exacaster.lighter.log;
 
+import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.storage.LogStorage;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class LogService {
         logStorage.saveApplicationLog(log);
     }
 
-    public Optional<Log> fetchLive(String id) {
-        return backend.getLogs(id);
+    public Optional<Log> fetchLive(Application application) {
+        return backend.getLogs(application);
     }
 }

@@ -61,7 +61,7 @@ public class SessionController {
 
     @Get("/{id}/log")
     public Optional<Log> getLog(@PathVariable String id) {
-        return logService.fetchLive(id);
+        return sessionService.fetchOne(id).flatMap(logService::fetchLive);
     }
 
     @Get("/{id}/statements")

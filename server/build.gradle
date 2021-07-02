@@ -17,6 +17,8 @@ micronaut {
 }
 mainClassName = "com.exacaster.lighter.Application"
 
+def sparkVersion = "3.0.3"
+
 dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
@@ -25,7 +27,7 @@ dependencies {
     implementation "io.micronaut.flyway:micronaut-flyway"
     implementation "io.swagger.core.v3:swagger-annotations"
 
-    implementation 'org.apache.spark:spark-launcher_2.12:3.0.2'
+    implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
     implementation 'io.fabric8:kubernetes-client:5.4.0'
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
@@ -35,6 +37,7 @@ dependencies {
     implementation "io.micronaut.sql:micronaut-jdbc-hikari"
     implementation "io.micronaut.sql:micronaut-jdbi"
     implementation "io.micronaut.data:micronaut-data-processor"
+    implementation "io.micronaut:micronaut-http-client"
 
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.postgresql:postgresql"

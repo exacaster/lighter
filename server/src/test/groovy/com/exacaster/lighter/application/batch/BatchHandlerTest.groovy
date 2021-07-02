@@ -35,11 +35,11 @@ class BatchHandlerTest extends Specification {
 
         then: "updates job status"
         1 * service.fetchRunning() >> [app]
-        1 * backend.getInfo(app.id) >> Optional.of(appInfo)
+        1 * backend.getInfo(app) >> Optional.of(appInfo)
         1 * service.update({ it.id == app.id && it.state == appInfo.getState()})
 
         and: "updates job jogs"
-        1 * backend.getLogs(app.id) >> Optional.of(log)
+        1 * backend.getLogs(app) >> Optional.of(log)
         1 * logService.save(log)
     }
 

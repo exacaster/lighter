@@ -8,11 +8,11 @@ import java.util.Optional;
 
 public interface Backend {
 
-    Optional<ApplicationInfo> getInfo(String internalApplicationId);
+    Optional<ApplicationInfo> getInfo(Application application);
 
-    Optional<Log> getLogs(String internalApplicationId);
+    Optional<Log> getLogs(Application application);
 
-    void kill(String internalApplicationId);
+    void kill(Application application);
 
     default Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of();
