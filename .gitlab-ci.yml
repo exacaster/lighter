@@ -18,7 +18,11 @@ variables:
 
 include:
   - https://exagit.exacaster.com/exacaster/ci-commons/-/raw/master/.cdp-publish-ecr.yml
+  - https://exagit.exacaster.com/exacaster/ci-commons/raw/master/cdp/.publish-image-cdp-ecrs.yml
 
+publish-image-cdp-ecrs:
+  needs:
+    - publishInternal
 
 buildServer:
   stage: buildServer
