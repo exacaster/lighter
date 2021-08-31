@@ -2,6 +2,7 @@ stages:
   - buildServer
   - publish
   - publish-ecr
+  - publish-image-cdp-ecrs
 
 workflow:
   rules:
