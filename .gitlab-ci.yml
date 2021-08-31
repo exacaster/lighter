@@ -24,6 +24,8 @@ include:
 publish-image-cdp-ecrs:
   needs:
     - publishInternal
+  variables:
+    TAG: $CI_COMMIT_TAG
 
 buildServer:
   stage: buildServer
