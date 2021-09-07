@@ -7,6 +7,7 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.yarn.resources.State;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationWrapper;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import java.util.Collection;
 import java.util.Map;
@@ -16,9 +17,11 @@ import java.util.stream.Collectors;
 public class YarnBackend implements Backend {
 
     private final YarnClient client;
+    private final AppConfiguration conf;
 
-    public YarnBackend(YarnClient client) {
+    public YarnBackend(YarnClient client, AppConfiguration conf) {
         this.client = client;
+        this.conf = conf;
     }
 
     @Override
@@ -67,7 +70,8 @@ public class YarnBackend implements Backend {
     public Map<String, String> getSubmitConfiguration(Application application) {
         return Map.of(
                 "spark.yarn.tags", "lighter," + application.getAppId(),
-                "spark.yarn.submit.waitAppCompletion", "false"
+                "spark.yarn.submit.waitAppCompletion", "false",
+                "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort())
         );
     }
 

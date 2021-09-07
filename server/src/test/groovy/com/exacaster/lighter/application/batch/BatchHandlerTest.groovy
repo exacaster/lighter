@@ -19,7 +19,7 @@ class BatchHandlerTest extends Specification {
 
     LogService logService = Mock()
 
-    AppConfiguration config = new AppConfiguration(1, null)
+    AppConfiguration config = new AppConfiguration(1, null, null)
 
     @Subject
     def handler = Spy(new BatchHandler(backend, service, logService, config))

@@ -29,6 +29,7 @@ dependencies {
 
     implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
     implementation 'io.fabric8:kubernetes-client:5.4.0'
+    implementation 'net.sf.py4j:py4j:0.10.9.2'
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"

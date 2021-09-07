@@ -2,6 +2,7 @@ lighter:
     max-running-jobs: 5
     spark-history-server-url: http://localhost/spark-history/
     frontend-path: file:${FRONTEND_PATH:../frontend/build}
+    py-gateway-port: 25333
     kubernetes:
         enabled: true
         master: k8s://kubernetes.default.svc.cluster.local:443

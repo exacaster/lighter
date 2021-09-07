@@ -1,6 +1,7 @@
 package com.exacaster.lighter.backend.kubernetes;
 
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import javax.inject.Singleton;
@@ -10,7 +11,7 @@ import javax.inject.Singleton;
 public class KubernetesConfigurationFactory {
 
     @Singleton
-    public Backend backend(KubernetesProperties properties) {
-        return new KubernetesBackend(properties);
+    public Backend backend(KubernetesProperties properties, AppConfiguration conf) {
+        return new KubernetesBackend(properties, conf);
     }
 }
