@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
 @Introspected
 public class SubmitParams {
@@ -55,6 +54,11 @@ public class SubmitParams {
         this.files = ofNullable(files).orElse(List.of());
         this.jars = ofNullable(jars).orElse(List.of());
         this.conf = ofNullable(conf).orElse(Map.of());
+    }
+
+    public SubmitParams withFile(String file) {
+        return new SubmitParams(name, file, master, mainClass, numExecutors, executorCores, executorMemory, driverCores,
+                driverMemory, args, pyFiles, files, jars, conf);
     }
 
     public String getName() {

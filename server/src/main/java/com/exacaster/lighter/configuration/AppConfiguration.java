@@ -12,11 +12,15 @@ public class AppConfiguration {
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer maxRunningJobs;
     private final String sparkHistoryServerUrl;
+    @JsonProperty(access = Access.WRITE_ONLY)
+    private final Integer pyGatewayPort;
 
     @ConfigurationInject
-    public AppConfiguration(Integer maxRunningJobs, @Nullable String sparkHistoryServerUrl){
+    public AppConfiguration(Integer maxRunningJobs, @Nullable String sparkHistoryServerUrl,
+            Integer pyGatewayPort){
         this.maxRunningJobs = maxRunningJobs;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
+        this.pyGatewayPort = pyGatewayPort;
     }
 
     public Integer getMaxRunningJobs() {
@@ -25,6 +29,10 @@ public class AppConfiguration {
 
     public String getSparkHistoryServerUrl() {
         return sparkHistoryServerUrl;
+    }
+
+    public Integer getPyGatewayPort() {
+        return pyGatewayPort;
     }
 
     @Override

@@ -1,0 +1,88 @@
+package com.exacaster.lighter.application.sessions.processors.python;
+
+import com.exacaster.lighter.application.sessions.Statement;
+import com.exacaster.lighter.application.sessions.processors.Output;
+import com.exacaster.lighter.configuration.AppConfiguration;
+import io.micronaut.context.event.StartupEvent;
+import io.micronaut.runtime.event.annotation.EventListener;
+import io.micronaut.scheduling.annotation.Async;
+import java.net.InetAddress;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+import javax.inject.Singleton;
+import py4j.GatewayServer;
+
+@Singleton
+public class SessionIntegration {
+
+    private final Map<String, List<Statement>> statements = new HashMap<>();
+    private final Integer gatewayPort;
+
+    public SessionIntegration(AppConfiguration conf) {
+        this.gatewayPort = conf.getPyGatewayPort();
+    }
+
+    // Used By Py4J
+    public List<Statement> statementsToProcess(String id) {
+        var result = statements.get(id);
+        if (result == null) {
+            return List.of();
+        }
+        return result;
+    }
+
+    // Used By Py4J
+    public void handleResponse(String sessionId, String statementId, Map<String, Object> result) {
+        var sessionStatements = statementsToProcess(sessionId);
+        sessionStatements.stream()
+                .filter(st -> statementId.equals(st.getId()))
+                .findFirst()
+                .ifPresent(st ->{
+                    var index = sessionStatements.indexOf(st);
+                    var error = result.get("error");
+                    var status = error != null ? "error" : "available";
+                    var output = new Output(status, 1, (Map<String, Object>) result.get("content"));
+                    var newSt = st.withStateAndOutput(status, output);
+                    sessionStatements.set(index, newSt);
+                });
+    }
+
+    public Statement processStatement(String id, Statement statement) {
+        // cleanup statements, keep only the last one.
+        var sessionStatements = new ArrayList<Statement>();
+        var newStatement = statement.withIdAndState(UUID.randomUUID().toString(), "waiting");
+        sessionStatements.add(newStatement);
+        statements.put(id, sessionStatements);
+
+        return newStatement;
+    }
+
+    public Statement getStatement(String id, String statementId) {
+        var sessionStatements = statements.get(id);
+        if (sessionStatements != null) {
+            return sessionStatements.stream()
+                    .filter(st -> st.getId().equals(statementId))
+                    .findFirst()
+                    .orElse(null);
+        }
+        return null;
+    }
+
+    public Statement cancelStatement(String id, String statementId) {
+        // TODO: Not sure what to do. Send interrupt?
+        return null;
+    }
+
+    @EventListener
+    @Async
+    public void runServer(StartupEvent event) {
+        var server = new GatewayServer.GatewayServerBuilder(this)
+                .javaAddress(InetAddress.getLoopbackAddress())
+                .javaPort(gatewayPort)
+                .build();
+        server.start();
+    }
+}

@@ -15,7 +15,6 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.validation.Validated;
-import java.util.List;
 import java.util.Optional;
 import javax.validation.Valid;
 
@@ -38,8 +37,8 @@ public class SessionController {
     }
 
     @Post
-    public Application create(@Valid @Body SubmitParams session) {
-        return sessionService.createStatement(session);
+    public Application create(@Body SubmitParams session) {
+        return sessionService.createSession(session);
     }
 
     @Get("/{id}")
@@ -64,14 +63,9 @@ public class SessionController {
         return sessionService.fetchOne(id).flatMap(logService::fetchLive);
     }
 
-    @Get("/{id}/statements")
-    public List<Statement> getStatements(@PathVariable String id) {
-        return sessionService.getStatements(id);
-    }
-
     @Post("/{id}/statements")
     public Statement postStatements(@PathVariable String id, @Valid @Body Statement statement) {
-        return sessionService.createStatement(id, statement);
+        return sessionService.createSession(id, statement);
     }
 
     @Get("/{id}/statements/{statementId}")
@@ -82,10 +76,5 @@ public class SessionController {
     @Post("/{id}/statements/{statementId}/cancel")
     public Statement cancelStatements(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.cancelStatement(id, statementId);
-    }
-
-    @Post("/sessions/{id}/completion")
-    public List<String> completion(@PathVariable String id) {
-        return sessionService.runStatement(id);
     }
 }

@@ -1,6 +1,7 @@
 package com.exacaster.lighter.backend.yarn;
 
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Requires;
 import javax.inject.Singleton;
@@ -10,7 +11,7 @@ import javax.inject.Singleton;
 public class YarnConfigurationFactory {
 
     @Singleton
-    public Backend backend(YarnClient yarnClient) {
-        return new YarnBackend(yarnClient);
+    public Backend backend(YarnClient yarnClient, AppConfiguration conf) {
+        return new YarnBackend(yarnClient, conf);
     }
 }

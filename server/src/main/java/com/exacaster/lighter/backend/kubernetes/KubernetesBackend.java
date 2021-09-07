@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;
@@ -25,9 +26,11 @@ public class KubernetesBackend implements Backend {
 
     private final KubernetesClient client;
     private final KubernetesProperties properties;
+    private final AppConfiguration conf;
 
-    public KubernetesBackend(KubernetesProperties properties) {
+    public KubernetesBackend(KubernetesProperties properties, AppConfiguration conf) {
         this.properties = properties;
+        this.conf = conf;
         this.client = new DefaultKubernetesClient();
     }
 
@@ -37,7 +40,8 @@ public class KubernetesBackend implements Backend {
                 "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
-                "spark.kubernetes.submission.waitAppCompletion", "false"
+                "spark.kubernetes.submission.waitAppCompletion", "false",
+                "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort())
         );
     }
 
