@@ -13,6 +13,7 @@ import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.slf4j.Logger;
@@ -36,15 +37,15 @@ public class KubernetesBackend implements Backend {
 
     @Override
     public Map<String, String> getSubmitConfiguration(Application application) {
-        return Map.of(
+        var props = new HashMap<>(Map.of(
                 "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.submission.waitAppCompletion", "false",
-                "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
-                // TODO: Replace with configurable image
-                "spark.kubernetes.container.image", "218320193259.dkr.ecr.eu-central-1.amazonaws.com/spark-cdp:3.0.3"
-        );
+                "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort())
+        ));
+        props.putAll(properties.getSubmitProps());
+        return props;
     }
 
     @Override
