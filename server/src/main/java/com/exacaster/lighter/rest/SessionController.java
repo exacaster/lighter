@@ -7,6 +7,7 @@ import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SubmitParams;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -14,6 +15,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
+import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
 import java.util.Optional;
 import javax.validation.Valid;
@@ -37,6 +39,7 @@ public class SessionController {
     }
 
     @Post
+    @Status(HttpStatus.CREATED)
     public Application create(@Body SubmitParams session) {
         return sessionService.createSession(session);
     }
@@ -64,6 +67,7 @@ public class SessionController {
     }
 
     @Post("/{id}/statements")
+    @Status(HttpStatus.CREATED)
     public Statement postStatements(@PathVariable String id, @Valid @Body Statement statement) {
         return sessionService.createSession(id, statement);
     }
@@ -74,6 +78,7 @@ public class SessionController {
     }
 
     @Post("/{id}/statements/{statementId}/cancel")
+    @Status(HttpStatus.CREATED)
     public Statement cancelStatements(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.cancelStatement(id, statementId);
     }
