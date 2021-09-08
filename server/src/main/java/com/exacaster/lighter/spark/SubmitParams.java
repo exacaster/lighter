@@ -78,23 +78,23 @@ public class SubmitParams {
     }
 
     public Integer getNumExecutors() {
-        return numExecutors;
+        return ofNullable(numExecutors).orElse(1);
     }
 
     public Integer getExecutorCores() {
-        return executorCores;
+        return ofNullable(executorCores).orElse(2);
     }
 
     public String getExecutorMemory() {
-        return executorMemory;
+        return ofNullable(executorMemory).orElse("1000M");
     }
 
     public Integer getDriverCores() {
-        return driverCores;
+        return ofNullable(driverCores).orElse(2);
     }
 
     public String getDriverMemory() {
-        return driverMemory;
+        return ofNullable(driverMemory).orElse("1000M");
     }
 
     public List<String> getArgs() {

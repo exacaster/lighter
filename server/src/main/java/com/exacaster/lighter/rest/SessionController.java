@@ -60,10 +60,15 @@ public class SessionController {
         return sessionService.fetchOne(id);
     }
 
-
     @Get("/{id}/log")
     public Optional<Log> getLog(@PathVariable String id) {
-        return sessionService.fetchOne(id).flatMap(logService::fetchLive);
+        return sessionService.fetchOne(id).flatMap(session -> {
+            if (session.getState().isComplete()) {
+                return logService.fetch(id);
+            }
+
+            return logService.fetchLive(session);
+        });
     }
 
     @Post("/{id}/statements")
