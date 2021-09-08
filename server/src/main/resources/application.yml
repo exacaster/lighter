@@ -12,8 +12,6 @@ lighter:
               "spark.kubernetes.container.image": "218320193259.dkr.ecr.eu-central-1.amazonaws.com/spark-cdp:3.0.3"
               "spark.kubernetes.namespace": spark
               "spark.kubernetes.authenticate.driver.serviceAccountName": spark
-              "'[spark.kubernetes.driver.annotation.cluster-autoscaler.kubernetes.io/safe-to-evict]'": false
-              "'[spark.kubernetes.executor.annotation.cluster-autoscaler.kubernetes.io/safe-to-evict]'": false
               "spark.kubernetes.driver.podTemplateFile": "/home/app/k8s/driver_pod_template.yaml"
               "spark.kubernetes.executor.podTemplateFile": "/home/app/k8s/executor_pod_template.yaml"
     storage:
