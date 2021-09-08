@@ -1,5 +1,6 @@
 package com.exacaster.lighter.application;
 
+import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -43,5 +44,10 @@ public enum ApplicationState {
 
     public boolean isComplete() {
         return isComplete;
+    }
+
+    @JsonValue
+    public String getKey() {
+        return name().toLowerCase();
     }
 }

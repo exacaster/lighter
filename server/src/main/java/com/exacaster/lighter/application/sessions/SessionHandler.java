@@ -62,6 +62,7 @@ public class SessionHandler {
 
 
                     launch(batch, error -> {
+                        LOG.error("Error starting session", error);
                         var appId = backend.getInfo(batch).map(ApplicationInfo::getApplicationId)
                                 .orElse(null);
                         sessionService.update(
