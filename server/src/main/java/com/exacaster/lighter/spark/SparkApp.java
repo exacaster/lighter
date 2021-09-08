@@ -38,8 +38,8 @@ public class SparkApp {
             submitParams.getJars().forEach(launcher::addJar);
             submitParams.getFiles().forEach(launcher::addFile);
             submitParams.getPyFiles().forEach(launcher::addPyFile);
-            submitParams.getConf().forEach(launcher::setConf);
             extraConfiguration.forEach(launcher::setConf);
+            submitParams.getConf().forEach(launcher::setConf);
             launcher.setConf(DRIVER_MEMORY, submitParams.getDriverMemory())
                     .setConf("spark.driver.cores", String.valueOf(submitParams.getDriverCores()))
                     .setConf(EXECUTOR_CORES, String.valueOf(submitParams.getExecutorCores()))

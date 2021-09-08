@@ -41,7 +41,9 @@ public class KubernetesBackend implements Backend {
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.submission.waitAppCompletion", "false",
-                "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort())
+                "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
+                // TODO: Replace with configurable image
+                "spark.kubernetes.container.image", "218320193259.dkr.ecr.eu-central-1.amazonaws.com/spark-cdp:3.0.3"
         );
     }
 
