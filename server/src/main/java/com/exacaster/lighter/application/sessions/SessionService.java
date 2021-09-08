@@ -38,7 +38,7 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params) {
-        var submitParams = params.withFile(shellFilePath);
+        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), shellFilePath);
         var entity = ApplicationBuilder.builder()
                 .setId(UUID.randomUUID().toString())
                 .setType(ApplicationType.SESSION)

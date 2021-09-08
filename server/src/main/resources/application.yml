@@ -18,6 +18,7 @@ lighter:
 
 # Micronaut specific configs
 jackson:
+    serializationInclusion: ALWAYS
     serialization:
         writeDatesAsTimestamps: false
 

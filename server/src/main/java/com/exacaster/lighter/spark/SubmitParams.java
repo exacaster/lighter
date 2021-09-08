@@ -56,7 +56,7 @@ public class SubmitParams {
         this.conf = ofNullable(conf).orElse(Map.of());
     }
 
-    public SubmitParams withFile(String file) {
+    public SubmitParams withNameAndFile(String name, String file) {
         return new SubmitParams(name, file, master, mainClass, numExecutors, executorCores, executorMemory, driverCores,
                 driverMemory, args, pyFiles, files, jars, conf);
     }

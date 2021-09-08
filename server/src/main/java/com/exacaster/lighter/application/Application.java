@@ -52,7 +52,7 @@ public class Application implements Entity {
     public String getAppInfo() {
         return appInfo;
     }
-
+    
     public List<String> getLog() {
         return log;
     }

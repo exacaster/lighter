@@ -32,6 +32,17 @@ class Factories {
                 .build()
     }
 
+    static newSession() {
+        ApplicationBuilder.builder().setAppId("app123")
+                .setType(ApplicationType.SESSION)
+                .setState(ApplicationState.NOT_STARTED)
+                .setAppInfo("info")
+                .setCreatedAt(LocalDateTime.MAX)
+                .setId("1")
+                .setSubmitParams(null)
+                .build()
+    }
+
     static applicationInfo(id) {
         new ApplicationInfo(ApplicationState.ERROR, id)
     }
