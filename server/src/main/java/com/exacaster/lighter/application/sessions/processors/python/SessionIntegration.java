@@ -6,7 +6,7 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.scheduling.annotation.Async;
-import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,7 +80,7 @@ public class SessionIntegration {
     @Async
     public void runServer(StartupEvent event) {
         var server = new GatewayServer.GatewayServerBuilder(this)
-                .javaAddress(InetAddress.getLoopbackAddress())
+                .javaAddress(new InetSocketAddress(0).getAddress())
                 .javaPort(gatewayPort)
                 .build();
         server.start();
