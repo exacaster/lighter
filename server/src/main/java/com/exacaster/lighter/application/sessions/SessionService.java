@@ -8,7 +8,6 @@ import com.exacaster.lighter.application.sessions.processors.python.SessionInteg
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
-import java.io.File;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -17,20 +16,14 @@ import javax.inject.Singleton;
 
 @Singleton
 public class SessionService {
-
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
     private final SessionIntegration entrypoint;
-    private final String shellFilePath;
 
     public SessionService(ApplicationStorage applicationStorage, Backend backend, SessionIntegration entrypoint) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
         this.entrypoint = entrypoint;
-
-        ClassLoader classLoader = getClass().getClassLoader();
-        File file = new File(classLoader.getResource("shell_wrapper.py").getFile());
-        this.shellFilePath = file.getAbsolutePath();
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -38,7 +31,7 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params) {
-        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), "file://" + shellFilePath);
+        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), backend.getSessionJobResources());
         var entity = ApplicationBuilder.builder()
                 .setId(UUID.randomUUID().toString())
                 .setType(ApplicationType.SESSION)

@@ -9,6 +9,7 @@ import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationWrapper;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
+import java.io.File;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -58,6 +59,13 @@ public class YarnBackend implements Backend {
         return getYarnApplicationId(application).map(client::getApplication)
                 .map(YarnApplicationResponse::getApp)
                 .map(a -> new Log(application.getId(), a.getTrackingUrl()));
+    }
+
+    @Override
+    public String getSessionJobResources() {
+        ClassLoader classLoader = getClass().getClassLoader();
+        File file = new File(classLoader.getResource("shell_wrapper.py").getFile());
+        return file.getAbsolutePath();
     }
 
     @Override

@@ -12,6 +12,8 @@ public interface Backend {
 
     Optional<Log> getLogs(Application application);
 
+    String getSessionJobResources();
+
     void kill(Application application);
 
     default Map<String, String> getSubmitConfiguration(Application application) {

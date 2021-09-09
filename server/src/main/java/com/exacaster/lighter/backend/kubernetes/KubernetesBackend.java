@@ -74,6 +74,11 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
+    public String getSessionJobResources() {
+        return "http://lighter.spark:8080//lighter/jobs/shell_wrapper.py";
+    }
+
+    @Override
     public void kill(Application application) {
         var internalApplicationId = application.getId();
         this.getDriverPod(internalApplicationId)

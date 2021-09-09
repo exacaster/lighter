@@ -1,12 +1,10 @@
 package com.exacaster.lighter;
 
-import io.fabric8.zjsonpatch.internal.guava.Strings;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.core.io.ResourceResolver;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.server.types.files.StreamedFile;
 import java.util.Optional;
 
@@ -25,6 +23,12 @@ public class IndexController {
     public Optional<StreamedFile> forward(Optional<String> path) {
         var strPath = path.filter(p -> p.contains(".")).orElse("index.html");
         return res.getResource(this.path + "/" + strPath)
+                .map(StreamedFile::new);
+    }
+
+    @Get(value = "/jobs/shell_wrapper.py", consumes = MediaType.ALL)
+    public Optional<StreamedFile> job() {
+        return res.getResource("classpath:shell_wrapper.py")
                 .map(StreamedFile::new);
     }
 
