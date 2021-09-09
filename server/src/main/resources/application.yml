@@ -14,6 +14,10 @@ lighter:
               "spark.kubernetes.authenticate.driver.serviceAccountName": spark
               "spark.kubernetes.driver.podTemplateFile": "/home/app/k8s/driver_pod_template.yaml"
               "spark.kubernetes.executor.podTemplateFile": "/home/app/k8s/executor_pod_template.yaml"
+              "spark.kubernetes.file.upload.path": "s3a://stagecat-catfarm/lighter"
+              "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+              "spark.hadoop.fs.s3a.fast.upload": "true"
+              "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
     storage:
         jdbc:
             enabled: true
