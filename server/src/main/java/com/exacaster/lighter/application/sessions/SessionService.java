@@ -38,7 +38,7 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params) {
-        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), shellFilePath);
+        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), "file://" + shellFilePath);
         var entity = ApplicationBuilder.builder()
                 .setId(UUID.randomUUID().toString())
                 .setType(ApplicationType.SESSION)
@@ -47,6 +47,11 @@ public class SessionService {
                 .setCreatedAt(LocalDateTime.now())
                 .build();
         return applicationStorage.saveApplication(entity);
+    }
+
+    public List<Application> fetchRunning() {
+        return applicationStorage
+                .findApplicationsByStates(ApplicationType.SESSION, ApplicationState.runningStates(), Integer.MAX_VALUE);
     }
 
     public List<Application> fetchByState(ApplicationState state, Integer limit) {

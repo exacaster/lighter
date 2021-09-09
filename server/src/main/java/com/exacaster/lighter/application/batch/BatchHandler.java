@@ -3,16 +3,12 @@ package com.exacaster.lighter.application.batch;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
-import com.exacaster.lighter.application.ApplicationBuilder;
-import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
+import com.exacaster.lighter.application.ApplicationStatusHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
-import com.exacaster.lighter.log.Log;
-import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
-import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
@@ -25,14 +21,15 @@ public class BatchHandler {
 
     private final Backend backend;
     private final BatchService batchService;
-    private final LogService logService;
     private final AppConfiguration appConfiguration;
+    private final ApplicationStatusHandler statusTracker;
 
-    public BatchHandler(Backend backend, BatchService batchService, LogService logService, AppConfiguration appConfiguration) {
+    public BatchHandler(Backend backend, BatchService batchService, AppConfiguration appConfiguration,
+            ApplicationStatusHandler statusTracker) {
         this.backend = backend;
         this.batchService = batchService;
-        this.logService = logService;
         this.appConfiguration = appConfiguration;
+        this.statusTracker = statusTracker;
     }
 
     public void launch(Application application, Consumer<Throwable> errorHandler) {
@@ -48,68 +45,19 @@ public class BatchHandler {
         batchService.fetchByState(ApplicationState.NOT_STARTED, emptySlots)
                 .forEach(batch -> {
                     LOG.info("Launching {}", batch);
-                    batchService.update(ApplicationBuilder.builder(batch)
-                            .setState(ApplicationState.STARTING)
-                            .setContactedAt(LocalDateTime.now())
-                            .build());
-                    launch(batch, error -> {
-                        var appId = backend.getInfo(batch).map(ApplicationInfo::getApplicationId)
-                                .orElse(null);
-                        batchService.update(
-                                ApplicationBuilder.builder(batch)
-                                        .setState(ApplicationState.ERROR)
-                                        .setAppId(appId)
-                                        .setContactedAt(LocalDateTime.now())
-                                        .build());
-
-                        backend.getLogs(batch).ifPresentOrElse(
-                                logService::save,
-                                () -> logService.save(new Log(batch.getId(), error.toString()))
-                        );
-                    });
+                    statusTracker.processApplicationStarting(batch);
+                    launch(batch, error -> statusTracker.processApplicationError(batch, error));
                 });
-    }
-
-    @Scheduled(fixedRate = "2m")
-    @Transactional
-    public void processRunningBatches() {
-        batchService.fetchRunning()
-                .forEach(batch ->
-                        backend.getInfo(batch).ifPresentOrElse(
-                                info -> trackStatus(batch, info),
-                                () -> checkZombie(batch)
-                        )
-                );
-    }
-
-    private void trackStatus(Application batch, com.exacaster.lighter.application.ApplicationInfo info) {
-        LOG.info("Tracking {}, info: {}", batch, info);
-        batchService.update(ApplicationBuilder.builder(batch)
-                .setState(info.getState())
-                .setContactedAt(LocalDateTime.now())
-                .setAppId(info.getApplicationId())
-                .build());
-
-        if (info.getState().isComplete()) {
-            backend.getLogs(batch).ifPresent(logService::save);
-        }
     }
 
     private Integer countEmptySlots() {
         return Math.max(this.appConfiguration.getMaxRunningJobs() - this.batchService.fetchRunning().size(), 0);
     }
 
-    private void checkZombie(Application batch) {
-        LOG.info("No info for {}", batch);
-        if (batch.getContactedAt() != null && batch.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
-            LOG.info("Assuming zombie ({})", batch.getId());
-            batchService.update(ApplicationBuilder.builder(batch)
-                    .setState(ApplicationState.ERROR)
-                    .build());
-            logService.save(new Log(batch.getId(),
-                    "Application was not reachable for 10 minutes, so we assume something went wrong"));
-        }
+    @Scheduled(fixedRate = "2m")
+    @Transactional
+    public void trackRunning() {
+        statusTracker.processApplicationsRunning(batchService.fetchRunning());
     }
-
 
 }
