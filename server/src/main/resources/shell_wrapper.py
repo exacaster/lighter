@@ -43,7 +43,7 @@ class GatewayController(Controller):
         super().__init__(session_id)
         from py4j.java_gateway import JavaGateway, GatewayParameters
         from py4j.java_collections import MapConverter
-        port = os.environ.get("PY_GATEWAY_PORT")
+        port = int(os.environ.get("PY_GATEWAY_PORT"))
         host = os.environ.get("PY_GATEWAY_HOST")
         self.gateway = JavaGateway(gateway_parameters=GatewayParameters(address=host, port=port))
         self.endpoint = self.gateway.entry_point
