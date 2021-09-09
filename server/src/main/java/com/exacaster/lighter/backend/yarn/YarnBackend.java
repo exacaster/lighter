@@ -79,7 +79,8 @@ public class YarnBackend implements Backend {
         return Map.of(
                 "spark.yarn.tags", "lighter," + application.getAppId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
-                "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort())
+                "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
+                "spark.yarn.appMasterEnv.LIGHTER_SESSION_ID", application.getId()
         );
     }
 

@@ -4,12 +4,14 @@ import io
 import ast
 import traceback
 import os
+import logging
 
 sys_stdin = sys.stdin
 sys_stdout = sys.stdout
 
 is_test = os.environ.get("LIGHTER_TEST") == "true"
-
+logging.basicConfig(stream=sys.stdout, level= logging.FATAL if is_test else logging.INFO)
+log = logging.getLogger("session")
 
 class Controller:
     def __init__(self, session_id):
@@ -47,7 +49,11 @@ class GatewayController(Controller):
         self.map_converter = MapConverter()
 
     def read(self):
-        return [stmt.getCode() for stmt in self.endpoint.statementsToProcess(self.session_id)]
+        try:
+            return [stmt.getCode() for stmt in self.endpoint.statementsToProcess(self.session_id)]
+        except Exception as e:
+            log.exception(e)
+            return []
 
     def write(self, id, result):
         self.endpoint.handleResponse(
@@ -82,6 +88,7 @@ class CommandHandler:
             self._exec_then_eval(code)
             return {"content": {"text/plain": str(sys.stdout.getvalue()).rstrip()}}
         except Exception as e:
+            log.exception(e)
             return self._error_response(e)
 
 
@@ -90,12 +97,15 @@ def main():
     sys.stderr = io.StringIO()
 
     session_id = os.environ.get("LIGHTER_SESSION_ID")
+    log.info(f"Initiating session {session_id}")
     controller = TestController(
         session_id) if is_test else GatewayController(session_id)
     handler = CommandHandler()
 
+    log.info("Starting session loop")
     while True:
         for command in controller.read():
+            logging.info(f"Processing command {command}")
             result = handler.exec(command)
             response = json.dumps(result)
             controller.write(command["id"], response)
