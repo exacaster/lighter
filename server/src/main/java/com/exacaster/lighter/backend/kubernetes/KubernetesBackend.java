@@ -13,6 +13,7 @@ import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -37,12 +38,15 @@ public class KubernetesBackend implements Backend {
 
     @Override
     public Map<String, String> getSubmitConfiguration(Application application) {
+        URI uri = URI.create(conf.getUrl());
+        var host = uri.getHost();
         var props = new HashMap<>(Map.of(
                 "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.submission.waitAppCompletion", "false",
                 "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
+                "spark.kubernetes.driverEnv.PY_GATEWAY_HOST", host,
                 "spark.kubernetes.driverEnv.LIGHTER_SESSION_ID", application.getId()
         ));
         props.putAll(properties.getSubmitProps());
@@ -76,7 +80,7 @@ public class KubernetesBackend implements Backend {
 
     @Override
     public String getSessionJobResources() {
-        return "http://lighter.spark:8080/lighter/jobs/shell_wrapper.py";
+        return conf.getUrl() + "/lighter/jobs/shell_wrapper.py";
     }
 
     @Override

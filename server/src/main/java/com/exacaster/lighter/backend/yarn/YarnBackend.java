@@ -10,6 +10,7 @@ import com.exacaster.lighter.backend.yarn.resources.YarnApplicationWrapper;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import java.io.File;
+import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
@@ -76,10 +77,13 @@ public class YarnBackend implements Backend {
 
     @Override
     public Map<String, String> getSubmitConfiguration(Application application) {
+        URI uri = URI.create(conf.getUrl());
+        var host = uri.getHost();
         return Map.of(
                 "spark.yarn.tags", "lighter," + application.getAppId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
                 "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
+                "spark.yarn.appMasterEnv.PY_GATEWAY_HOST", host,
                 "spark.yarn.appMasterEnv.LIGHTER_SESSION_ID", application.getId()
         );
     }
