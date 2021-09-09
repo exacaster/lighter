@@ -2,17 +2,17 @@ import {Code} from '@chakra-ui/layout';
 import React, {useMemo} from 'react';
 import {useParams} from 'react-router';
 import PageHeading from '../components/PageHeading';
-import {useBatchLog, useBatch} from '../hooks/batch';
 import styles from './Batch.module.scss';
 import {Table, Thead, Tbody, Tr, Th, Td, Box} from '@chakra-ui/react';
+import {useSession, useSessionLog} from '../hooks/session';
 
-const Batch: React.FC = () => {
+const Session: React.FC = () => {
   const {id} = useParams<{id: string}>();
-  const {data: logs} = useBatchLog(id);
-  const {data: batch} = useBatch(id);
+  const {data: logs} = useSessionLog(id);
+  const {data: session} = useSession(id);
 
   const appInfo = useMemo(() => {
-    if (!batch) {
+    if (!session) {
       return null;
     }
 
@@ -28,41 +28,41 @@ const Batch: React.FC = () => {
           <Tbody>
             <Tr>
               <Td>Name</Td>
-              <Td>{batch.submitParams.name}</Td>
+              <Td>{session.submitParams.name}</Td>
             </Tr>
             <Tr>
               <Td>File</Td>
-              <Td>{batch.submitParams.file}</Td>
+              <Td>{session.submitParams.file}</Td>
             </Tr>
             <Tr>
               <Td>Driver Cores</Td>
-              <Td>{batch.submitParams.driverCores}</Td>
+              <Td>{session.submitParams.driverCores}</Td>
             </Tr>
             <Tr>
               <Td>Driver Memory</Td>
-              <Td>{batch.submitParams.driverMemory}</Td>
+              <Td>{session.submitParams.driverMemory}</Td>
             </Tr>
             <Tr>
               <Td>Number Of Executors</Td>
-              <Td>{batch.submitParams.numExecutors}</Td>
+              <Td>{session.submitParams.numExecutors}</Td>
             </Tr>
             <Tr>
               <Td>Executor Cores</Td>
-              <Td>{batch.submitParams.executorCores}</Td>
+              <Td>{session.submitParams.executorCores}</Td>
             </Tr>
             <Tr>
               <Td>Executor Memory</Td>
-              <Td>{batch.submitParams.executorMemory}</Td>
+              <Td>{session.submitParams.executorMemory}</Td>
             </Tr>
             <Tr>
               <Td>Args</Td>
-              <Td>{batch.submitParams.args.join(', ')}</Td>
+              <Td>{session.submitParams.args.join(', ')}</Td>
             </Tr>
             <Tr>
               <Th>Config</Th>
               <Th>Value</Th>
             </Tr>
-            {Object.entries(batch.submitParams.conf).map(([name, val]) => (
+            {Object.entries(session.submitParams.conf).map(([name, val]) => (
               <Tr key={name}>
                 <Td>{name}</Td>
                 <Td>{val}</Td>
@@ -72,15 +72,15 @@ const Batch: React.FC = () => {
         </Table>
       </Box>
     );
-  }, [batch]);
+  }, [session]);
 
   return (
     <div className={styles.batch}>
-      <PageHeading>Batch {id}</PageHeading>
+      <PageHeading>Session {id}</PageHeading>
       <Code className={styles.logs}>{logs?.log}</Code>
       {appInfo}
     </div>
   );
 };
 
-export default Batch;
+export default Session;

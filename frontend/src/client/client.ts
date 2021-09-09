@@ -28,8 +28,24 @@ export class Api {
     return this.delete(`/api/batches/${id}`);
   }
 
-  fetchApplicationLog(id: string): Promise<ApplicationLog> {
+  fetchBatchLog(id: string): Promise<ApplicationLog> {
     return this.get(`/api/batches/${id}/log`);
+  }
+
+  fetchSessions(size: number, from: number): Promise<BatchPage> {
+    return this.get(`/api/sessions?size=${size}&from=${from}`);
+  }
+
+  fetchSession(id: string): Promise<Application> {
+    return this.get(`/api/sessions/${id}`);
+  }
+
+  deleteSession(id: string) {
+    return this.delete(`/api/sessions/${id}`);
+  }
+
+  fetchSessionLog(id: string): Promise<ApplicationLog> {
+    return this.get(`/api/sessions/${id}/log`);
   }
 
   fetchConfiguration(): Promise<Configuration> {

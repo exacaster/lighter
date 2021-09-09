@@ -9,15 +9,15 @@ lighter:
         namespace: spark
         max-log-size: 500
         submit-props:
-              "spark.kubernetes.container.image": "218320193259.dkr.ecr.eu-central-1.amazonaws.com/hellcat:0.0.2796"
-              "spark.kubernetes.namespace": spark
-              "spark.kubernetes.authenticate.driver.serviceAccountName": spark
-              "spark.kubernetes.driver.podTemplateFile": "/home/app/k8s/driver_pod_template.yaml"
-              "spark.kubernetes.executor.podTemplateFile": "/home/app/k8s/executor_pod_template.yaml"
-              "spark.kubernetes.file.upload.path": "s3a://stagecat-catfarm/lighter"
-              "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
-              "spark.hadoop.fs.s3a.fast.upload": "true"
-              "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
+          "spark.kubernetes.container.image": "218320193259.dkr.ecr.eu-central-1.amazonaws.com/hellcat:0.0.2796"
+          "spark.kubernetes.namespace": spark
+          "spark.kubernetes.authenticate.driver.serviceAccountName": spark
+          "spark.kubernetes.driver.podTemplateFile": "/home/app/k8s/driver_pod_template.yaml"
+          "spark.kubernetes.executor.podTemplateFile": "/home/app/k8s/executor_pod_template.yaml"
+          "spark.kubernetes.file.upload.path": "s3a://stagecat-catfarm/lighter"
+          "spark.hadoop.fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+          "spark.hadoop.fs.s3a.fast.upload": "true"
+          "spark.driver.extraJavaOptions": "-Divy.cache.dir=/tmp -Divy.home=/tmp"
     storage:
         jdbc:
             enabled: true

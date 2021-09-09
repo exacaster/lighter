@@ -14,7 +14,7 @@ const statusMap: {[key: string]: BadgeProps['colorScheme']} = {
 };
 
 const AppStatus: React.FC<{status: string}> = ({status}) => {
-  return <Badge colorScheme={statusMap[status]}>{status}</Badge>;
+  return <Badge colorScheme={statusMap[status.toUpperCase()]}>{status}</Badge>;
 };
 
 export default AppStatus;

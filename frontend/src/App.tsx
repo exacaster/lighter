@@ -11,6 +11,7 @@ import {extendTheme} from '@chakra-ui/react';
 import '@fontsource/open-sans/700.css';
 import '@fontsource/open-sans/600.css';
 import '@fontsource/open-sans';
+import Session from './pages/Session';
 
 const theme = extendTheme({
   fonts: {
@@ -36,6 +37,9 @@ function App() {
         <Router basename={process.env.PUBLIC_URL}>
           <Layout>
             <Switch>
+              <Route path="/sessions/:id">
+                <Session />
+              </Route>
               <Route path="/sessions">
                 <Sessions />
               </Route>

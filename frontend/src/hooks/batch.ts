@@ -17,7 +17,7 @@ export function useBatchDelete() {
   return useMutation((id: string) => api.deleteBatch(id), {onSuccess: (_) => client.refetchQueries(['batches'])});
 }
 
-export function useApplicationLog(id: string) {
+export function useBatchLog(id: string) {
   const api = useApi();
-  return useQuery(['logs', id], () => api.fetchApplicationLog(id));
+  return useQuery(['logs', id], () => api.fetchBatchLog(id));
 }
