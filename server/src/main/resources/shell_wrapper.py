@@ -124,14 +124,20 @@ def main():
     handler = CommandHandler(init_globals(session_id))
 
     log.info("Starting session loop")
-    while True:
-        for command in controller.read():
-            log.info(f"Processing command {command}")
-            result = handler.exec(command)
-            response = json.dumps(result)
-            log.info(f"Sending response {response}")
-            controller.write(command["id"], response)
-            log.info("Response sent")
+    try:
+        while True:
+            for command in controller.read():
+                log.info(f"Processing command {command}")
+                result = handler.exec(command)
+                response = json.dumps(result)
+                log.info(f"Sending response {response}")
+                controller.write(command["id"], response)
+                log.info("Response sent")
+    except:
+        traceback.print_exc()
+        log.info("Exiting")
+        return 1
+
 
 
 if __name__ == '__main__':
