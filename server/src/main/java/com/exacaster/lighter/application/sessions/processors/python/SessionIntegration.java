@@ -1,7 +1,9 @@
 package com.exacaster.lighter.application.sessions.processors.python;
 
+import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.processors.Output;
+import com.exacaster.lighter.application.sessions.processors.StatementStatusChecker;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -16,7 +18,7 @@ import javax.inject.Singleton;
 import py4j.GatewayServer;
 
 @Singleton
-public class SessionIntegration {
+public class SessionIntegration implements StatementStatusChecker {
 
     private final Map<String, List<Statement>> statements = new HashMap<>();
     private final Integer gatewayPort;
@@ -84,5 +86,14 @@ public class SessionIntegration {
                 .javaPort(gatewayPort)
                 .build();
         server.start();
+    }
+
+    @Override
+    public boolean hasWaitingStatement(Application application) {
+        var appStatements = statements.get(application.getAppId());
+        if (appStatements == null) {
+            return false;
+        }
+        return appStatements.stream().allMatch(st -> "waiting".equals(st.getState()));
     }
 }

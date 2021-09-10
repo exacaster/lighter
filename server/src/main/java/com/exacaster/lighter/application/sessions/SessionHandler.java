@@ -5,10 +5,12 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
+import com.exacaster.lighter.application.sessions.processors.StatementStatusChecker;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 import javax.inject.Singleton;
 import javax.transaction.Transactional;
 import org.slf4j.Logger;
@@ -19,12 +21,16 @@ public class SessionHandler {
 
     private final SessionService sessionService;
     private final Backend backend;
+    private final StatementStatusChecker statementStatusChecker;
     private final ApplicationStatusHandler statusTracker;
 
-    public SessionHandler(SessionService sessionService, Backend backend,
+    public SessionHandler(SessionService sessionService,
+            Backend backend,
+            StatementStatusChecker statementStatusChecker,
             ApplicationStatusHandler statusTracker) {
         this.sessionService = sessionService;
         this.backend = backend;
+        this.statementStatusChecker = statementStatusChecker;
         this.statusTracker = statusTracker;
     }
 
@@ -48,6 +54,13 @@ public class SessionHandler {
     @Scheduled(fixedRate = "2m")
     @Transactional
     public void trackRunning() {
-        statusTracker.processApplicationsRunning(sessionService.fetchRunning());
+        var running = sessionService.fetchRunning();
+
+        var idleAndRunning = running.stream()
+                .collect(Collectors.groupingBy(statementStatusChecker::hasWaitingStatement));
+
+        idleAndRunning.get(false).forEach(statusTracker::processApplicationIdle);
+
+        statusTracker.processApplicationsRunning(idleAndRunning.get(true));
     }
 }

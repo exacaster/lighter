@@ -33,6 +33,17 @@ public class ApplicationStatusHandler {
                 .build());
     }
 
+    public void processApplicationIdle(Application application) {
+        backend.getInfo(application).ifPresentOrElse(
+                info -> {
+                    var state = info.getState().equals(ApplicationState.BUSY) ? ApplicationState.IDLE : info.getState();
+                    var idleInfo = new ApplicationInfo(state, application.getId());
+                    trackStatus(application, idleInfo);
+                },
+                () -> checkZombie(application)
+        );
+    }
+
     public void processApplicationsRunning(Iterable<Application> applications) {
         applications
                 .forEach(app ->
@@ -60,7 +71,7 @@ public class ApplicationStatusHandler {
         );
     }
 
-    private void trackStatus(Application app, com.exacaster.lighter.application.ApplicationInfo info) {
+    private void trackStatus(Application app, ApplicationInfo info) {
         LOG.info("Tracking {}, info: {}", app, info);
         applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                 .setState(info.getState())
