@@ -54,7 +54,7 @@ class GatewayController(Controller):
 
     def read(self):
         try:
-            return [{"code": stmt.getCode()} for stmt in self.endpoint.statementsToProcess(self.session_id)]
+            return [{"id": stmt.getId(), "code": stmt.getCode()} for stmt in self.endpoint.statementsToProcess(self.session_id)]
         except Exception as e:
             log.exception(e)
             return []
