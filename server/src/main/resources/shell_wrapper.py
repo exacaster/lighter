@@ -145,6 +145,7 @@ def main():
             response = json.dumps(result)
             log.info(f"Sending response {response}")
             controller.write(command["id"], response)
+            log.info("Response sent")
 
 
 if __name__ == '__main__':

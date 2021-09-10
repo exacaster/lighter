@@ -1,5 +1,7 @@
 package com.exacaster.lighter.application.sessions.processors.python;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.processors.Output;
@@ -15,10 +17,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import javax.inject.Singleton;
+import org.slf4j.Logger;
 import py4j.GatewayServer;
 
 @Singleton
 public class SessionIntegration implements StatementStatusChecker {
+
+    private static final Logger LOG = getLogger(SessionIntegration.class);
 
     private final Map<String, List<Statement>> statements = new HashMap<>();
     private final Integer gatewayPort;
@@ -38,6 +43,7 @@ public class SessionIntegration implements StatementStatusChecker {
 
     // Used By Py4J
     public void handleResponse(String sessionId, String statementId, Map<String, Object> result) {
+        LOG.debug("Handling response for {}:{} -- {}", sessionId, statementId, result);
         var sessionStatements = statementsToProcess(sessionId);
         sessionStatements.stream()
                 .filter(st -> statementId.equals(st.getId()))
