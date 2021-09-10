@@ -3,6 +3,7 @@ package com.exacaster.lighter.application.sessions;
 import com.exacaster.lighter.application.sessions.processors.Output;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import java.util.StringJoiner;
 
 @Introspected
 public class Statement {
@@ -40,5 +41,15 @@ public class Statement {
 
     public String getState() {
         return state;
+    }
+
+    @Override
+    public String toString() {
+        return new StringJoiner(", ", Statement.class.getSimpleName() + "[", "]")
+                .add("id='" + id + "'")
+                .add("code='" + code + "'")
+                .add("output=" + output)
+                .add("state='" + state + "'")
+                .toString();
     }
 }

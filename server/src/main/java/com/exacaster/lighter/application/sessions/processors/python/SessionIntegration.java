@@ -39,13 +39,15 @@ public class SessionIntegration implements StatementStatusChecker {
         if (result == null) {
             return List.of();
         }
-        return result.stream().filter(statement -> statement.getState().equals("waiting")).collect(Collectors.toList());
+        var statementQueue = result.stream().filter(statement -> statement.getState().equals("waiting")).collect(Collectors.toList());
+        LOG.info("Waiting: {}", statementQueue);
+        return statementQueue;
     }
 
     // Used By Py4J
     public void handleResponse(String sessionId, String statementId, Map<String, Object> result) {
-        LOG.debug("Handling response for {}:{} -- {}", sessionId, statementId, result);
-        var sessionStatements = statementsToProcess(sessionId);
+        LOG.debug("Handling response for {}:{} -- {}", sessionId, statementId);
+        var sessionStatements = statements.get(sessionId);
         sessionStatements.stream()
                 .filter(st -> statementId.equals(st.getId()))
                 .findFirst()
@@ -83,6 +85,7 @@ public class SessionIntegration implements StatementStatusChecker {
 
     public Statement cancelStatement(String id, String statementId) {
         // TODO: Not sure what to do. Send interrupt?
+        LOG.info("Want to cancel: {} : {}", id, statementId);
         return null;
     }
 
