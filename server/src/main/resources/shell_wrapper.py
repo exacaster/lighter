@@ -15,6 +15,13 @@ logging.basicConfig(stream=sys.stdout,
 log = logging.getLogger("session")
 
 
+def setup_output():
+    sys.stdout.close()
+    sys.stderr.close()
+    sys.stdout = io.StringIO()
+    sys.stderr = io.StringIO()
+
+
 class Controller:
     def __init__(self, session_id):
         self.session_id = session_id
@@ -112,9 +119,7 @@ def init_globals(name):
 
 
 def main():
-    sys.stdout = io.StringIO()
-    sys.stderr = io.StringIO()
-
+    setup_output()
     session_id = os.environ.get("LIGHTER_SESSION_ID")
     log.info(f"Initiating session {session_id}")
     controller = TestController(
@@ -124,6 +129,7 @@ def main():
     log.info("Starting session loop")
     try:
         while True:
+            setup_output()
             for command in controller.read():
                 log.info(f"Processing command {command}")
                 result = handler.exec(command)
