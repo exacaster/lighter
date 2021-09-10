@@ -95,6 +95,18 @@ class CommandHandler:
             log.exception(e)
             return self._error_response(e)
 
+def init_globals(name):
+  if is_test:
+    return {}
+
+  from pyspark.sql import SparkSession
+
+  spark = SparkSession \
+    .builder \
+    .appName(name) \
+    .getOrCreate()
+
+  return {"spark": spark}
 
 def init_globals(name):
     if is_test:
