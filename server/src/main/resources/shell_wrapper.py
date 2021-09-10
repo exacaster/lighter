@@ -113,20 +113,6 @@ def init_globals(name):
     return {"spark": spark}
 
 
-def init_globals(name):
-    if is_test:
-        return {}
-
-    from pyspark.sql import SparkSession
-
-    spark = SparkSession \
-        .builder \
-        .appName(name) \
-        .getOrCreate()
-
-    return {"spark": spark}
-
-
 def main():
     sys.stdout = io.StringIO()
     sys.stderr = io.StringIO()
