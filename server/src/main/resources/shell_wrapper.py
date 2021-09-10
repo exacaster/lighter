@@ -134,7 +134,8 @@ def main():
                 controller.write(command["id"], response)
                 log.info("Response sent")
     except:
-        traceback.print_exc()
+        exc_type, exc_value, exc_tb = sys.exc_info()
+        log.info(f"Error: {traceback.format_exception(exc_type, exc_value, exc_tb)}")
         log.info("Exiting")
         return 1
 
