@@ -36,7 +36,7 @@ class TestController(Controller):
             return []
 
     def write(self, id, result):
-        print(result, file=sys_stdout)
+        print(json.dumps(result), file=sys_stdout)
         sys_stdout.flush()
 
 
@@ -47,10 +47,9 @@ class GatewayController(Controller):
         from py4j.java_collections import MapConverter
         port = int(os.environ.get("PY_GATEWAY_PORT"))
         host = os.environ.get("PY_GATEWAY_HOST")
-        self.gateway = JavaGateway(
-            gateway_parameters=GatewayParameters(address=host, port=port))
+        self.gateway = JavaGateway(gateway_parameters=GatewayParameters(
+            address=host, port=port, auto_convert=True))
         self.endpoint = self.gateway.entry_point
-        self.map_converter = MapConverter()
 
     def read(self):
         try:
@@ -61,8 +60,7 @@ class GatewayController(Controller):
 
     def write(self, id, result):
         try:
-            self.endpoint.handleResponse(
-                self.session_id, id, self.map_converter.convert(result, self.gateway))
+            self.endpoint.handleResponse(self.session_id, id, result)
         except Exception as e:
             log.exception(e)
 
@@ -129,16 +127,15 @@ def main():
             for command in controller.read():
                 log.info(f"Processing command {command}")
                 result = handler.exec(command)
-                response = json.dumps(result)
-                log.info(f"Sending response {response}")
-                controller.write(command["id"], response)
+                log.info(f"Sending response {result}")
+                controller.write(command["id"], result)
                 log.info("Response sent")
     except:
         exc_type, exc_value, exc_tb = sys.exc_info()
-        log.info(f"Error: {traceback.format_exception(exc_type, exc_value, exc_tb)}")
+        log.info(
+            f"Error: {traceback.format_exception(exc_type, exc_value, exc_tb)}")
         log.info("Exiting")
         return 1
-
 
 
 if __name__ == '__main__':
