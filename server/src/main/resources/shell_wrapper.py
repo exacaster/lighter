@@ -60,8 +60,11 @@ class GatewayController(Controller):
             return []
 
     def write(self, id, result):
-        self.endpoint.handleResponse(
-            self.session_id, id, self.map_converter.convert(result, self.gateway))
+        try:
+            self.endpoint.handleResponse(
+                self.session_id, id, self.map_converter.convert(result, self.gateway))
+        except Exception as e:
+            log.exception(e)
 
 
 class CommandHandler:
@@ -95,18 +98,20 @@ class CommandHandler:
             log.exception(e)
             return self._error_response(e)
 
+
 def init_globals(name):
-  if is_test:
-    return {}
+    if is_test:
+        return {}
 
-  from pyspark.sql import SparkSession
+    from pyspark.sql import SparkSession
 
-  spark = SparkSession \
-    .builder \
-    .appName(name) \
-    .getOrCreate()
+    spark = SparkSession \
+        .builder \
+        .appName(name) \
+        .getOrCreate()
 
-  return {"spark": spark}
+    return {"spark": spark}
+
 
 def init_globals(name):
     if is_test:
@@ -135,9 +140,10 @@ def main():
     log.info("Starting session loop")
     while True:
         for command in controller.read():
-            logging.info(f"Processing command {command}")
+            log.info(f"Processing command {command}")
             result = handler.exec(command)
             response = json.dumps(result)
+            log.info(f"Sending response {response}")
             controller.write(command["id"], response)
 
 
