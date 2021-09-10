@@ -51,7 +51,7 @@ class GatewayController(Controller):
 
     def read(self):
         try:
-            return [stmt.getCode() for stmt in self.endpoint.statementsToProcess(self.session_id)]
+            return [{"code": stmt.getCode()} for stmt in self.endpoint.statementsToProcess(self.session_id)]
         except Exception as e:
             log.exception(e)
             return []
@@ -63,8 +63,8 @@ class GatewayController(Controller):
 
 class CommandHandler:
 
-    def __init__(self) -> None:
-        self.globals = {}
+    def __init__(self, globals) -> None:
+        self.globals = globals
 
     def _error_response(self, error):
         exc_type, exc_value, exc_tb = sys.exc_info()
@@ -92,6 +92,18 @@ class CommandHandler:
             log.exception(e)
             return self._error_response(e)
 
+def init_globals(name):
+  if is_test:
+    return {}
+
+  from pyspark.sql import SparkSession
+
+  spark = SparkSession \
+    .builder \
+    .appName(name) \
+    .getOrCreate()
+
+  return {"spark": spark}
 
 def main():
     sys.stdout = io.StringIO()
@@ -101,7 +113,7 @@ def main():
     log.info(f"Initiating session {session_id}")
     controller = TestController(
         session_id) if is_test else GatewayController(session_id)
-    handler = CommandHandler()
+    handler = CommandHandler(init_globals(session_id))
 
     log.info("Starting session loop")
     while True:
