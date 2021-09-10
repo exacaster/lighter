@@ -1,5 +1,6 @@
 package com.exacaster.lighter.application;
 
+import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.backend.Backend;
@@ -36,7 +37,7 @@ public class ApplicationStatusHandler {
     public void processApplicationIdle(Application application) {
         backend.getInfo(application).ifPresentOrElse(
                 info -> {
-                    var state = info.getState().equals(ApplicationState.BUSY) ? ApplicationState.IDLE : info.getState();
+                    var state = adjustState(true, info.getState());
                     var idleInfo = new ApplicationInfo(state, application.getId());
                     trackStatus(application, idleInfo);
                 },

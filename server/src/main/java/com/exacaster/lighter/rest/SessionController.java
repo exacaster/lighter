@@ -46,7 +46,8 @@ public class SessionController {
 
     @Get("/{id}")
     public Optional<Application> get(@PathVariable String id) {
-        return sessionService.fetchOne(id);
+        // Fetch with live state, to make sessions faster
+        return sessionService.fetchOne(id, true);
     }
 
     @Delete("/{id}")

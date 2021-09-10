@@ -127,7 +127,6 @@ def main():
             for command in controller.read():
                 log.info(f"Processing command {command}")
                 result = handler.exec(command)
-                log.info(f"Sending response {result}")
                 controller.write(command["id"], result)
                 log.info("Response sent")
     except:

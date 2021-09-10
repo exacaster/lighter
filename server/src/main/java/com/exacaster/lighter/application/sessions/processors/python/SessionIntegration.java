@@ -52,7 +52,8 @@ public class SessionIntegration implements StatementStatusChecker {
                     var index = sessionStatements.indexOf(st);
                     var error = result.get("error");
                     var status = error != null ? "error" : "available";
-                    var output = new Output(status, 1, (Map<String, Object>) result.get("content"));
+                    var outputStatus = error != null ? "error" : "ok";
+                    var output = new Output(outputStatus, 1, (Map<String, Object>) result.get("content"));
                     var newSt = st.withStateAndOutput(status, output);
                     sessionStatements.set(index, newSt);
                 });

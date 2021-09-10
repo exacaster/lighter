@@ -1,5 +1,7 @@
 package com.exacaster.lighter.application.sessions;
 
+import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
+
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
@@ -18,12 +20,12 @@ import javax.inject.Singleton;
 public class SessionService {
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
-    private final SessionIntegration entrypoint;
+    private final SessionIntegration integration;
 
-    public SessionService(ApplicationStorage applicationStorage, Backend backend, SessionIntegration entrypoint) {
+    public SessionService(ApplicationStorage applicationStorage, Backend backend, SessionIntegration integration) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
-        this.entrypoint = entrypoint;
+        this.integration = integration;
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -56,8 +58,25 @@ public class SessionService {
     }
 
 
+    public Optional<Application> fetchOne(String id, boolean liveStatus) {
+        return applicationStorage.findApplication(id)
+                .map(app -> {
+                    if (app.getState().isComplete() && liveStatus) {
+                        return backend.getInfo(app)
+                                .map(info -> {
+                                    var hasWaiting = integration.hasWaitingStatement(app);
+                                    var state = adjustState(!hasWaiting, info.getState());
+                                    return ApplicationBuilder.builder(app).setState(state).build();
+                                })
+                                .orElse(app);
+                    }
+                    return app;
+                });
+
+    }
+
     public Optional<Application> fetchOne(String id) {
-        return applicationStorage.findApplication(id);
+        return this.fetchOne(id, false);
     }
 
     public void deleteOne(String id) {
@@ -68,14 +87,14 @@ public class SessionService {
     }
 
     public Statement createSession(String id, Statement statement) {
-        return entrypoint.processStatement(id, statement);
+        return integration.processStatement(id, statement);
     }
 
     public Statement getStatement(String id, String statementId) {
-        return entrypoint.getStatement(id, statementId);
+        return integration.getStatement(id, statementId);
     }
 
     public Statement cancelStatement(String id, String statementId) {
-        return entrypoint.cancelStatement(id, statementId);
+        return integration.cancelStatement(id, statementId);
     }
 }
