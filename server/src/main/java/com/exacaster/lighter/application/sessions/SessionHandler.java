@@ -1,5 +1,6 @@
 package com.exacaster.lighter.application.sessions;
 
+import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
@@ -9,6 +10,7 @@ import com.exacaster.lighter.application.sessions.processors.StatementStatusChec
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
+import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import javax.inject.Singleton;
@@ -17,6 +19,7 @@ import org.slf4j.Logger;
 
 @Singleton
 public class SessionHandler {
+
     private static final Logger LOG = getLogger(SessionHandler.class);
 
     private final SessionService sessionService;
@@ -59,8 +62,14 @@ public class SessionHandler {
         var idleAndRunning = running.stream()
                 .collect(Collectors.groupingBy(statementStatusChecker::hasWaitingStatement));
 
-        idleAndRunning.get(false).forEach(statusTracker::processApplicationIdle);
+        selfOrEmpty(selfOrEmpty(idleAndRunning.get(false))).forEach(statusTracker::processApplicationIdle);
 
-        statusTracker.processApplicationsRunning(idleAndRunning.get(true));
+        statusTracker.processApplicationsRunning(
+                selfOrEmpty(idleAndRunning.get(true))
+        );
+    }
+
+    private <T> List<T> selfOrEmpty(List<T> list) {
+        return ofNullable(list).orElse(List.of());
     }
 }

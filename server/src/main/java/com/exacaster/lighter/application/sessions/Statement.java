@@ -1,14 +1,17 @@
 package com.exacaster.lighter.application.sessions;
 
 import com.exacaster.lighter.application.sessions.processors.Output;
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 
+@Introspected
 public class Statement {
     private final String id;
     private final String code;
     private final Output output;
     private final String state;
 
-    public Statement(String id, String code, Output output, String state) {
+    public Statement(@Nullable String id, String code, @Nullable Output output, @Nullable String state) {
         this.id = id;
         this.code = code;
         this.output = output;
