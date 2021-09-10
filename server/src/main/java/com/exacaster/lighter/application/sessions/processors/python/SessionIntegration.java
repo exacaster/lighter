@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import javax.inject.Singleton;
 import org.slf4j.Logger;
 import py4j.GatewayServer;
@@ -38,7 +39,7 @@ public class SessionIntegration implements StatementStatusChecker {
         if (result == null) {
             return List.of();
         }
-        return result;
+        return result.stream().filter(statement -> statement.getState().equals("waiting")).collect(Collectors.toList());
     }
 
     // Used By Py4J
