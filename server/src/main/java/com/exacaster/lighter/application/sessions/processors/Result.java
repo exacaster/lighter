@@ -10,6 +10,8 @@ import java.util.StringJoiner;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Result {
     public static final String TEXT_PLAIN = "text/plain";
+    public static final String APPLICATION_JSON = "application/json";
+    public static final String APPLICATION_TABLE_JSON = "application/vnd.livy.table.v1+json";
 
     private final Map<String, Object> content;
     private final String error;
