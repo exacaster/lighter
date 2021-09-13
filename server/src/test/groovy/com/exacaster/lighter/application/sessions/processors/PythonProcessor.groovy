@@ -18,7 +18,7 @@ class PythonProcessor {
     }
 
     Result process(String code) throws IOException {
-        writer.write(mapper.writeValueAsString(Map.of("code", code, "type", "execute_request")))
+        writer.write(mapper.writeValueAsString(Map.of("code", code, "id", UUID.randomUUID().toString())))
         writer.newLine()
         writer.flush()
 

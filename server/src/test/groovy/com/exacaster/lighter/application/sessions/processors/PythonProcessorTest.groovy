@@ -3,7 +3,7 @@ package com.exacaster.lighter.application.sessions.processors
 import spock.lang.Ignore
 import spock.lang.Specification
 
-import static com.exacaster.lighter.application.sessions.processors.Result.TEXT_PLAIN
+import static com.exacaster.lighter.application.sessions.processors.Result.*
 
 @Ignore
 class PythonProcessorTest extends Specification {
@@ -104,6 +104,30 @@ class PythonProcessorTest extends Specification {
         result.error == "NameError"
         result.message == "name 'x' is not defined"
         result.traceback.size() > 0
+    }
+
+    def "do json magic"() {
+        when:
+        def result = processor.process("""
+        |x = [[1, 'a'], [3, 'b']]
+        |%json x
+        """.stripMargin().stripIndent())
+
+        then:
+        result.content[APPLICATION_JSON] == [[1, "a"], [3, "b"]]
+    }
+
+    def "do table magic"() {
+        when:
+        def result = processor.process(
+            """x = [[1, 'a'], [3, 'b']]
+            |%table x
+            """.stripMargin().stripIndent())
+
+        then:
+        result.content[APPLICATION_TABLE_JSON].headers == [[name:"0", type:"INT_TYPE"], [name:"1", type:"STRING_TYPE"]]
+        result.content[APPLICATION_TABLE_JSON].data == [[1, "a"], [3, "b"]]
+
     }
 
 }
