@@ -1,5 +1,6 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
@@ -10,7 +11,6 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;
-import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import java.net.URI;
@@ -30,10 +30,10 @@ public class KubernetesBackend implements Backend {
     private final KubernetesProperties properties;
     private final AppConfiguration conf;
 
-    public KubernetesBackend(KubernetesProperties properties, AppConfiguration conf) {
+    public KubernetesBackend(KubernetesProperties properties, AppConfiguration conf, KubernetesClient client) {
         this.properties = properties;
         this.conf = conf;
-        this.client = new DefaultKubernetesClient();
+        this.client = client;
     }
 
     @Override
@@ -73,7 +73,7 @@ public class KubernetesBackend implements Backend {
                     } catch (KubernetesClientException e) {
                         LOG.debug("Error Retrieving logs: {}", e.getStatus());
                     }
-                    return Optional.ofNullable(log);
+                    return ofNullable(log);
                 })
                 .map(log -> new Log(internalApplicationId, log));
     }

@@ -51,6 +51,7 @@ public class KubernetesProperties{
                 .add("namespace='" + namespace + "'")
                 .add("maxLogSize=" + maxLogSize)
                 .add("master=" + master)
+                .add("submitProps=" + submitProps)
                 .toString();
     }
 }

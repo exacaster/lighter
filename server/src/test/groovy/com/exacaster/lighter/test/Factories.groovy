@@ -4,6 +4,10 @@ import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationInfo
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
+import com.exacaster.lighter.application.sessions.Statement
+import com.exacaster.lighter.application.sessions.processors.Output
+import com.exacaster.lighter.backend.kubernetes.KubernetesProperties
+import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.log.Log
 import com.exacaster.lighter.spark.SubmitParams
 
@@ -49,5 +53,18 @@ class Factories {
 
     static logs(id) {
         new Log(id, "Error")
+    }
+
+    static statement() {
+        new Statement("id", "code", new Output("error", 1, [:]), "ok")
+    }
+
+    static kubernetesProperties() {
+        new KubernetesProperties("spark", 500, "k8s://kubernetes.default.svc.cluster.local:443",
+                ["spark.kubernetes.namespace": "spark"])
+    }
+
+    static appConfiguration() {
+        new AppConfiguration(10, "http://history", 5432, "http://lighter:8080")
     }
 }

@@ -47,6 +47,7 @@ dependencies {
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"
     testImplementation "io.micronaut:micronaut-http-client"
+    testImplementation "io.fabric8:kubernetes-server-mock:5.7.3"
 }
 
 dockerfile {
