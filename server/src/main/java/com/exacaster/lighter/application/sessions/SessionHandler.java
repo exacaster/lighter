@@ -6,7 +6,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
-import com.exacaster.lighter.application.sessions.processors.StatementStatusChecker;
+import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
@@ -24,12 +24,12 @@ public class SessionHandler {
 
     private final SessionService sessionService;
     private final Backend backend;
-    private final StatementStatusChecker statementStatusChecker;
+    private final StatementHandler statementStatusChecker;
     private final ApplicationStatusHandler statusTracker;
 
     public SessionHandler(SessionService sessionService,
             Backend backend,
-            StatementStatusChecker statementStatusChecker,
+            StatementHandler statementStatusChecker,
             ApplicationStatusHandler statusTracker) {
         this.sessionService = sessionService;
         this.backend = backend;

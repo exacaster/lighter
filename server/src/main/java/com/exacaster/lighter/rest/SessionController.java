@@ -75,7 +75,7 @@ public class SessionController {
     @Post("/{id}/statements")
     @Status(HttpStatus.CREATED)
     public Statement postStatements(@PathVariable String id, @Valid @Body Statement statement) {
-        return sessionService.createSession(id, statement);
+        return sessionService.createStatement(id, statement);
     }
 
     @Get("/{id}/statements/{statementId}")

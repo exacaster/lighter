@@ -6,7 +6,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
-import com.exacaster.lighter.application.sessions.processors.python.SessionIntegration;
+import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
@@ -20,12 +20,12 @@ import javax.inject.Singleton;
 public class SessionService {
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
-    private final SessionIntegration integration;
+    private final StatementHandler statementHandler;
 
-    public SessionService(ApplicationStorage applicationStorage, Backend backend, SessionIntegration integration) {
+    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
-        this.integration = integration;
+        this.statementHandler = statementHandler;
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -64,7 +64,7 @@ public class SessionService {
                     if (app.getState().isComplete() && liveStatus) {
                         return backend.getInfo(app)
                                 .map(info -> {
-                                    var hasWaiting = integration.hasWaitingStatement(app);
+                                    var hasWaiting = statementHandler.hasWaitingStatement(app);
                                     var state = adjustState(!hasWaiting, info.getState());
                                     return ApplicationBuilder.builder(app).setState(state).build();
                                 })
@@ -86,15 +86,15 @@ public class SessionService {
         });
     }
 
-    public Statement createSession(String id, Statement statement) {
-        return integration.processStatement(id, statement);
+    public Statement createStatement(String id, Statement statement) {
+        return statementHandler.processStatement(id, statement);
     }
 
     public Statement getStatement(String id, String statementId) {
-        return integration.getStatement(id, statementId);
+        return statementHandler.getStatement(id, statementId);
     }
 
     public Statement cancelStatement(String id, String statementId) {
-        return integration.cancelStatement(id, statementId);
+        return statementHandler.cancelStatement(id, statementId);
     }
 }

@@ -5,7 +5,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.processors.Output;
-import com.exacaster.lighter.application.sessions.processors.StatementStatusChecker;
+import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -22,14 +22,14 @@ import org.slf4j.Logger;
 import py4j.GatewayServer;
 
 @Singleton
-public class SessionIntegration implements StatementStatusChecker {
+public class PythonSessionIntegration implements StatementHandler {
 
-    private static final Logger LOG = getLogger(SessionIntegration.class);
+    private static final Logger LOG = getLogger(PythonSessionIntegration.class);
 
     private final Map<String, List<Statement>> statements = new HashMap<>();
     private final Integer gatewayPort;
 
-    public SessionIntegration(AppConfiguration conf) {
+    public PythonSessionIntegration(AppConfiguration conf) {
         this.gatewayPort = conf.getPyGatewayPort();
     }
 
@@ -64,6 +64,7 @@ public class SessionIntegration implements StatementStatusChecker {
                 });
     }
 
+    @Override
     public Statement processStatement(String id, Statement statement) {
         // cleanup statements, keep only the last one.
         var sessionStatements = new ArrayList<Statement>();
@@ -74,6 +75,7 @@ public class SessionIntegration implements StatementStatusChecker {
         return newStatement;
     }
 
+    @Override
     public Statement getStatement(String id, String statementId) {
         var sessionStatements = statements.get(id);
         if (sessionStatements != null) {
@@ -85,6 +87,7 @@ public class SessionIntegration implements StatementStatusChecker {
         return null;
     }
 
+    @Override
     public Statement cancelStatement(String id, String statementId) {
         // TODO: Not sure what to do. Send interrupt?
         LOG.info("Want to cancel: {} : {}", id, statementId);
