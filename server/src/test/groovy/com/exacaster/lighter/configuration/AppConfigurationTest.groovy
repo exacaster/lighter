@@ -15,6 +15,7 @@ class AppConfigurationTest extends Specification {
     def "binds properties form yaml"() {
         expect:
         appConfiguration.maxRunningJobs == 5
+        appConfiguration.sessionConfiguration.timeoutMinutes == 90
     }
 
 }

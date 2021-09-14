@@ -4,7 +4,7 @@ lighter:
     frontend-path: file:${FRONTEND_PATH:../frontend/build}
     py-gateway-port: 25333
     url: http://lighter.spark:8080
-    session-configuration:
+    session:
         timeout-minutes: 90
     kubernetes:
         enabled: true

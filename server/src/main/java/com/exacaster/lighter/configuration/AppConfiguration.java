@@ -57,9 +57,11 @@ public class AppConfiguration {
                 .toString();
     }
 
+    @ConfigurationProperties("session")
     public static class SessionConfiguration {
         private final Integer timeoutMinutes;
 
+        @ConfigurationInject
         public SessionConfiguration(@Nullable Integer timeoutMinutes) {
             this.timeoutMinutes = timeoutMinutes;
         }
