@@ -13,6 +13,7 @@ public class Application implements Entity {
     private final ApplicationState state;
     private final String appId;
     private final String appInfo;
+    private final String kind;
     // For Sparkmagic compatibility
     private final List<String> log = List.of();
     private final SubmitParams submitParams;
@@ -30,6 +31,7 @@ public class Application implements Entity {
         this.submitParams = submitParams;
         this.createdAt = createdAt;
         this.contactedAt = contactedAt;
+        this.kind = "pyspark";
     }
 
     @Override
@@ -68,6 +70,10 @@ public class Application implements Entity {
 
     public LocalDateTime getContactedAt() {
         return contactedAt;
+    }
+
+    public String getKind() {
+        return kind;
     }
 
     @Override

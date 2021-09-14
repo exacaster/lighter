@@ -39,5 +39,6 @@ class SessionControllerTest extends Specification {
         then:
         result.log == []
         result.state == "not_started"
+        result.kind == "pyspark"
     }
 }

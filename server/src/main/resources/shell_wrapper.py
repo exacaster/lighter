@@ -9,14 +9,13 @@ sys_stdin = sys.stdin
 sys_stdout = sys.stdout
 
 is_test = os.environ.get("LIGHTER_TEST") == "true"
-logging.basicConfig(stream=sys_stdout,
+logging.basicConfig(stream=sys.stdout,
                     level=logging.FATAL if is_test else logging.INFO)
 log = logging.getLogger("session")
 
 def setup_output():
-    if not is_test:
-        sys.stdout.close()
-        sys.stderr.close()
+    sys.stdout.flush()
+    sys.stderr.flush()
     sys.stdout = io.StringIO()
     sys.stderr = io.StringIO()
 

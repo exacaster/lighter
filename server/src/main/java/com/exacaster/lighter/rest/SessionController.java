@@ -8,6 +8,7 @@ import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.rest.magic.SessionList;
 import com.exacaster.lighter.rest.magic.SparkMagicCompatibility;
 import com.exacaster.lighter.spark.SubmitParams;
+import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -41,7 +42,7 @@ public class SessionController {
 
     @Get
     public Object get(@QueryValue(defaultValue = "0") Integer from,
-            @QueryValue(defaultValue = "100") Integer size, @Header("X-Compatibility-Mode") String mode) {
+            @QueryValue(defaultValue = "100") Integer size, @Nullable @Header("X-Compatibility-Mode") String mode) {
         var sessions = sessionService.fetch(from, size);
         return magicCompatibility.transformOrElse(mode,
                 () -> new SessionList(from, sessions.size(), sessions),
@@ -73,7 +74,7 @@ public class SessionController {
     }
 
     @Get("/{id}/log")
-    public Optional<Object> getLog(@PathVariable String id, @Header("X-Compatibility-Mode") String mode) {
+    public Optional<Object> getLog(@PathVariable String id, @Nullable @Header("X-Compatibility-Mode") String mode) {
         return sessionService.fetchOne(id).flatMap(session -> {
             if (session.getState().isComplete()) {
                 return logService.fetch(id);
