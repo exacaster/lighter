@@ -1,0 +1,3 @@
+# Lighter configuration
+
+TODO
