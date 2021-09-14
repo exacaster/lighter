@@ -8,8 +8,10 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -26,15 +28,18 @@ public class SessionHandler {
     private final Backend backend;
     private final StatementHandler statementStatusChecker;
     private final ApplicationStatusHandler statusTracker;
+    private final AppConfiguration appConfiguration;
 
     public SessionHandler(SessionService sessionService,
             Backend backend,
             StatementHandler statementStatusChecker,
-            ApplicationStatusHandler statusTracker) {
+            ApplicationStatusHandler statusTracker,
+            AppConfiguration appConfiguration) {
         this.sessionService = sessionService;
         this.backend = backend;
         this.statementStatusChecker = statementStatusChecker;
         this.statusTracker = statusTracker;
+        this.appConfiguration = appConfiguration;
     }
 
     public void launch(Application application, Consumer<Throwable> errorHandler) {
@@ -67,6 +72,19 @@ public class SessionHandler {
         statusTracker.processApplicationsRunning(
                 selfOrEmpty(idleAndRunning.get(true))
         );
+    }
+
+    @Scheduled(fixedRate = "10m")
+    public void handleTimeout() {
+        var timeout = appConfiguration.getSessionConfiguration().getTimeoutMinutes();
+        if (timeout != null) {
+            sessionService.fetchRunning()
+                    .stream()
+                    .filter(s -> s.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(timeout)))
+                    .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
+                    .forEach(sessionService::killOne);
+        }
+
     }
 
     private <T> List<T> selfOrEmpty(List<T> list) {

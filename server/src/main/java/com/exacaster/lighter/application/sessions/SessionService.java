@@ -81,9 +81,13 @@ public class SessionService {
 
     public void deleteOne(String id) {
         this.fetchOne(id).ifPresent(app -> {
-            backend.kill(app);
+            killOne(app);
             applicationStorage.deleteApplication(id);
         });
+    }
+
+    public void killOne(Application app) {
+        backend.kill(app);
     }
 
     public Statement createStatement(String id, Statement statement) {

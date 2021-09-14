@@ -16,14 +16,16 @@ public class AppConfiguration {
     private final Integer pyGatewayPort;
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
+    private final SessionConfiguration sessionConfiguration;
 
     @ConfigurationInject
     public AppConfiguration(Integer maxRunningJobs, @Nullable String sparkHistoryServerUrl,
-            Integer pyGatewayPort, String url){
+            Integer pyGatewayPort, String url, SessionConfiguration sessionConfiguration){
         this.maxRunningJobs = maxRunningJobs;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
         this.pyGatewayPort = pyGatewayPort;
         this.url = url;
+        this.sessionConfiguration = sessionConfiguration;
     }
 
     public Integer getMaxRunningJobs() {
@@ -42,11 +44,35 @@ public class AppConfiguration {
         return url;
     }
 
+    public SessionConfiguration getSessionConfiguration() {
+        return sessionConfiguration;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", AppConfiguration.class.getSimpleName() + "[", "]")
                 .add("maxRunningJobs=" + maxRunningJobs)
                 .add("sparkHistoryServerUrl=" + sparkHistoryServerUrl)
+                .add("sessionConfiguration=" + sessionConfiguration)
                 .toString();
+    }
+
+    public static class SessionConfiguration {
+        private final Integer timeoutMinutes;
+
+        public SessionConfiguration(@Nullable Integer timeoutMinutes) {
+            this.timeoutMinutes = timeoutMinutes;
+        }
+
+        public Integer getTimeoutMinutes() {
+            return timeoutMinutes;
+        }
+
+        @Override
+        public String toString() {
+            return new StringJoiner(", ", SessionConfiguration.class.getSimpleName() + "[", "]")
+                    .add("timeoutMinutes=" + timeoutMinutes)
+                    .toString();
+        }
     }
 }
