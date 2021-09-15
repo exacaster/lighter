@@ -1,5 +1,7 @@
 stages:
   - buildServer
+  - publish
+  - publish-ecr
   - publish-image-cdp-ecrs
 
 workflow:
@@ -16,9 +18,12 @@ variables:
     CDP_TRIGGER: 'false'
 
 include:
+  - https://exagit.exacaster.com/exacaster/ci-commons/-/raw/master/.cdp-publish-ecr.yml
   - https://exagit.exacaster.com/exacaster/ci-commons/raw/master/cdp/.publish-image-cdp-ecrs.yml
 
 publish-image-cdp-ecrs:
+  needs:
+    - publishInternal
   variables:
     TAG: $CI_COMMIT_TAG
 
@@ -32,3 +37,21 @@ buildServer:
     ./gradlew dockerBuild -PIMAGE=${SERVER_IMAGE} -PTAG=${TAG}
     ./gradlew dockerPush -PIMAGE=${SERVER_IMAGE} -PTAG=${TAG}
 
+publishInternal:
+  interruptible: true
+  stage: publish
+  script: |
+    export TAG=${CI_COMMIT_TAG}
+    export SERVER_IMAGE="${CI_REGISTRY_IMAGE}/server"
+    docker build . -t ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} --network host --build-arg SERVER_IMAGE=${SERVER_IMAGE} --build-arg SERVER_TAG=${TAG}
+    docker push $CI_REGISTRY_IMAGE:${TAG}
+    docker rmi $CI_REGISTRY_IMAGE:${TAG}
+
+publish-ecr:
+  variables:
+    AWS_ACCESS_KEY_ID: $ECR_SCARABS_KEY_ID
+    AWS_SECRET_ACCESS_KEY: $ECR_SCARABS_ACCESS_KEY
+    AWS_DEFAULT_REGION: $ECR_SCARABS_DEFAULT_REGION
+    TAG: ${CI_COMMIT_TAG}
+  needs:
+    - publishInternal
