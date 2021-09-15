@@ -37,7 +37,6 @@ buildServer:
     ./gradlew dockerBuild -PIMAGE=${SERVER_IMAGE} -PTAG=${TAG}
     ./gradlew dockerPush -PIMAGE=${SERVER_IMAGE} -PTAG=${TAG}
 
-
 publishInternal:
   interruptible: true
   stage: publish
