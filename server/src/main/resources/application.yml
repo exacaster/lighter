@@ -10,6 +10,8 @@ lighter:
         enabled: true
         master: k8s://kubernetes.default.svc.cluster.local:443
         namespace: spark
+        service-account: spark
+        container-image: "218320193259.dkr.ecr.eu-central-1.amazonaws.com/hellcat:0.0.2796"
         max-log-size: 500
         submit-props:
           "spark.kubernetes.container.image": ${lighter.kubernetes.container-image}
