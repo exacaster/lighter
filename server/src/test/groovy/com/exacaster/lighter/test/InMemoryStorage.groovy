@@ -55,6 +55,10 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
         return storeEntity(log)
     }
 
+    void cleanup() {
+        storage.clear()
+    }
+
     private <T extends Entity> T storeEntity(T entity) {
         var entityStore = storage.computeIfAbsent(entity.getClass(), key -> new HashMap<>())
         entityStore.put(entity.getId(), entity)

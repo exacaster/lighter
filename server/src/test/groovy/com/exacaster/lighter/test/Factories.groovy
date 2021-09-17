@@ -36,7 +36,7 @@ class Factories {
                 .build()
     }
 
-    static newSession() {
+    static newSession(state=ApplicationState.NOT_STARTED) {
         ApplicationBuilder.builder().setAppId("app123")
                 .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)

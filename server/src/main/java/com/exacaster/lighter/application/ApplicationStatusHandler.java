@@ -38,7 +38,7 @@ public class ApplicationStatusHandler {
         backend.getInfo(application).ifPresentOrElse(
                 info -> {
                     var state = adjustState(true, info.getState());
-                    var idleInfo = new ApplicationInfo(state, application.getId());
+                    var idleInfo = new ApplicationInfo(state, info.getApplicationId());
                     trackStatus(application, idleInfo);
                 },
                 () -> checkZombie(application)
@@ -58,7 +58,6 @@ public class ApplicationStatusHandler {
         applicationStorage.saveApplication(
                 ApplicationBuilder.builder(application)
                         .setState(ApplicationState.ERROR)
-
                         .setAppId(appId)
                         .setContactedAt(LocalDateTime.now())
                         .build());
