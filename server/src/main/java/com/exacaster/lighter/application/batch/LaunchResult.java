@@ -9,7 +9,6 @@ public class LaunchResult {
     private final Exception exception;
 
     public LaunchResult(ApplicationState state, Exception exception) {
-
         this.state = state;
         this.exception = exception;
     }

@@ -57,7 +57,7 @@ public class BatchHandler {
     @Scheduled(fixedRate = "2m")
     @Transactional
     public void trackRunning() {
-        statusTracker.processApplicationsRunning(batchService.fetchRunning());
+        batchService.fetchRunning().forEach(statusTracker::processApplicationRunning);
     }
 
 }

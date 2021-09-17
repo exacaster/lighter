@@ -68,10 +68,7 @@ public class SessionHandler {
                 .collect(Collectors.groupingBy(statementStatusChecker::hasWaitingStatement));
 
         selfOrEmpty(selfOrEmpty(idleAndRunning.get(false))).forEach(statusTracker::processApplicationIdle);
-
-        statusTracker.processApplicationsRunning(
-                selfOrEmpty(idleAndRunning.get(true))
-        );
+        selfOrEmpty(idleAndRunning.get(true)).forEach(statusTracker::processApplicationRunning);
     }
 
     @Scheduled(fixedRate = "10m")

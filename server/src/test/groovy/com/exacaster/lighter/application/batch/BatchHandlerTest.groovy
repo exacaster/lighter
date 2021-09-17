@@ -17,7 +17,7 @@ class BatchHandlerTest extends Specification {
 
     ApplicationStatusHandler statusHandler = Mock()
 
-    AppConfiguration config = new AppConfiguration(1, null, null, null, null)
+    AppConfiguration config = appConfiguration()
 
     @Subject
     def handler = Spy(new BatchHandler(backend, service, config, statusHandler))
@@ -44,7 +44,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> [app]
-        _ * service.fetchByState(ApplicationState.NOT_STARTED, 0) >> []
+        _ * service.fetchByState(ApplicationState.NOT_STARTED, config.getMaxRunningJobs() - 1) >> []
         0 * handler.launch(app, _) >> {  }
     }
 }

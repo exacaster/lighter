@@ -45,14 +45,11 @@ public class ApplicationStatusHandler {
         );
     }
 
-    public void processApplicationsRunning(Iterable<Application> applications) {
-        applications
-                .forEach(app ->
-                        backend.getInfo(app).ifPresentOrElse(
-                                info -> trackStatus(app, info),
-                                () -> checkZombie(app)
-                        )
-                );
+    public void processApplicationRunning(Application app) {
+        backend.getInfo(app).ifPresentOrElse(
+                info -> trackStatus(app, info),
+                () -> checkZombie(app)
+        );
     }
 
     public void processApplicationError(Application application, Throwable error) {

@@ -12,9 +12,9 @@ lighter:
         namespace: spark
         max-log-size: 500
         submit-props:
-          "spark.kubernetes.container.image": "218320193259.dkr.ecr.eu-central-1.amazonaws.com/hellcat:0.0.2796"
-          "spark.kubernetes.namespace": spark
-          "spark.kubernetes.authenticate.driver.serviceAccountName": spark
+          "spark.kubernetes.container.image": ${lighter.kubernetes.container-image}
+          "spark.kubernetes.namespace": ${lighter.kubernetes.namespace}
+          "spark.kubernetes.authenticate.driver.serviceAccountName": ${lighter.kubernetes.service-account}
           "spark.kubernetes.driver.podTemplateFile": "/home/app/k8s/driver_pod_template.yaml"
           "spark.kubernetes.executor.podTemplateFile": "/home/app/k8s/executor_pod_template.yaml"
           "spark.hadoop.fs.s3a.fast.upload": "true"
