@@ -28,6 +28,10 @@ ARG HADOOP_VERSION=2.7
 ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
 
+# Add symlinks so that after deployment of CM configs symlinks are still in tact
+RUN ln -s /etc/hadoop/conf.cloudera.yarn /etc/alternatives/hadoop-conf \
+  && ln -s /etc/hive/conf.cloudera.hive /etc/alternatives/hive-conf
+
 WORKDIR /home/app/
 COPY --from=server /home/app/server/build/layers/libs /home/app/libs
 COPY --from=server /home/app/server/build/layers/resources /home/app/resources
