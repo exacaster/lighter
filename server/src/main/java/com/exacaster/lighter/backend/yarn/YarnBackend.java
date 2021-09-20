@@ -80,7 +80,7 @@ public class YarnBackend implements Backend {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
         return Map.of(
-                "spark.yarn.tags", "lighter," + application.getAppId(),
+                "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
                 "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
                 "spark.yarn.appMasterEnv.PY_GATEWAY_HOST", host,
@@ -91,7 +91,7 @@ public class YarnBackend implements Backend {
     private Optional<String> getYarnApplicationId(Application application) {
         return Optional.ofNullable(application.getAppId())
                 .or(() -> {
-                    var yarnApps = client.getApps("lighter," + application.getAppId())
+                    var yarnApps = client.getApps("lighter," + application.getId())
                             .getApps().stream()
                             .map(YarnApplicationWrapper::getApp)
                             .flatMap(Collection::stream)

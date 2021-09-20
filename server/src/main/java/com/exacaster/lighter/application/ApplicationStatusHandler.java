@@ -53,6 +53,7 @@ public class ApplicationStatusHandler {
     }
 
     public void processApplicationError(Application application, Throwable error) {
+        LOG.debug("Application {} error occurred", application, error);
         var appId = backend.getInfo(application).map(ApplicationInfo::getApplicationId)
                 .orElse(null);
         applicationStorage.saveApplication(

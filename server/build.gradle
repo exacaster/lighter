@@ -11,6 +11,10 @@ repositories {
     mavenCentral()
 }
 
+java {
+    sourceCompatibility = JavaVersion.VERSION_11
+}
+
 micronaut {
     version = "2.5.5"
     runtime "netty"
