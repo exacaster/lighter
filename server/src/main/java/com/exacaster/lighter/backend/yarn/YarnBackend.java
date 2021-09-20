@@ -1,10 +1,14 @@
 package com.exacaster.lighter.backend.yarn;
 
+import static java.util.stream.Stream.of;
+
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.yarn.resources.State;
+import com.exacaster.lighter.backend.yarn.resources.YarnApplication;
+import com.exacaster.lighter.backend.yarn.resources.YarnApplicationListResponse;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationWrapper;
 import com.exacaster.lighter.configuration.AppConfiguration;
@@ -13,8 +17,8 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class YarnBackend implements Backend {
 
@@ -80,6 +84,7 @@ public class YarnBackend implements Backend {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
         return Map.of(
+                "spark.master", "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
                 "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
@@ -90,16 +95,13 @@ public class YarnBackend implements Backend {
 
     private Optional<String> getYarnApplicationId(Application application) {
         return Optional.ofNullable(application.getAppId())
-                .or(() -> {
-                    var yarnApps = client.getApps("lighter," + application.getId())
-                            .getApps().stream()
-                            .map(YarnApplicationWrapper::getApp)
-                            .flatMap(Collection::stream)
-                            .collect(Collectors.toList());
-                    if (yarnApps.isEmpty()) {
-                        return Optional.empty();
-                    }
-                    return Optional.of(yarnApps.get(0).getId());
-                });
+                .or(() -> of(client.getApps("lighter," + application.getId()))
+                        .map(YarnApplicationListResponse::getApps)
+                        .filter(Objects::nonNull)
+                        .flatMap(Collection::stream)
+                        .map(YarnApplicationWrapper::getApp)
+                        .flatMap(Collection::stream)
+                        .findFirst()
+                        .map(YarnApplication::getId));
     }
 }
