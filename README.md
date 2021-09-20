@@ -18,5 +18,5 @@ Lighter supports:
 To build Docker image, containing application, you need to run
 
 ```
-./build_docker.sh full
+docker build -t lighter .
 ```

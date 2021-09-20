@@ -27,6 +27,11 @@ dependencies {
     implementation "io.micronaut.flyway:micronaut-flyway"
     implementation "io.swagger.core.v3:swagger-annotations"
 
+    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
+    implementation "io.micronaut.sql:micronaut-jdbi"
+    implementation "io.micronaut.data:micronaut-data-processor"
+    implementation "io.micronaut:micronaut-http-client"
+
     implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
     implementation 'io.fabric8:kubernetes-client:5.4.0'
     implementation 'net.sf.py4j:py4j:0.10.9.2'
@@ -34,11 +39,6 @@ dependencies {
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
     runtimeOnly "io.micronaut:micronaut-management"
-
-    implementation "io.micronaut.sql:micronaut-jdbc-hikari"
-    implementation "io.micronaut.sql:micronaut-jdbi"
-    implementation "io.micronaut.data:micronaut-data-processor"
-    implementation "io.micronaut:micronaut-http-client"
 
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.postgresql:postgresql"
@@ -48,22 +48,6 @@ dependencies {
     testImplementation "io.micronaut.test:micronaut-test-spock"
     testImplementation "io.micronaut:micronaut-http-client"
     testImplementation "io.fabric8:kubernetes-server-mock:5.7.3"
-}
-
-dockerfile {
-    baseImage = "dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master"
-}
-
-dockerBuild {
-    images = ["${getImage()}:${getTag()}"]
-}
-
-def getTag() {
-    return findProperty('TAG') ?: 'latest'
-}
-
-def getImage() {
-    return findProperty('IMAGE') ?: 'exacaster/lighter-server'
 }
 
 tasks.withType(JavaCompile) {
