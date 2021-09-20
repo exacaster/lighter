@@ -84,6 +84,9 @@ public class YarnBackend implements Backend {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
         return Map.of(
+                // TODO kerberos temp fix - move to catproxy if it works
+                "spark.kerberos.keytab", System.getenv("KERBEROS_KEYTAB"),
+                "spark.kerberos.principal", System.getenv("KERBEROS_PRINCIPAL"),
                 "spark.master", "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
