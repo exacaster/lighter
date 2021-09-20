@@ -2,9 +2,11 @@ package com.exacaster.lighter.backend.yarn.resources;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import java.util.List;
-import javax.annotation.Nullable;
 
+@Introspected
 public class YarnApplicationListResponse {
     private final List<YarnApplicationWrapper> apps;
 

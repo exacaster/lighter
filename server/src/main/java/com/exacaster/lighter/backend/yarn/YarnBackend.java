@@ -100,6 +100,7 @@ public class YarnBackend implements Backend {
                         .filter(Objects::nonNull)
                         .flatMap(Collection::stream)
                         .map(YarnApplicationWrapper::getApp)
+                        .filter(Objects::nonNull)
                         .flatMap(Collection::stream)
                         .findFirst()
                         .map(YarnApplication::getId));
