@@ -31,7 +31,7 @@ class SessionHandlerTest extends Specification {
     def "kills timeouted sessions"() {
         given:
         def oldSession = ApplicationBuilder.builder(newSession())
-                .setContactedAt(LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1))
+                .setCreatedAt(LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1))
                 .build()
         def newSession = app()
         1 * service.fetchRunning() >> [

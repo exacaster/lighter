@@ -77,7 +77,7 @@ public class SessionHandler {
         if (timeout != null) {
             sessionService.fetchRunning()
                     .stream()
-                    .filter(s -> s.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(timeout)))
+                    .filter(s -> s.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(timeout)))
                     .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
                     .forEach(sessionService::killOne);
         }
