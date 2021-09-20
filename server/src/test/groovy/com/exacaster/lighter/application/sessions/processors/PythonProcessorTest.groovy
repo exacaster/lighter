@@ -1,11 +1,12 @@
 package com.exacaster.lighter.application.sessions.processors
 
 
+import spock.lang.Ignore
 import spock.lang.Specification
 
 import static com.exacaster.lighter.application.sessions.processors.Result.TEXT_PLAIN
 
-//@Ignore
+@Ignore
 class PythonProcessorTest extends Specification {
     def process
     def processor
