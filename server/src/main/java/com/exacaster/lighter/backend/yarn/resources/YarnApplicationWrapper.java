@@ -11,7 +11,7 @@ public class YarnApplicationWrapper {
     private final List<YarnApplication> app;
 
     @JsonCreator
-    public YarnApplicationWrapper(@Nullable @JsonProperty List<YarnApplication> app) {
+    public YarnApplicationWrapper(@Nullable @JsonProperty("app") List<YarnApplication> app) {
         this.app = app;
     }
 

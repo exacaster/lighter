@@ -10,7 +10,7 @@ public class YarnApplicationListResponse {
     private final YarnApplicationWrapper apps;
 
     @JsonCreator
-    public YarnApplicationListResponse(@Nullable @JsonProperty YarnApplicationWrapper apps) {
+    public YarnApplicationListResponse(@Nullable @JsonProperty("apps") YarnApplicationWrapper apps) {
         this.apps = apps;
     }
 
