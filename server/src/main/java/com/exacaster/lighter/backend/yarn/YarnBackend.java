@@ -101,7 +101,6 @@ public class YarnBackend implements Backend {
                 .or(() -> of(client.getApps(application.getId()))
                         .map(YarnApplicationListResponse::getApps)
                         .filter(Objects::nonNull)
-                        .flatMap(Collection::stream)
                         .map(YarnApplicationWrapper::getApp)
                         .filter(Objects::nonNull)
                         .flatMap(Collection::stream)
