@@ -6,7 +6,6 @@ import io.micronaut.core.annotation.Introspected;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
-import javax.validation.constraints.NotBlank;
 
 @Introspected
 public class SubmitParams {
@@ -24,10 +23,11 @@ public class SubmitParams {
     private final List<String> pyFiles;
     private final List<String> files;
     private final List<String> jars;
+    private final List<String> archives;
     private final Map<String, String> conf;
 
-    public SubmitParams(@NotBlank String name,
-            @NotBlank String file,
+    public SubmitParams(String name,
+            String file,
             String master,
             String mainClass,
             Integer numExecutors,
@@ -39,6 +39,7 @@ public class SubmitParams {
             List<String> pyFiles,
             List<String> files,
             List<String> jars,
+            List<String> archives,
             Map<String, String> conf) {
         this.name = name;
         this.file = file;
@@ -53,12 +54,13 @@ public class SubmitParams {
         this.pyFiles = ofNullable(pyFiles).orElse(List.of());
         this.files = ofNullable(files).orElse(List.of());
         this.jars = ofNullable(jars).orElse(List.of());
+        this.archives = ofNullable(archives).orElse(List.of());
         this.conf = ofNullable(conf).orElse(Map.of());
     }
 
     public SubmitParams withNameAndFile(String name, String file) {
         return new SubmitParams(name, file, master, mainClass, numExecutors, executorCores, executorMemory, driverCores,
-                driverMemory, args, pyFiles, files, jars, conf);
+                driverMemory, args, pyFiles, files, jars, archives, conf);
     }
 
     public String getName() {
@@ -113,6 +115,10 @@ public class SubmitParams {
         return jars;
     }
 
+    public List<String> getArchives() {
+        return archives;
+    }
+
     public Map<String, String> getConf() {
         return conf;
     }
@@ -133,6 +139,7 @@ public class SubmitParams {
                 .add("pyFiles=" + pyFiles)
                 .add("files=" + files)
                 .add("jars=" + jars)
+                .add("archives=" + archives)
                 .add("conf=" + conf)
                 .toString();
     }

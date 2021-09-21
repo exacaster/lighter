@@ -13,7 +13,9 @@ public class YarnApplication {
     private final String trackingUrl;
 
     @JsonCreator
-    public YarnApplication(@Nullable @JsonProperty String id, @Nullable @JsonProperty String trackingUrl) {
+    public YarnApplication(
+            @Nullable @JsonProperty("id") String id,
+            @Nullable @JsonProperty("trackingUrl") String trackingUrl) {
         this.id = id;
         this.trackingUrl = trackingUrl;
     }

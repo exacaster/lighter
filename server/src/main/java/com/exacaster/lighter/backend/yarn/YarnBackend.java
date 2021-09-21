@@ -98,7 +98,7 @@ public class YarnBackend implements Backend {
 
     private Optional<String> getYarnApplicationId(Application application) {
         return Optional.ofNullable(application.getAppId())
-                .or(() -> of(client.getApps("lighter," + application.getId()))
+                .or(() -> of(client.getApps(application.getId()))
                         .map(YarnApplicationListResponse::getApps)
                         .filter(Objects::nonNull)
                         .flatMap(Collection::stream)

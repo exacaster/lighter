@@ -38,6 +38,9 @@ public class SparkApp {
             submitParams.getJars().forEach(launcher::addJar);
             submitParams.getFiles().forEach(launcher::addFile);
             submitParams.getPyFiles().forEach(launcher::addPyFile);
+            if (!submitParams.getArchives().isEmpty()) {
+                launcher.setConf("spark.yarn.dist.archives", String.join(",", submitParams.getArchives()));
+            }
             extraConfiguration.forEach(launcher::setConf);
             submitParams.getConf().forEach(launcher::setConf);
             launcher.setConf(DRIVER_MEMORY, submitParams.getDriverMemory())
