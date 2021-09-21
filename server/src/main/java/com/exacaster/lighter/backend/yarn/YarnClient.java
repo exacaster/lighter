@@ -18,9 +18,6 @@ import io.micronaut.http.client.annotation.Client;
 @Header(name = ACCEPT, value = "application/json")
 public interface YarnClient {
 
-    @Get("/apps/{appId}/state")
-    State getState(String appId);
-
     @Put("/apps/{appId}/state")
     State setState(String appId, @Body State state);
 

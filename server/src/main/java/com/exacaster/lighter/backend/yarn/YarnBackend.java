@@ -37,8 +37,8 @@ public class YarnBackend implements Backend {
     }
 
     private ApplicationState getState(String id) {
-        var yarnState = client.getState(id);
-        switch (yarnState.getState()) {
+        var yarnApplication = client.getApplication(id).getApp();
+        switch (yarnApplication.getFinalStatus()) {
             case "NEW_SAVING":
             case "NEW":
                 return ApplicationState.STARTING;
@@ -54,7 +54,7 @@ public class YarnBackend implements Backend {
             case "KILLED":
                 return ApplicationState.KILLED;
             default:
-                throw new IllegalStateException("Unexpected state: " + yarnState);
+                throw new IllegalStateException("Unexpected state: " + yarnApplication);
         }
     }
 

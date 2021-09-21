@@ -11,13 +11,16 @@ import io.micronaut.core.annotation.Nullable;
 public class YarnApplication {
     private final String id;
     private final String trackingUrl;
+    private final String finalStatus;
 
     @JsonCreator
     public YarnApplication(
             @Nullable @JsonProperty("id") String id,
-            @Nullable @JsonProperty("trackingUrl") String trackingUrl) {
+            @Nullable @JsonProperty("trackingUrl") String trackingUrl,
+            @Nullable @JsonProperty("finalStatus") String finalStatus) {
         this.id = id;
         this.trackingUrl = trackingUrl;
+        this.finalStatus = finalStatus;
     }
 
     public String getId() {
@@ -26,5 +29,9 @@ public class YarnApplication {
 
     public String getTrackingUrl() {
         return trackingUrl;
+    }
+
+    public String getFinalStatus() {
+        return finalStatus;
     }
 }
