@@ -34,4 +34,13 @@ public class YarnApplication {
     public String getFinalStatus() {
         return finalStatus;
     }
+
+    @Override
+    public String toString() {
+        return "YarnApplication{" +
+                "id='" + id + '\'' +
+                ", trackingUrl='" + trackingUrl + '\'' +
+                ", finalStatus='" + finalStatus + '\'' +
+                '}';
+    }
 }

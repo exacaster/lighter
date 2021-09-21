@@ -39,15 +39,9 @@ public class YarnBackend implements Backend {
     private ApplicationState getState(String id) {
         var yarnApplication = client.getApplication(id).getApp();
         switch (yarnApplication.getFinalStatus()) {
-            case "NEW_SAVING":
-            case "NEW":
-                return ApplicationState.STARTING;
-            case "SUBMITTED":
-            case "ACCEPTED":
-                return ApplicationState.IDLE;
-            case "RUNNING":
+            case "UNDEFINED":
                 return ApplicationState.BUSY;
-            case "FINISHED":
+            case "SUCCEEDED":
                 return ApplicationState.SUCCESS;
             case "FAILED":
                 return ApplicationState.ERROR;
