@@ -43,4 +43,6 @@ COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION
 COPY k8s/ ./k8s/
 
 EXPOSE 8080
+EXPOSE 25333
+
 ENTRYPOINT ["java", "-jar", "/home/app/application.jar"]
