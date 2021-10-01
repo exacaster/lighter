@@ -63,7 +63,8 @@ public class PythonSessionIntegration implements StatementHandler {
                             1,
                             (Map<String, Object>) result.get("content"),
                             error,
-                            string(result.get("traceback")));
+                            string(result.get("traceback"))
+                    );
                     var newSt = st.withStateAndOutput(status, output);
                     sessionStatements.set(index, newSt);
                 });
