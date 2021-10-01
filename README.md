@@ -4,7 +4,9 @@ Lighter is an opensource application for interacting with [Apache Spark](https:/
 
 Lighter supports:
 - Interactive Python Sessions through [Sparkmagic](https://github.com/jupyter-incubator/sparkmagic) kernel
-- Batch job submissions through the REST API
+- Batch application submissions through the REST API
+
+> :warning: **If you are using interactive sessions**: While we have tested batch applications quite extensively, there might be some problems with interactive sessions, consider current release of Lighter as alpha.
 
 You can read a breaf description on how Lighter works [here](./docs/architecture.md).
 
