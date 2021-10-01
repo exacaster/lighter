@@ -20,3 +20,11 @@ To build Docker image, containing application, you need to run
 ```
 docker build -t lighter .
 ```
+
+### Contributing
+
+See [Contribution guide](./docs/CONTRIBUTING.md)
+
+## License
+
+Lighter is [MIT](./LICENSE.txt) liceansed.
