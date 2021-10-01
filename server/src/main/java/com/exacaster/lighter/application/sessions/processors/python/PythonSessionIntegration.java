@@ -55,13 +55,22 @@ public class PythonSessionIntegration implements StatementHandler {
                 .findFirst()
                 .ifPresent(st ->{
                     var index = sessionStatements.indexOf(st);
-                    var error = result.get("error");
+                    var error = string(result.get("error"));
                     var status = error != null ? "error" : "available";
                     var outputStatus = error != null ? "error" : "ok";
-                    var output = new Output(outputStatus, 1, (Map<String, Object>) result.get("content"));
+                    var output = new Output(
+                            outputStatus,
+                            1,
+                            (Map<String, Object>) result.get("content"),
+                            error,
+                            string(result.get("traceback")));
                     var newSt = st.withStateAndOutput(status, output);
                     sessionStatements.set(index, newSt);
                 });
+    }
+
+    private String string(Object obj) {
+        return obj != null ? String.valueOf(obj) : null;
     }
 
     @Override

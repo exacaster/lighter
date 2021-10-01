@@ -56,7 +56,7 @@ class Factories {
     }
 
     static statement() {
-        new Statement("id", "code", new Output("error", 1, [:]), "ok")
+        new Statement("id", "code", new Output("error", 1, [:], "evalue", "traceback"), "ok")
     }
 
     static kubernetesProperties() {

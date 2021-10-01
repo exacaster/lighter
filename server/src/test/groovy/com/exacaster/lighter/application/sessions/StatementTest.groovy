@@ -21,7 +21,7 @@ class StatementTest extends Specification {
         newStatement.state == "error"
 
         when:
-        newStatement = st.withStateAndOutput("error", new Output("ok", 3, [foo: 1]))
+        newStatement = st.withStateAndOutput("error", new Output("ok", 3, [foo: 1], "evalue", "traceback"))
 
         then:
         newStatement.id == st.id
