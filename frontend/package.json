@@ -32,6 +32,7 @@
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
     "@types/react-router-dom": "^5.1.7",
+    "dotenv": "^10.0.0",
     "http-proxy-middleware": "^2.0.0",
     "prettier": "^2.3.1"
   },
@@ -39,7 +40,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint ./src",
+    "format": "prettier --write ./src"
   },
   "eslintConfig": {
     "extends": [
