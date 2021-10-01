@@ -16,16 +16,19 @@ import com.exacaster.lighter.log.Log;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
 public class YarnBackend implements Backend {
 
+    private final YarnProperties yarnProperties;
     private final YarnClient client;
     private final AppConfiguration conf;
 
-    public YarnBackend(YarnClient client, AppConfiguration conf) {
+    public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf) {
+        this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
     }
@@ -77,17 +80,19 @@ public class YarnBackend implements Backend {
     public Map<String, String> getSubmitConfiguration(Application application) {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
-        return Map.of(
-                // TODO kerberos temp fix - move to catproxy if it works
-                "spark.kerberos.keytab", System.getenv("KERBEROS_KEYTAB"),
-                "spark.kerberos.principal", System.getenv("KERBEROS_PRINCIPAL"),
+        var props = new HashMap<>(Map.of(
                 "spark.master", "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
                 "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
                 "spark.yarn.appMasterEnv.PY_GATEWAY_HOST", host,
                 "spark.yarn.appMasterEnv.LIGHTER_SESSION_ID", application.getId()
-        );
+        ));
+        if (yarnProperties.getKerberosKeytab() != null) {
+            props.put("spark.kerberos.keytab", yarnProperties.getKerberosKeytab());
+            props.put("spark.kerberos.principal", yarnProperties.getKerberosPrincipal());
+        }
+        return props;
     }
 
     private Optional<String> getYarnApplicationId(Application application) {

@@ -11,7 +11,7 @@ import javax.inject.Singleton;
 public class YarnConfigurationFactory {
 
     @Singleton
-    public Backend backend(YarnClient yarnClient, AppConfiguration conf) {
-        return new YarnBackend(yarnClient, conf);
+    public Backend backend(YarnProperties yarnProperties, YarnClient yarnClient, AppConfiguration conf) {
+        return new YarnBackend(yarnProperties, yarnClient, conf);
     }
 }

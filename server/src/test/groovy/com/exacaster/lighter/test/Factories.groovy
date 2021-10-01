@@ -25,8 +25,8 @@ class Factories {
         )
     }
 
-    static newApplication() {
-        ApplicationBuilder.builder().setAppId("app123")
+    static newApplication(appId="app123") {
+        ApplicationBuilder.builder().setAppId(appId)
                 .setType(ApplicationType.BATCH)
                 .setState(ApplicationState.NOT_STARTED)
                 .setAppInfo("info")
