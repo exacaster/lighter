@@ -1,7 +1,9 @@
 const {createProxyMiddleware} = require('http-proxy-middleware');
 
+require('dotenv').config();
+
 const opts = {
-  target: 'https://stagecat.exacaster.com/',
+  target: process.env.LIGHTER_DEV_PROXY_URL,
   secure: true,
   cookieDomainRewrite: 'localhost',
   preserveHeaderKeyCase: true,
