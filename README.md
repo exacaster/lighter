@@ -6,7 +6,7 @@ Lighter supports:
 - Interactive Python Sessions through [Sparkmagic](https://github.com/jupyter-incubator/sparkmagic) kernel
 - Batch job submissions through the REST API
 
-You can read a breaf description on how Lighter works [here](./docs/architecture.md)
+You can read a breaf description on how Lighter works [here](./docs/architecture.md).
 
 ## Using Lighter
 - [Installation on Kubernetes](./docs/kubernetes.md)
