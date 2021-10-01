@@ -1,6 +1,6 @@
 # How Lighter works
 
-The idea idea is based off [Apache Livy](https://livy.incubator.apache.org/). Lighter supports two types of Spark applications: batch and live sessions.
+The idea is based off [Apache Livy](https://livy.incubator.apache.org/). Lighter supports two types of Spark applications: batch and live sessions.
 
 ## Batch applications
 
@@ -47,4 +47,4 @@ Simplified ilustration of the workflow:
 
 ## Live sessions
 
-Live sessions works in a similar way. The mayn difference is, that when starting a live session, Lighter submits a special PySpark application, which contains infinite loop and accepts command statements from Lighter through Py4J Gateway.
+Live sessions works in a similar way. The main difference is, that when starting a live session, Lighter submits a special PySpark application, which contains infinite loop and accepts command statements from Lighter through Py4J Gateway.
