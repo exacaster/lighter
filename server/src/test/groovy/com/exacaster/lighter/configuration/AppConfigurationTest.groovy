@@ -1,10 +1,9 @@
 package com.exacaster.lighter.configuration
 
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Inject
 import spock.lang.Specification
 import spock.lang.Subject
-
-import javax.inject.Inject
 
 @MicronautTest
 class AppConfigurationTest extends Specification {

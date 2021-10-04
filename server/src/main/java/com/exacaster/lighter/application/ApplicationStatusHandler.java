@@ -8,7 +8,7 @@ import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import java.time.LocalDateTime;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 
 @Singleton

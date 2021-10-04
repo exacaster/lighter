@@ -1,10 +1,9 @@
 package com.exacaster.lighter.storage.jdbc
 
-import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import spock.lang.Specification
 import com.exacaster.lighter.log.Log
-
-import javax.inject.Inject
+import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Inject
+import spock.lang.Specification
 
 import static com.exacaster.lighter.test.Factories.newApplication
 

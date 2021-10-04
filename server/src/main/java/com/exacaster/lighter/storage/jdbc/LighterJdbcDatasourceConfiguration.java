@@ -4,17 +4,20 @@ package com.exacaster.lighter.storage.jdbc;
 import io.micronaut.configuration.jdbc.hikari.DatasourceConfiguration;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Factory;
+import io.micronaut.context.annotation.Primary;
 import io.micronaut.context.annotation.Requires;
+import io.micronaut.core.annotation.Introspected;
 import io.micronaut.jdbc.BasicJdbcConfiguration;
+import jakarta.inject.Named;
+import jakarta.inject.Singleton;
 import java.util.Map;
-import javax.inject.Named;
-import javax.inject.Singleton;
 
 @Requires(property = "lighter.storage.jdbc.enabled", value = "true")
 @Factory
 public class LighterJdbcDatasourceConfiguration {
 
     @Singleton
+    @Primary
     @Named("default")
     public DatasourceConfiguration datasourceConfiguration(JdbcConnectionConfiguration configuration) {
         var ds = new DatasourceConfiguration("default");
@@ -25,6 +28,8 @@ public class LighterJdbcDatasourceConfiguration {
         return ds;
     }
 
+    @Primary
+    @Introspected
     @ConfigurationProperties("lighter.storage.jdbc")
     public static class JdbcConnectionConfiguration implements BasicJdbcConfiguration {
 

@@ -15,7 +15,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 import org.jdbi.v3.core.Jdbi;

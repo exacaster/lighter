@@ -1,9 +1,12 @@
 package com.exacaster.lighter.log;
 
 import com.exacaster.lighter.storage.Entity;
+import io.micronaut.core.annotation.Introspected;
+
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
+@Introspected
 public class Log implements Entity {
 
     private final String id;

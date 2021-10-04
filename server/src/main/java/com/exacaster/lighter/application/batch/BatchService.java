@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class BatchService {

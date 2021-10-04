@@ -1,7 +1,7 @@
 package com.exacaster.lighter.rest.magic;
 
 import java.util.function.Supplier;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class SparkMagicCompatibility {

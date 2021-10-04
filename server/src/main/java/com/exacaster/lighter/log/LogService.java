@@ -4,7 +4,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.storage.LogStorage;
 import java.util.Optional;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Singleton
 public class LogService {

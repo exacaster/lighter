@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import org.slf4j.Logger;
 import py4j.GatewayServer;
 

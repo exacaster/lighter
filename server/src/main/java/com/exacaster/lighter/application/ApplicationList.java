@@ -1,8 +1,11 @@
 package com.exacaster.lighter.application;
 
+import io.micronaut.core.annotation.Introspected;
+
 import java.util.List;
 import java.util.StringJoiner;
 
+@Introspected
 public class ApplicationList {
 
     private final Integer from;

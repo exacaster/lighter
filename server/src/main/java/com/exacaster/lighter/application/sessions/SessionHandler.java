@@ -11,12 +11,12 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
+import jakarta.inject.Singleton;
+import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import javax.inject.Singleton;
-import javax.transaction.Transactional;
 import org.slf4j.Logger;
 
 @Singleton
@@ -72,6 +72,7 @@ public class SessionHandler {
     }
 
     @Scheduled(fixedRate = "10m")
+    @Transactional
     public void handleTimeout() {
         var timeout = appConfiguration.getSessionConfiguration().getTimeoutMinutes();
         if (timeout != null) {

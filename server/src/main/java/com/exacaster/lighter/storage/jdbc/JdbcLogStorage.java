@@ -6,7 +6,7 @@ import io.micronaut.context.annotation.Requires;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 import org.jdbi.v3.core.Jdbi;

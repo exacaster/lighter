@@ -2,10 +2,13 @@ package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Entity;
+import io.micronaut.core.annotation.Introspected;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.StringJoiner;
 
+@Introspected
 public class Application implements Entity {
 
     private final String id;

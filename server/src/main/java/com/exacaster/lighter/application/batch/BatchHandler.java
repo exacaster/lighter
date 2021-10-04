@@ -9,9 +9,9 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
-import java.util.function.Consumer;
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 import javax.transaction.Transactional;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 
 @Singleton

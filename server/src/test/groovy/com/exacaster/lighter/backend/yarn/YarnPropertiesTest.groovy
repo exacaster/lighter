@@ -2,10 +2,9 @@ package com.exacaster.lighter.backend.yarn
 
 import io.micronaut.context.annotation.Property
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
+import jakarta.inject.Inject
 import spock.lang.Specification
 import spock.lang.Subject
-
-import javax.inject.Inject
 
 @MicronautTest
 @Property(name="lighter.yarn.enabled", value="true")

@@ -4,10 +4,9 @@ import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
-import spock.lang.Specification
-
-import javax.inject.Inject
+import jakarta.inject.Inject
 import javax.transaction.Transactional
+import spock.lang.Specification
 
 import static com.exacaster.lighter.test.Factories.newApplication
 
