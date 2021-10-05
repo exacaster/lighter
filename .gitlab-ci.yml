@@ -1,30 +1,41 @@
 stages:
-  - buildServer
+  - build
+  - quality
   - publish-image-cdp-ecrs
-
-workflow:
-  rules:
-    - if: $CI_COMMIT_TAG
+  - release-tag
 
 default:
   tags:
     - docker_image
-  image: dckregistry.exacaster.com:5000/docker/exagit-runner-artifactory:latest
+  image: 'dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master'
 
 include:
-  - https://exagit.exacaster.com/exacaster/ci-commons/raw/master/cdp/.publish-image-cdp-ecrs.yml
+  - 'https://exagit.exacaster.com/exacaster/ci-commons/raw/master/.cdp-java-gradle.yml'
+  - 'https://exagit.exacaster.com/exacaster/ci-commons/raw/master/cdp/.publish-image-cdp-ecrs.yml'
+  - 'https://exagit.exacaster.com/exacaster/ci-commons/raw/master/.cdp-release-tag.yml'
 
-buildServer:
-  stage: buildServer
-  image: dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master
-  script: |
-    cd server/
-    ./gradlew build
+variables:
+  TAG: 0.0.$CI_PIPELINE_IID
 
-publish-image-cdp-ecrs:
-  variables:
-    TAG: $CI_COMMIT_TAG
+build:
+  stage: build
   rules:
     - if: $NO_BUILD
       when: never
-    - if: $ECR_ADDRESS_customer360 && $ECR_ADDRESS_millicom_cdp && $ECR_ADDRESS_stagecat
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
+      variables:
+        TAG: 0.0.$CI_PIPELINE_IID.$CI_COMMIT_REF_SLUG
+    - when: always
+      allow_failure: false
+  before_script:
+    - cd server/
+  script: |
+    ./gradlew build
+
+sonar-merge-request:
+  before_script:
+    - cd server/
+
+sonar-master:
+  before_script:
+    - cd server/
