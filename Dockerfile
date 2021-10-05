@@ -33,9 +33,9 @@ RUN ln -s /etc/hadoop/conf.cloudera.yarn /etc/alternatives/hadoop-conf \
   && ln -s /etc/hive/conf.cloudera.hive /etc/alternatives/hive-conf
 
 WORKDIR /home/app/
-COPY --from=server /home/app/server/build/layers/libs /home/app/libs
-COPY --from=server /home/app/server/build/layers/resources /home/app/resources
-COPY --from=server /home/app/server/build/layers/application.jar /home/app/application.jar
+COPY --from=server /home/app/server/build/docker/layers/libs /home/app/libs
+COPY --from=server /home/app/server/build/docker/layers/resources /home/app/resources
+COPY --from=server /home/app/server/build/docker/layers/application.jar /home/app/application.jar
 
 COPY --from=frontend /home/app/frontend/build/ ./frontend/
 COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/ ./spark/
