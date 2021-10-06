@@ -4,17 +4,17 @@ Lighter can be configurated by using environment variables. Currently Lighter su
 
 ## Global properties
 
-| Property                             | Description                                            | Default                          |
-| ------------------------------------ | ------------------------------------------------------ | -------------------------------- |
-| LIGHTER_MAX_RUNNING_JOBS             | Max running Batch jobs in parallel                     | 5                                |
-| LIGHTER_SPARK_HISTORY_SERVER_URL     | Spark history server URL used on frontend              | http://localhost/spark-history/  |
-| LIGHTER_PY_GATEWAY_PORT              | Port for live Spark session communication              | 25333                            |
-| LIGHETR_URL                          | URL which can be used to access Lighter form Spark Job | http://lighter.spark:8080        |
-| LIGHTER_SESSION_TIMEOUT_MINUTES      | Session lifetime in minutes                            | 90                               |
-| LIGHTER_STORAGE_JDBC_URL             | JDBC url for lighter storage                           | jdbc:h2:mem:lighter              |
-| LIGHTER_STORAGE_JDBC_USERNAME        | JDBC username                                          | sa                               |
-| LIGHTER_STORAGE_JDBC_PASSWORD        | JDBC password                                          |                                  |
-| LIGHTER_STORAGE_JDBC_DRIVERCLASSNAME | JDBC driver class name                                 | org.h2.Driver                    |
+| Property                               | Description                                            | Default                          |
+| -------------------------------------- | ------------------------------------------------------ | -------------------------------- |
+| LIGHTER_MAX_RUNNING_JOBS               | Max running Batch jobs in parallel                     | 5                                |
+| LIGHTER_SPARK_HISTORY_SERVER_URL       | Spark history server URL used on frontend              | http://localhost/spark-history/  |
+| LIGHTER_PY_GATEWAY_PORT                | Port for live Spark session communication              | 25333                            |
+| LIGHETR_URL                            | URL which can be used to access Lighter form Spark Job | http://lighter.spark:8080        |
+| LIGHTER_SESSION_TIMEOUT_MINUTES        | Session lifetime in minutes                            | 90                               |
+| LIGHTER_STORAGE_JDBC_URL               | JDBC url for lighter storage                           | jdbc:h2:mem:lighter              |
+| LIGHTER_STORAGE_JDBC_USERNAME          | JDBC username                                          | sa                               |
+| LIGHTER_STORAGE_JDBC_PASSWORD          | JDBC password                                          |                                  |
+| LIGHTER_STORAGE_JDBC_DRIVER_CLASS_NAME | JDBC driver class name                                 | org.h2.Driver                    |
 
 
 ## Kubernetes configuration
