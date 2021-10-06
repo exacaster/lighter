@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.configuration.AppConfiguration
+import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -29,6 +30,8 @@ class SessionHandlerTest extends Specification {
     SessionHandler handler = new SessionHandler(service, backend, statementHandler, tracker, conf)
 
     def "kills timeouted sessions"() {
+        LockAssert.TestHelper.makeAllAssertsPass(true)
+
         given:
         def oldSession = ApplicationBuilder.builder(newSession())
                 .setCreatedAt(LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1))

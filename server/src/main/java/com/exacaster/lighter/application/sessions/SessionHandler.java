@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application.sessions;
 
 import static java.util.Optional.ofNullable;
+import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
@@ -12,11 +13,12 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
-import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
+import net.javacrumbs.shedlock.micronaut.SchedulerLock;
 import org.slf4j.Logger;
 
 @Singleton
@@ -48,9 +50,10 @@ public class SessionHandler {
     }
 
 
+    @SchedulerLock(name = "processScheduledBatches")
     @Scheduled(fixedRate = "1m")
-    @Transactional
     public void processScheduledBatches() {
+        assertLocked();
         sessionService.fetchByState(ApplicationState.NOT_STARTED, 10)
                 .forEach(session -> {
                     LOG.info("Launching {}", session);
@@ -59,9 +62,10 @@ public class SessionHandler {
                 });
     }
 
+    @SchedulerLock(name = "trackRunning")
     @Scheduled(fixedRate = "2m")
-    @Transactional
     public void trackRunning() {
+        assertLocked();
         var running = sessionService.fetchRunning();
 
         var idleAndRunning = running.stream()
@@ -71,9 +75,10 @@ public class SessionHandler {
         selfOrEmpty(idleAndRunning.get(true)).forEach(statusTracker::processApplicationRunning);
     }
 
+    @SchedulerLock(name = "handleTimeout")
     @Scheduled(fixedRate = "10m")
-    @Transactional
     public void handleTimeout() {
+        assertLocked();
         var timeout = appConfiguration.getSessionConfiguration().getTimeoutMinutes();
         if (timeout != null) {
             sessionService.fetchRunning()
