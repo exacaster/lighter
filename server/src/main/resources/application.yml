@@ -34,6 +34,11 @@ jackson:
     serialization:
         writeDatesAsTimestamps: false
 
+
+shedlock:
+    defaults:
+        lock-at-most-for: 10m
+
 flyway:
     datasources:
         default:

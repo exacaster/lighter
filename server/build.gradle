@@ -40,6 +40,9 @@ dependencies {
     implementation 'io.fabric8:kubernetes-client:5.4.0'
     implementation 'net.sf.py4j:py4j:0.10.9.2'
 
+    implementation "net.javacrumbs.shedlock:shedlock-micronaut:4.25.0"
+    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:4.25.0"
+
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
     runtimeOnly "io.micronaut:micronaut-management"
