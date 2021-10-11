@@ -15,6 +15,7 @@ You can read a breaf description on how Lighter works [here](./docs/architecture
 - [Installation on Docker](./docs/docker.md)
 - [Configuration Properties](./docs/configuration.md)
 - [Configuring Sparkmagic](./docs/sparkmagic.md)
+- [Using REST API](./docs/rest.md)
 
 ## Developing Lighter
 
