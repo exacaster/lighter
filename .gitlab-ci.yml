@@ -3,6 +3,7 @@ stages:
   - quality
   - publish-image-cdp-ecrs
   - release-tag
+  - trigger-catfarm
 
 default:
   tags:
@@ -39,3 +40,13 @@ sonar-merge-request:
 sonar-master:
   before_script:
     - cd server/
+
+trigger-catfarm:
+  variables:
+    PROJECT: $CI_PROJECT_NAME
+    TAG: 0.0.$CI_PIPELINE_IID
+    REF_SLUG: $CI_COMMIT_REF_SLUG
+  stage: trigger-catfarm
+  trigger:
+    project: cdp/infra/catfarm
+    branch: master
