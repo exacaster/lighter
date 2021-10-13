@@ -4,6 +4,7 @@ import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.configuration.AppConfiguration
+import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -21,6 +22,10 @@ class BatchHandlerTest extends Specification {
 
     @Subject
     def handler = Spy(new BatchHandler(backend, service, config, statusHandler))
+
+    def setup() {
+        LockAssert.TestHelper.makeAllAssertsPass(true)
+    }
 
     def "triggering scheduled apps"() {
         given:
