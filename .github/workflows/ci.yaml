@@ -33,6 +33,5 @@ jobs:
         run: |
           cd ./frontend
           yarn install
-          yarn test
           yarn lint
           yarn prettier --check ./src
