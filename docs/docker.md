@@ -1,6 +1,6 @@
 # Installing Lighter on Docker
 
-If you thinking of running Lighter on docker, you are probably using it with YARN backend. When you are running it, you should expose two ports (REST API port and Python Gateway port), as shown in this example:
+If you're thinking of running Lighter on docker, you are probably using it with YARN backend. When you are running it, you should expose two ports (REST API port and Python Gateway port), as shown in this example:
 
 ```bash
 docker run ghcr.io/exacaster/lighter:latest \
@@ -11,4 +11,4 @@ docker run ghcr.io/exacaster/lighter:latest \
   -e LIGHTER_YARN_URL=http://your_yarn.local
 ```
 
-[Click here](./configuration.md) to see all posible configuration options.
+[Click here](./configuration.md) to see all possible configuration options.

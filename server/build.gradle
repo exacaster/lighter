@@ -21,7 +21,7 @@ micronaut {
 }
 mainClassName = "com.exacaster.lighter.Application"
 
-def sparkVersion = "3.0.3"
+def java.lang.String sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.0.3'
 
 dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"

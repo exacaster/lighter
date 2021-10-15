@@ -27,6 +27,10 @@ To build Docker image, containing application, you need to run
 docker build -t lighter .
 ```
 
+### Spark versions
+
+Lighter will always support latest patch version for all officially recommended [Apache Spark](https://spark.apache.org/) releases i.e.: 3.0.3 and 3.1.2.
+
 ### Contributing
 
 See [Contribution guide](./docs/CONTRIBUTING.md)

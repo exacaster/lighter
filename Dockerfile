@@ -1,21 +1,22 @@
 FROM openjdk:11-jre-slim-stretch as server
 
+ARG SPARK_VERSION=3.0.3
+
 WORKDIR /home/app/
 COPY server/ ./server/
 
 WORKDIR /home/app/server/
-RUN ./gradlew build
+RUN ./gradlew build -PSPARK_VERSION=${SPARK_VERSION}
 
 FROM node:alpine3.13 as frontend
 
 ARG SPARK_VERSION=3.0.3
-ARG HADOOP_VERSION=2.7
 
 ENV REACT_APP_API_BASE_URL='/lighter'
 
 WORKDIR /home/app/
 COPY frontend/ ./frontend/
-RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" -O - | tar -xz
+RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.2.tgz" -O - | tar -xz
 
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
@@ -23,7 +24,6 @@ RUN yarn install && yarn build
 FROM openjdk:11-jre-slim-stretch
 
 ARG SPARK_VERSION=3.0.3
-ARG HADOOP_VERSION=2.7
 
 ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
@@ -38,7 +38,7 @@ COPY --from=server /home/app/server/build/docker/layers/resources /home/app/reso
 COPY --from=server /home/app/server/build/docker/layers/application.jar /home/app/application.jar
 
 COPY --from=frontend /home/app/frontend/build/ ./frontend/
-COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/ ./spark/
+COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop3.2/ ./spark/
 
 COPY k8s/ ./k8s/
 
