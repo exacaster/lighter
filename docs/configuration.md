@@ -1,6 +1,6 @@
 # Lighter configuration
 
-Lighter can be configurated by using environment variables. Currently Lighter supports only one of backends on single deployment: Yarn or Kubernetes.
+Lighter can be configured by using environment variables. Currently, Lighter supports only one of backends on single deployment: Yarn or Kubernetes.
 
 ## Global properties
 

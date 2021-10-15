@@ -1,5 +1,6 @@
-name: CI
+name: build backend and frontend
 on: [push]
+
 jobs:
   build-java:
     runs-on: ubuntu-latest

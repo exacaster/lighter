@@ -40,7 +40,7 @@ Server application runs on Java 11.
 
 To build, navigate to `server` folder and run:
 ```
-./gradlew build
+./gradlew build [-PSPARK_VERSION=x.y.z]
 ```
 
 To test:

@@ -61,7 +61,7 @@ spec:
 ## Deployment
 
 Make sure to change `env` values to valid ones.
-[Click here](./configuration.md) to see all posible configuration options.
+[Click here](./configuration.md) to see all possible configuration options.
 
 ```yaml
 apiVersion: apps/v1
