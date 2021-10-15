@@ -1,4 +1,4 @@
-FROM dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master as server
+FROM openjdk:11-jre-slim-stretch as server
 
 WORKDIR /home/app/
 COPY server/ ./server/
@@ -20,7 +20,7 @@ RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPAR
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
 
-FROM dckregistry.exacaster.com:5000/docker/java/11-jre-slim:master
+FROM openjdk:11-jre-slim-stretch
 
 ARG SPARK_VERSION=3.0.3
 ARG HADOOP_VERSION=2.7
