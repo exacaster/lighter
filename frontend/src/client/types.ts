@@ -12,6 +12,10 @@ export type Application = {
     driverCores: number;
     driverMemory: string;
     args: string[];
+    pyFiles: string[];
+    archives: string[];
+    files: string[];
+    jars: string[];
     conf: Record<string, string>;
   };
 };
