@@ -27,7 +27,7 @@ const Batch: React.FC = () => {
           </Thead>
           <Tbody>
             <Tr>
-              <Td>Name</Td>
+              <Td>Name (--name)</Td>
               <Td>{batch.submitParams.name}</Td>
             </Tr>
             <Tr>
@@ -35,23 +35,23 @@ const Batch: React.FC = () => {
               <Td>{batch.submitParams.file}</Td>
             </Tr>
             <Tr>
-              <Td>Driver Cores</Td>
+              <Td>Driver Cores (--driver-cores)</Td>
               <Td>{batch.submitParams.driverCores}</Td>
             </Tr>
             <Tr>
-              <Td>Driver Memory</Td>
+              <Td>Driver Memory (--driver-memory)</Td>
               <Td>{batch.submitParams.driverMemory}</Td>
             </Tr>
             <Tr>
-              <Td>Number Of Executors</Td>
+              <Td>Number Of Executors (--num-executors)</Td>
               <Td>{batch.submitParams.numExecutors}</Td>
             </Tr>
             <Tr>
-              <Td>Executor Cores</Td>
+              <Td>Executor Cores (--executor-cores)</Td>
               <Td>{batch.submitParams.executorCores}</Td>
             </Tr>
             <Tr>
-              <Td>Executor Memory</Td>
+              <Td>Executor Memory (--executor-memory)</Td>
               <Td>{batch.submitParams.executorMemory}</Td>
             </Tr>
             <Tr>
@@ -59,7 +59,19 @@ const Batch: React.FC = () => {
               <Td>{batch.submitParams.args.join(', ')}</Td>
             </Tr>
             <Tr>
-              <Th>Config</Th>
+              <Td>Python files (--py-files)</Td>
+              <Td>{batch.submitParams.pyFiles.join(', ')}</Td>
+            </Tr>
+            <Tr>
+              <Td>Archives (--archives)</Td>
+              <Td>{batch.submitParams.archives.join(', ')}</Td>
+            </Tr>
+            <Tr>
+              <Td>Additional files (--files)</Td>
+              <Td>{batch.submitParams.files.join(', ')}</Td>
+            </Tr>
+            <Tr>
+              <Th>Config (--conf)</Th>
               <Th>Value</Th>
             </Tr>
             {Object.entries(batch.submitParams.conf).map(([name, val]) => (
