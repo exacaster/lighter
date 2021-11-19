@@ -71,6 +71,10 @@ const Batch: React.FC = () => {
               <Td>{batch.submitParams.files.join(', ')}</Td>
             </Tr>
             <Tr>
+              <Td>Additional JARs (--jars)</Td>
+              <Td>{batch.submitParams.jars.join(', ')}</Td>
+            </Tr>
+            <Tr>
               <Th>Config (--conf)</Th>
               <Th>Value</Th>
             </Tr>
