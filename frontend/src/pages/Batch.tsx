@@ -21,7 +21,7 @@ const Batch: React.FC = () => {
 
     return (
       <Box mt="5">
-        <Table variant="simple" size="sm">
+        <Table className={styles.noWrapTable} variant="simple" size="sm">
           <Thead>
             <Tr>
               <Th>Property</Th>
