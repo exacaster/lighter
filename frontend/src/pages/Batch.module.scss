@@ -5,3 +5,9 @@
     font-size: 12px;
   }
 }
+
+.noWrapTable {
+  td {
+    white-space: nowrap;
+  }
+}
