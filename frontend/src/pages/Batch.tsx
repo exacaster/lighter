@@ -120,7 +120,7 @@ const Batch: React.FC = () => {
   }, [batch]);
 
   const logsStr = useMemo(() => {
-    if (!logs) {
+    if (!logs?.log) {
       return null;
     }
 
