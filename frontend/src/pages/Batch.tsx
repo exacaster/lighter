@@ -109,7 +109,7 @@ const Batch: React.FC = () => {
         {getSparkSubmitArg('--jars', batch.submitParams.jars.join(','))}
         {Object.entries(batch.submitParams.conf).map(([name, val]) => (
           <span key={name}>
-            --conf {name} {val + ' '}
+            {' '}--conf {name} {val}
           </span>
         ))}
         {' ' + batch.submitParams.file}
