@@ -1,10 +1,13 @@
 import {Code} from '@chakra-ui/layout';
 import React, {useMemo} from 'react';
 import {useParams} from 'react-router';
+import {Link} from '@chakra-ui/react';
+import {ExternalLinkIcon} from '@chakra-ui/icons';
 import PageHeading from '../components/PageHeading';
 import {useBatchLog, useBatch} from '../hooks/batch';
 import styles from './Batch.module.scss';
 import {Table, Thead, Tbody, Tr, Th, Td, Box} from '@chakra-ui/react';
+import {getSparkSubmitArg} from '../utils/batch';
 
 const Batch: React.FC = () => {
   const {id} = useParams<{id: string}>();
@@ -86,14 +89,6 @@ const Batch: React.FC = () => {
     );
   }, [batch]);
 
-  function getSparkSubmitArg(key: string, value: string) {
-    if (value) {
-      return ' ' + key + ' ' + value;
-    } else {
-      return '';
-    }
-  }
-
   const sparkSubmitStr = useMemo(() => {
     if (!batch) {
       return null;
@@ -129,27 +124,29 @@ const Batch: React.FC = () => {
     }
 
     if (logs.log.startsWith('http')) {
-      return <a href={logs.log}>{logs?.log}</a>;
-    } else {
-      return <Code className={styles.logs}>{logs.log}</Code>;
+      return (
+        <Link href={logs.log} isExternal>
+          {logs?.log} <ExternalLinkIcon mx="2px" marginBottom="5px" />
+        </Link>
+      );
     }
+
+    return <Code className={styles.logs}>{logs.log}</Code>;
   }, [logs]);
 
   return (
     <div className={styles.batch}>
       <PageHeading>Batch {id}</PageHeading>
-      <Box mt="5">
-        <b>Logs:</b>
-        <br />
-        {logsStr}
+      <Box textStyle="caption" mt="5">
+        Logs:
       </Box>
+      <Box mt="1">{logsStr}</Box>
 
       {appInfo}
-      <Box mt="5">
-        <b>Spark submit command:</b>
-        <br />
-        {sparkSubmitStr}
+      <Box textStyle="caption" mt="5">
+        Spark submit command:
       </Box>
+      <Box mt="1">{sparkSubmitStr}</Box>
     </div>
   );
 };
