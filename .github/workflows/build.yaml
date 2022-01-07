@@ -6,6 +6,6 @@ on:
 
 jobs:
   build-frontend:
-    uses: .github/workflows/workflow_callable/build-frontend.yml@main
+    uses: .github/workflows/build-frontend.yml@main
   build-java:
-    uses: .github/workflows/workflow_callable/build-java.yml@main
+    uses: .github/workflows/build-java.yml@main
