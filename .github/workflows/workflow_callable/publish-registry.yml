@@ -1,8 +1,7 @@
-name: publish docker image
+name: Publish image to Github container registry
 on:
-  release:
-    types:
-      - released
+  workflow_call:
+
 jobs:
   publish-registry:
     runs-on: ubuntu-latest

@@ -1,0 +1,11 @@
+name: build backend and frontend
+on:
+  push:
+    tags-ignore:
+      - *
+
+jobs:
+  build-frontend:
+    uses: .github/workflows/workflow_callable/build-frontend.yml@main
+  build-java:
+    uses: .github/workflows/workflow_callable/build-java.yml@main
