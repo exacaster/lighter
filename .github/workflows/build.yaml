@@ -1,0 +1,13 @@
+name: build backend and frontend
+on:
+  push:
+    branches:
+      - "*"
+    tags-ignore:
+      - "*"
+
+jobs:
+  build-frontend:
+    uses: exacaster/lighter/.github/workflows/build-frontend.yml@master
+  build-java:
+    uses: exacaster/lighter/.github/workflows/build-java.yml@master
