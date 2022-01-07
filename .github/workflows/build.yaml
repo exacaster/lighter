@@ -6,6 +6,6 @@ on:
 
 jobs:
   build-frontend:
-    uses: .github/workflows/build-frontend.yml@main
+    uses: exacaster/lighter/.github/workflows/build-frontend.yml@main
   build-java:
-    uses: .github/workflows/build-java.yml@main
+    uses: exacaster/lighter/.github/workflows/build-java.yml@main
