@@ -1,6 +1,8 @@
 name: build backend and frontend
 on:
   push:
+    branches:
+      - "*"
     tags-ignore:
       - "aaa"
 
