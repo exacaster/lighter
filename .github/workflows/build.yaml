@@ -1,8 +1,6 @@
 name: build backend and frontend
 on:
   push:
-    tags-ignore:
-      - "*"
 
 jobs:
   build-frontend:
