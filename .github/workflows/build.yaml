@@ -2,9 +2,7 @@ name: build backend and frontend
 on:
   push:
     tags-ignore:
-      - "*"
-    branches:
-      - master
+      - "aaa"
 
 jobs:
   build-frontend:
