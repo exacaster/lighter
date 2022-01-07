@@ -10,5 +10,5 @@ jobs:
   build-java:
     uses: exacaster/lighter/.github/workflows/build-java.yml@master
   publish-registry:
-    uses: exacaster/lighter/.github/publish-registry.yml@master
+    uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
     needs: [build-frontend, build-java]
