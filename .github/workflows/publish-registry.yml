@@ -1,6 +1,6 @@
 name: Publish image to Github container registry
 on:
-  workflow_call:
+  workflow_call: {}
 
 jobs:
   publish-registry:

@@ -1,6 +1,6 @@
 name: Build frontend service
 on:
-  workflow_call:
+  workflow_call: {}
 
 jobs:
   build-frontend:

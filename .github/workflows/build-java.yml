@@ -1,6 +1,6 @@
 name: Build backend service
 on:
-  workflow_call:
+  workflow_call: {}
 
 jobs:
   build-java:
