@@ -8,6 +8,6 @@ on:
 
 jobs:
   build-frontend:
-    uses: ./.github/workflows/build-frontend.yml@master
+    uses: ${{ github.repository }}/.github/workflows/build-frontend.yml@master
   build-java:
-    uses: ./.github/workflows/build-java.yml@master
+    uses: ${{ github.repository }}/.github/workflows/build-java.yml@master
