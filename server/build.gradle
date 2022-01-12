@@ -1,7 +1,8 @@
 plugins {
     id "java"
     id "groovy"
-    id "io.micronaut.application" version "2.0.6"
+    id "io.micronaut.application" version "3.1.1"
+    id "com.github.ben-manes.versions" version "0.41.0"
 }
 
 group "org.exacaster.lighter"
@@ -16,12 +17,12 @@ java {
 }
 
 micronaut {
-    version = "3.0.3"
+    version = "3.1.4"
     runtime "netty"
 }
 mainClassName = "com.exacaster.lighter.Application"
 
-def java.lang.String sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.0.3'
+def java.lang.String sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.2.0'
 
 dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
@@ -37,11 +38,11 @@ dependencies {
     implementation "io.micronaut:micronaut-http-client"
 
     implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
-    implementation 'io.fabric8:kubernetes-client:5.4.0'
-    implementation 'net.sf.py4j:py4j:0.10.9.2'
+    implementation 'io.fabric8:kubernetes-client:5.11.2'
+    implementation 'net.sf.py4j:py4j:0.10.9.3'
 
-    implementation "net.javacrumbs.shedlock:shedlock-micronaut:4.25.0"
-    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:4.25.0"
+    implementation "net.javacrumbs.shedlock:shedlock-micronaut:4.30.0"
+    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:4.30.0"
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
@@ -50,11 +51,11 @@ dependencies {
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.postgresql:postgresql"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.3.1"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.8.2"
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"
     testImplementation "io.micronaut:micronaut-http-client"
-    testImplementation "io.fabric8:kubernetes-server-mock:5.7.3"
+    testImplementation "io.fabric8:kubernetes-server-mock:5.11.2"
 }
 
 tasks.withType(JavaCompile) {
