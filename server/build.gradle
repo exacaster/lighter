@@ -36,6 +36,7 @@ dependencies {
     implementation "io.micronaut.sql:micronaut-jdbi"
     implementation "io.micronaut.data:micronaut-data-processor"
     implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut.rxjava3:micronaut-rxjava3"
 
     implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
     implementation 'io.fabric8:kubernetes-client:5.11.2'

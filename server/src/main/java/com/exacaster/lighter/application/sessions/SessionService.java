@@ -10,11 +10,13 @@ import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
+import io.reactivex.rxjava3.core.Observable;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class SessionService {
@@ -32,11 +34,21 @@ public class SessionService {
         return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
     }
 
+    public Optional<Application> fetchPermanent() {
+        return applicationStorage.findApplications(ApplicationType.PERMANENT_SESSION, 0, 1).stream().findAny();
+    }
+
     public Application createSession(SubmitParams params) {
-        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), backend.getSessionJobResources());
+        return createSession(params, ApplicationType.SESSION);
+    }
+
+    public Application createSession(SubmitParams params, ApplicationType type) {
+        var submitParams = params.withNameAndFile(
+                String.join("_", type.name().toLowerCase(), UUID.randomUUID().toString()),
+                backend.getSessionJobResources());
         var entity = ApplicationBuilder.builder()
                 .setId(UUID.randomUUID().toString())
-                .setType(ApplicationType.SESSION)
+                .setType(type)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
                 .setCreatedAt(LocalDateTime.now())
@@ -101,5 +113,15 @@ public class SessionService {
 
     public Statement cancelStatement(String id, String statementId) {
         return statementHandler.cancelStatement(id, statementId);
+    }
+
+    public synchronized Statement executeStatement(Statement statement) {
+        var sessionId = fetchPermanent().orElseThrow().getId();
+        var statementId = createStatement(sessionId, statement).getId();
+        return Observable.fromCallable(() -> getStatement(sessionId, statementId))
+                .delay(1, TimeUnit.SECONDS)
+                .repeat(15)
+                .filter(it -> it != null && it.getOutput() != null)
+                .blockingFirst(cancelStatement(sessionId, statementId));
     }
 }

@@ -105,4 +105,9 @@ public class SessionController {
     public Statement cancelStatements(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.cancelStatement(id, statementId);
     }
+
+    @Post("/statements")
+    public Statement executeStatements(@Valid @Body Statement statement) {
+        return sessionService.executeStatement(statement);
+    }
 }

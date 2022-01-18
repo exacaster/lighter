@@ -7,17 +7,20 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
+import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
+import io.micronaut.context.event.StartupEvent;
+import io.micronaut.runtime.event.annotation.EventListener;
+import io.micronaut.scheduling.annotation.Async;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-
 import net.javacrumbs.shedlock.micronaut.SchedulerLock;
 import org.slf4j.Logger;
 
@@ -49,10 +52,37 @@ public class SessionHandler {
         app.launch(backend.getSubmitConfiguration(application));
     }
 
+    @EventListener
+    @Async
+    public void startPermanentSession(StartupEvent event) {
+        sessionService.fetchPermanent().ifPresent(it -> sessionService.deleteOne(it.getId()));
+        startPermanentSession();
+    }
 
-    @SchedulerLock(name = "processScheduledBatches")
+    private void startPermanentSession() {
+        var params = appConfiguration.getSessionConfiguration().getPermanentSessionParams();
+        if (params != null) {
+            var session = sessionService.createSession(params, ApplicationType.PERMANENT_SESSION);
+            statusTracker.processApplicationStarting(session);
+            launch(session, error -> statusTracker.processApplicationError(session, error));
+        }
+    }
+
+    @SchedulerLock(name = "keepPermanentSession")
     @Scheduled(fixedRate = "1m")
-    public void processScheduledBatches() {
+    public void keepPermanentSession() {
+        assertLocked();
+        sessionService.fetchPermanent()
+                .filter(it -> it.getState().isComplete())
+                .ifPresent(it -> {
+                    sessionService.deleteOne(it.getId());
+                    startPermanentSession();
+                });
+    }
+
+    @SchedulerLock(name = "processScheduledSessions")
+    @Scheduled(fixedRate = "1m")
+    public void processScheduledSessions() {
         assertLocked();
         sessionService.fetchByState(ApplicationState.NOT_STARTED, 10)
                 .forEach(session -> {
@@ -62,7 +92,7 @@ public class SessionHandler {
                 });
     }
 
-    @SchedulerLock(name = "trackRunning")
+    @SchedulerLock(name = "trackRunningSessions")
     @Scheduled(fixedRate = "2m")
     public void trackRunning() {
         assertLocked();
@@ -75,7 +105,7 @@ public class SessionHandler {
         selfOrEmpty(idleAndRunning.get(true)).forEach(statusTracker::processApplicationRunning);
     }
 
-    @SchedulerLock(name = "handleTimeout")
+    @SchedulerLock(name = "handleTimeoutSessions")
     @Scheduled(fixedRate = "10m")
     public void handleTimeout() {
         assertLocked();
