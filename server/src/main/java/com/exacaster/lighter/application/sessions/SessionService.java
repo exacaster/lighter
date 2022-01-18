@@ -38,7 +38,7 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params) {
-        return createSession(params,UUID.randomUUID().toString());
+        return createSession(params, UUID.randomUUID().toString());
     }
 
     public Application createSession(SubmitParams params, String sessionId) {
