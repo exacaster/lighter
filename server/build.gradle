@@ -22,7 +22,7 @@ micronaut {
 }
 mainClassName = "com.exacaster.lighter.Application"
 
-def java.lang.String sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.2.0'
+String sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.2.0'
 
 dependencies {
     annotationProcessor "io.micronaut:micronaut-validation"
@@ -36,14 +36,13 @@ dependencies {
     implementation "io.micronaut.sql:micronaut-jdbi"
     implementation "io.micronaut.data:micronaut-data-processor"
     implementation "io.micronaut:micronaut-http-client"
-    implementation "io.micronaut.rxjava3:micronaut-rxjava3"
 
     implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
     implementation 'io.fabric8:kubernetes-client:5.11.2'
     implementation 'net.sf.py4j:py4j:0.10.9.3'
 
-    implementation "net.javacrumbs.shedlock:shedlock-micronaut:4.30.0"
-    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:4.30.0"
+    implementation "net.javacrumbs.shedlock:shedlock-micronaut:4.31.0"
+    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:4.31.0"
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"

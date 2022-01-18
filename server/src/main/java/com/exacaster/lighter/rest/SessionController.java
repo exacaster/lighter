@@ -96,7 +96,7 @@ public class SessionController {
     }
 
     @Get("/{id}/statements/{statementId}")
-    public Statement postStatements(@PathVariable String id, @PathVariable String statementId) {
+    public Statement getStatements(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.getStatement(id, statementId);
     }
 
@@ -107,7 +107,13 @@ public class SessionController {
     }
 
     @Post("/statements")
-    public Statement executeStatements(@Valid @Body Statement statement) {
-        return sessionService.executeStatement(statement);
+    @Status(HttpStatus.CREATED)
+    public Statement postStatements(@Valid @Body Statement statement) {
+        return sessionService.createStatement(statement);
+    }
+
+    @Get("/statements/{statementId}")
+    public Statement getStatements(@PathVariable String statementId) {
+        return sessionService.getStatement(statementId);
     }
 }

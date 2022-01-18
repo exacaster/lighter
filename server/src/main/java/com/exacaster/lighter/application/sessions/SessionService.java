@@ -8,46 +8,45 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
-import io.reactivex.rxjava3.core.Observable;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 @Singleton
 public class SessionService {
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
     private final StatementHandler statementHandler;
+    private final SessionConfiguration sessionConfiguration;
 
-    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler) {
+    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler,
+            AppConfiguration appConfiguration) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
         this.statementHandler = statementHandler;
+        this.sessionConfiguration = appConfiguration.getSessionConfiguration();
     }
 
     public List<Application> fetch(Integer from, Integer size) {
         return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
     }
 
-    public Optional<Application> fetchPermanent() {
-        return applicationStorage.findApplications(ApplicationType.PERMANENT_SESSION, 0, 1).stream().findAny();
-    }
-
     public Application createSession(SubmitParams params) {
-        return createSession(params, ApplicationType.SESSION);
+        return createSession(params, ApplicationType.SESSION, UUID.randomUUID().toString());
     }
 
-    public Application createSession(SubmitParams params, ApplicationType type) {
+    public Application createSession(SubmitParams params, ApplicationType type, String sessionId) {
         var submitParams = params.withNameAndFile(
                 String.join("_", type.name().toLowerCase(), UUID.randomUUID().toString()),
                 backend.getSessionJobResources());
         var entity = ApplicationBuilder.builder()
-                .setId(UUID.randomUUID().toString())
+                .setId(sessionId)
                 .setType(type)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
@@ -115,13 +114,11 @@ public class SessionService {
         return statementHandler.cancelStatement(id, statementId);
     }
 
-    public synchronized Statement executeStatement(Statement statement) {
-        var sessionId = fetchPermanent().orElseThrow().getId();
-        var statementId = createStatement(sessionId, statement).getId();
-        return Observable.fromCallable(() -> getStatement(sessionId, statementId))
-                .delay(1, TimeUnit.SECONDS)
-                .repeat(15)
-                .filter(it -> it != null && it.getOutput() != null)
-                .blockingFirst(cancelStatement(sessionId, statementId));
+    public Statement createStatement(Statement statement) {
+        return createStatement(sessionConfiguration.getPermanentSessionId(), statement);
+    }
+
+    public Statement getStatement(String statementId) {
+        return getStatement(sessionConfiguration.getPermanentSessionId(), statementId);
     }
 }

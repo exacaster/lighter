@@ -11,6 +11,7 @@ import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
@@ -33,7 +34,7 @@ public class SessionHandler {
     private final Backend backend;
     private final StatementHandler statementStatusChecker;
     private final ApplicationStatusHandler statusTracker;
-    private final AppConfiguration appConfiguration;
+    private final SessionConfiguration sessionConfiguration;
 
     public SessionHandler(SessionService sessionService,
             Backend backend,
@@ -44,7 +45,7 @@ public class SessionHandler {
         this.backend = backend;
         this.statementStatusChecker = statementStatusChecker;
         this.statusTracker = statusTracker;
-        this.appConfiguration = appConfiguration;
+        this.sessionConfiguration = appConfiguration.getSessionConfiguration();
     }
 
     public void launch(Application application, Consumer<Throwable> errorHandler) {
@@ -55,14 +56,15 @@ public class SessionHandler {
     @EventListener
     @Async
     public void startPermanentSession(StartupEvent event) {
-        sessionService.fetchPermanent().ifPresent(it -> sessionService.deleteOne(it.getId()));
-        startPermanentSession();
+        restartPermanentSession();
     }
 
-    private void startPermanentSession() {
-        var params = appConfiguration.getSessionConfiguration().getPermanentSessionParams();
-        if (params != null) {
-            var session = sessionService.createSession(params, ApplicationType.PERMANENT_SESSION);
+    private void restartPermanentSession() {
+        var sessionId = sessionConfiguration.getPermanentSessionId();
+        var params = sessionConfiguration.getPermanentSessionParams();
+        if (sessionId != null && params != null) {
+            sessionService.deleteOne(sessionId);
+            var session = sessionService.createSession(params, ApplicationType.PERMANENT_SESSION, sessionId);
             statusTracker.processApplicationStarting(session);
             launch(session, error -> statusTracker.processApplicationError(session, error));
         }
@@ -72,12 +74,9 @@ public class SessionHandler {
     @Scheduled(fixedRate = "1m")
     public void keepPermanentSession() {
         assertLocked();
-        sessionService.fetchPermanent()
+        sessionService.fetchOne(sessionConfiguration.getPermanentSessionId())
                 .filter(it -> it.getState().isComplete())
-                .ifPresent(it -> {
-                    sessionService.deleteOne(it.getId());
-                    startPermanentSession();
-                });
+                .ifPresent(it -> restartPermanentSession());
     }
 
     @SchedulerLock(name = "processScheduledSessions")
@@ -109,7 +108,7 @@ public class SessionHandler {
     @Scheduled(fixedRate = "10m")
     public void handleTimeout() {
         assertLocked();
-        var timeout = appConfiguration.getSessionConfiguration().getTimeoutMinutes();
+        var timeout = sessionConfiguration.getTimeoutMinutes();
         if (timeout != null) {
             sessionService.fetchRunning()
                     .stream()

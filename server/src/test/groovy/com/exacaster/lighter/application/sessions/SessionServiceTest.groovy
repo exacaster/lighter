@@ -3,6 +3,7 @@ package com.exacaster.lighter.application.sessions
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
+import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.storage.ApplicationStorage
 import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
@@ -14,9 +15,10 @@ class SessionServiceTest extends Specification {
     ApplicationStorage storage = new InMemoryStorage()
     Backend backend = Mock()
     StatementHandler statementHandler = Mock()
+    AppConfiguration appConfiguration = Mock()
 
     @Subject
-    SessionService service = new SessionService(storage, backend, statementHandler)
+    SessionService service = new SessionService(storage, backend, statementHandler, appConfiguration)
 
     def "manage sessions"() {
         given:
