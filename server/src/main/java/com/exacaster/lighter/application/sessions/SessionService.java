@@ -113,6 +113,6 @@ public class SessionService {
     }
 
     public Optional<Application> fetchPermanentSession() {
-        return fetchOne(sessionConfiguration.getPermanentSessionId());
+        return Optional.ofNullable(sessionConfiguration.getPermanentSessionId()).flatMap(this::fetchOne);
     }
 }
