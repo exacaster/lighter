@@ -38,16 +38,14 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params) {
-        return createSession(params, ApplicationType.SESSION, UUID.randomUUID().toString());
+        return createSession(params,UUID.randomUUID().toString());
     }
 
-    public Application createSession(SubmitParams params, ApplicationType type, String sessionId) {
-        var submitParams = params.withNameAndFile(
-                String.join("_", type.name().toLowerCase(), UUID.randomUUID().toString()),
-                backend.getSessionJobResources());
+    public Application createSession(SubmitParams params, String sessionId) {
+        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), backend.getSessionJobResources());
         var entity = ApplicationBuilder.builder()
                 .setId(sessionId)
-                .setType(type)
+                .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
                 .setCreatedAt(LocalDateTime.now())
@@ -114,11 +112,7 @@ public class SessionService {
         return statementHandler.cancelStatement(id, statementId);
     }
 
-    public Statement createStatement(Statement statement) {
-        return createStatement(sessionConfiguration.getPermanentSessionId(), statement);
-    }
-
-    public Statement getStatement(String statementId) {
-        return getStatement(sessionConfiguration.getPermanentSessionId(), statementId);
+    public Optional<Application> fetchPermanentSession() {
+        return fetchOne(sessionConfiguration.getPermanentSessionId());
     }
 }

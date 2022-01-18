@@ -7,7 +7,6 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
-import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
@@ -64,7 +63,7 @@ public class SessionHandler {
         var params = sessionConfiguration.getPermanentSessionParams();
         if (sessionId != null && params != null) {
             sessionService.deleteOne(sessionId);
-            var session = sessionService.createSession(params, ApplicationType.PERMANENT_SESSION, sessionId);
+            var session = sessionService.createSession(params, sessionId);
             statusTracker.processApplicationStarting(session);
             launch(session, error -> statusTracker.processApplicationError(session, error));
         }
@@ -74,9 +73,10 @@ public class SessionHandler {
     @Scheduled(fixedRate = "1m")
     public void keepPermanentSession() {
         assertLocked();
-        sessionService.fetchOne(sessionConfiguration.getPermanentSessionId())
-                .filter(it -> it.getState().isComplete())
-                .ifPresent(it -> restartPermanentSession());
+        var session = sessionService.fetchOne(sessionConfiguration.getPermanentSessionId());
+        if (session.isEmpty() || session.filter(it -> it.getState().isComplete()).isPresent()) {
+            restartPermanentSession();
+        }
     }
 
     @SchedulerLock(name = "processScheduledSessions")
@@ -112,6 +112,7 @@ public class SessionHandler {
         if (timeout != null) {
             sessionService.fetchRunning()
                     .stream()
+                    .filter(s -> !s.getId().equals(sessionConfiguration.getPermanentSessionId()))
                     .filter(s -> s.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(timeout)))
                     .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
                     .forEach(sessionService::killOne);

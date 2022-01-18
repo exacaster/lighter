@@ -62,6 +62,11 @@ public class SessionController {
         return sessionService.fetchOne(id, true);
     }
 
+    @Get("/permanent")
+    public Optional<Application> getPermanent() {
+        return sessionService.fetchPermanentSession();
+    }
+
     @Delete("/{id}")
     public void delete(@PathVariable String id) {
         sessionService.deleteOne(id);
@@ -104,16 +109,5 @@ public class SessionController {
     @Status(HttpStatus.CREATED)
     public Statement cancelStatements(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.cancelStatement(id, statementId);
-    }
-
-    @Post("/statements")
-    @Status(HttpStatus.CREATED)
-    public Statement postStatements(@Valid @Body Statement statement) {
-        return sessionService.createStatement(statement);
-    }
-
-    @Get("/statements/{statementId}")
-    public Statement getStatements(@PathVariable String statementId) {
-        return sessionService.getStatement(statementId);
     }
 }
