@@ -1,6 +1,7 @@
 package com.exacaster.lighter.rest
 
 import com.exacaster.lighter.application.sessions.SessionService
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
@@ -12,6 +13,8 @@ import spock.lang.Specification
 import static com.exacaster.lighter.test.Factories.newSession
 
 @MicronautTest
+@Property(name = "lighter.session.permanent-session-id", value = "permanentSessionId")
+@Property(name = "lighter.session.permanent-session-params.mainClass", value = "permanentClass")
 class SessionControllerTest extends Specification {
     @Inject
     @Client("/lighter/api/")
@@ -39,5 +42,17 @@ class SessionControllerTest extends Specification {
         result.log == []
         result.state == "not_started"
         result.kind == "pyspark"
+    }
+
+    def "returns permanent session"() {
+        when:
+        def result = client.toBlocking()
+                .exchange(HttpRequest.GET("/sessions/permanent"), Map.class).body()
+
+        then:
+        result.id == "permanentSessionId"
+        result.state == "starting"
+        result.kind == "pyspark"
+        result.submitParams.mainClass == "permanentClass"
     }
 }

@@ -2,11 +2,15 @@ package com.exacaster.lighter.spark;
 
 import static java.util.Optional.ofNullable;
 
+import io.micronaut.context.annotation.ConfigurationInject;
+import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Introspected;
+import io.micronaut.core.annotation.Nullable;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
 
+@ConfigurationProperties("lighter.session.permanent-session-params")
 @Introspected
 public class SubmitParams {
 
@@ -26,21 +30,22 @@ public class SubmitParams {
     private final List<String> archives;
     private final Map<String, String> conf;
 
-    public SubmitParams(String name,
-            String file,
-            String master,
-            String mainClass,
-            Integer numExecutors,
-            Integer executorCores,
-            String executorMemory,
-            Integer driverCores,
-            String driverMemory,
-            List<String> args,
-            List<String> pyFiles,
-            List<String> files,
-            List<String> jars,
-            List<String> archives,
-            Map<String, String> conf) {
+    @ConfigurationInject
+    public SubmitParams(@Nullable String name,
+            @Nullable String file,
+            @Nullable String master,
+            @Nullable String mainClass,
+            @Nullable Integer numExecutors,
+            @Nullable Integer executorCores,
+            @Nullable String executorMemory,
+            @Nullable Integer driverCores,
+            @Nullable String driverMemory,
+            @Nullable List<String> args,
+            @Nullable List<String> pyFiles,
+            @Nullable List<String> files,
+            @Nullable List<String> jars,
+            @Nullable List<String> archives,
+            @Nullable Map<String, String> conf) {
         this.name = name;
         this.file = file;
         this.master = master;

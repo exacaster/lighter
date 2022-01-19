@@ -1,5 +1,6 @@
 package com.exacaster.lighter.configuration;
 
+import com.exacaster.lighter.spark.SubmitParams;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import io.micronaut.context.annotation.ConfigurationInject;
@@ -65,20 +66,36 @@ public class AppConfiguration {
     @ConfigurationProperties("session")
     public static class SessionConfiguration {
         private final Integer timeoutMinutes;
+        private final String permanentSessionId;
+        private final SubmitParams permanentSessionParams;
 
         @ConfigurationInject
-        public SessionConfiguration(@Nullable Integer timeoutMinutes) {
+        public SessionConfiguration(@Nullable Integer timeoutMinutes,
+                @Nullable String permanentSessionId,
+                @Nullable SubmitParams permanentSessionParams) {
             this.timeoutMinutes = timeoutMinutes;
+            this.permanentSessionId = permanentSessionId;
+            this.permanentSessionParams = permanentSessionParams;
         }
 
         public Integer getTimeoutMinutes() {
             return timeoutMinutes;
         }
 
+        public String getPermanentSessionId() {
+            return permanentSessionId;
+        }
+
+        public SubmitParams getPermanentSessionParams() {
+            return permanentSessionParams;
+        }
+
         @Override
         public String toString() {
             return new StringJoiner(", ", SessionConfiguration.class.getSimpleName() + "[", "]")
                     .add("timeoutMinutes=" + timeoutMinutes)
+                    .add("permanentSessionId=" + permanentSessionId)
+                    .add("permanentSessionParams=" + permanentSessionParams)
                     .toString();
         }
     }

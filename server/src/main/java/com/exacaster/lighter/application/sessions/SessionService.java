@@ -8,6 +8,8 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import jakarta.inject.Singleton;
@@ -21,11 +23,14 @@ public class SessionService {
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
     private final StatementHandler statementHandler;
+    private final SessionConfiguration sessionConfiguration;
 
-    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler) {
+    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler,
+            AppConfiguration appConfiguration) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
         this.statementHandler = statementHandler;
+        this.sessionConfiguration = appConfiguration.getSessionConfiguration();
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -33,9 +38,13 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params) {
+        return createSession(params, UUID.randomUUID().toString());
+    }
+
+    public Application createSession(SubmitParams params, String sessionId) {
         var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), backend.getSessionJobResources());
         var entity = ApplicationBuilder.builder()
-                .setId(UUID.randomUUID().toString())
+                .setId(sessionId)
                 .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
@@ -101,5 +110,9 @@ public class SessionService {
 
     public Statement cancelStatement(String id, String statementId) {
         return statementHandler.cancelStatement(id, statementId);
+    }
+
+    public Optional<Application> fetchPermanentSession() {
+        return Optional.ofNullable(sessionConfiguration.getPermanentSessionId()).flatMap(this::fetchOne);
     }
 }
