@@ -58,24 +58,26 @@ public class SessionHandler {
         restartPermanentSession();
     }
 
+    @SchedulerLock(name = "keepPermanentSession")
+    @Scheduled(fixedRate = "1m")
+    public void keepPermanentSession() {
+        assertLocked();
+        var sessionId = sessionConfiguration.getPermanentSessionId();
+        if (sessionId == null) {
+            return;
+        }
+        var session = sessionService.fetchOne(sessionId);
+        if (session.isEmpty() || session.filter(it -> it.getState().isComplete()).isPresent()) {
+            restartPermanentSession();
+        }
+    }
+
     private void restartPermanentSession() {
         var sessionId = sessionConfiguration.getPermanentSessionId();
         var params = sessionConfiguration.getPermanentSessionParams();
         if (sessionId != null && params != null) {
             sessionService.deleteOne(sessionId);
-            var session = sessionService.createSession(params, sessionId);
-            statusTracker.processApplicationStarting(session);
-            launch(session, error -> statusTracker.processApplicationError(session, error));
-        }
-    }
-
-    @SchedulerLock(name = "keepPermanentSession")
-    @Scheduled(fixedRate = "1m")
-    public void keepPermanentSession() {
-        assertLocked();
-        var session = sessionService.fetchOne(sessionConfiguration.getPermanentSessionId());
-        if (session.isEmpty() || session.filter(it -> it.getState().isComplete()).isPresent()) {
-            restartPermanentSession();
+            launchSession(sessionService.createSession(params, sessionId));
         }
     }
 
@@ -83,12 +85,13 @@ public class SessionHandler {
     @Scheduled(fixedRate = "1m")
     public void processScheduledSessions() {
         assertLocked();
-        sessionService.fetchByState(ApplicationState.NOT_STARTED, 10)
-                .forEach(session -> {
-                    LOG.info("Launching {}", session);
-                    statusTracker.processApplicationStarting(session);
-                    launch(session, error -> statusTracker.processApplicationError(session, error));
-                });
+        sessionService.fetchByState(ApplicationState.NOT_STARTED, 10).forEach(this::launchSession);
+    }
+
+    private void launchSession(Application session) {
+        LOG.info("Launching {}", session);
+        statusTracker.processApplicationStarting(session);
+        launch(session, error -> statusTracker.processApplicationError(session, error));
     }
 
     @SchedulerLock(name = "trackRunningSessions")
