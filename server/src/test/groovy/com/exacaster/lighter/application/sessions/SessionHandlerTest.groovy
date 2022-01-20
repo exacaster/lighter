@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application.sessions
 
 import com.exacaster.lighter.application.ApplicationBuilder
+import com.exacaster.lighter.application.ApplicationInfo
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
@@ -89,6 +90,7 @@ class SessionHandlerTest extends Specification {
                 .setId(sessionId)
                 .build()
         1 * service.fetchOne(sessionId) >> Optional.of(permanentSession)
+        1 * backend.getInfo(permanentSession) >> Optional.of(new ApplicationInfo(permanentSession.getState(), sessionId))
 
         when: "exists healthy permanent session"
         handler.keepPermanentSession()
