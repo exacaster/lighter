@@ -1,11 +1,14 @@
 package com.exacaster.lighter.spark;
 
+import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
+import static io.micronaut.core.naming.conventions.StringConvention.RAW;
 import static java.util.Optional.ofNullable;
 
 import io.micronaut.context.annotation.ConfigurationInject;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.format.MapFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -45,6 +48,7 @@ public class SubmitParams {
             @Nullable List<String> files,
             @Nullable List<String> jars,
             @Nullable List<String> archives,
+            @MapFormat(transformation = FLAT, keyFormat = RAW)
             @Nullable Map<String, String> conf) {
         this.name = name;
         this.file = file;
