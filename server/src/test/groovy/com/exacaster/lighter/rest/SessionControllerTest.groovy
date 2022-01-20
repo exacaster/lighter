@@ -14,7 +14,7 @@ import static com.exacaster.lighter.test.Factories.newSession
 
 @MicronautTest
 @Property(name = "lighter.session.permanent-session-id", value = "permanentSessionId")
-@Property(name = "lighter.session.permanent-session-params.mainClass", value = "permanentClass")
+@Property(name = "lighter.session.permanent-session-params.conf.spark.kubernetes.node.selector.dedicated", value = "app")
 class SessionControllerTest extends Specification {
     @Inject
     @Client("/lighter/api/")
@@ -53,6 +53,6 @@ class SessionControllerTest extends Specification {
         result.id == "permanentSessionId"
         result.state == "starting"
         result.kind == "pyspark"
-        result.submitParams.mainClass == "permanentClass"
+        result.submitParams.conf.'spark.kubernetes.node.selector.dedicated' == "app"
     }
 }
