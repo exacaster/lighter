@@ -1,10 +1,12 @@
 package com.exacaster.lighter.application.sessions;
 
 import static java.util.Optional.ofNullable;
+import static java.util.function.Predicate.not;
 import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
@@ -67,7 +69,9 @@ public class SessionHandler {
             return;
         }
         var session = sessionService.fetchOne(sessionId);
-        if (session.isEmpty() || session.filter(it -> it.getState().isComplete()).isPresent()) {
+        var running = not(ApplicationState::isComplete);
+        if (session.map(Application::getState).filter(running).isEmpty() ||
+                session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(running).isEmpty()) {
             restartPermanentSession();
         }
     }
