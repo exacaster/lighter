@@ -71,7 +71,7 @@ public class SessionHandler {
         var session = sessionService.fetchOne(sessionId);
         var running = not(ApplicationState::isComplete);
         if (session.map(Application::getState).filter(running).isEmpty() ||
-                backend.getInfo(session.get()).map(ApplicationInfo::getState).filter(running).isEmpty()) {
+                session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(running).isEmpty()) {
             restartPermanentSession();
         }
     }
