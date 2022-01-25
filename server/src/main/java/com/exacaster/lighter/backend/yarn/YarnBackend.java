@@ -16,6 +16,7 @@ import com.exacaster.lighter.log.Log;
 import java.io.File;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -103,7 +104,8 @@ public class YarnBackend implements Backend {
                         .map(YarnApplicationWrapper::getApp)
                         .filter(Objects::nonNull)
                         .flatMap(Collection::stream)
-                        .findFirst()
+                        .filter(Objects::nonNull)
+                        .max(Comparator.comparing(YarnApplication::getStartedTime))
                         .map(YarnApplication::getId));
     }
 }

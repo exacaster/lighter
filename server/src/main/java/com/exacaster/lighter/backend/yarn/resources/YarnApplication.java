@@ -12,15 +12,18 @@ public class YarnApplication {
     private final String id;
     private final String trackingUrl;
     private final String finalStatus;
+    private final Long startedTime;
 
     @JsonCreator
     public YarnApplication(
             @Nullable @JsonProperty("id") String id,
             @Nullable @JsonProperty("trackingUrl") String trackingUrl,
-            @Nullable @JsonProperty("finalStatus") String finalStatus) {
+            @Nullable @JsonProperty("finalStatus") String finalStatus,
+            @Nullable @JsonProperty("startedTime") Long startedTime) {
         this.id = id;
         this.trackingUrl = trackingUrl;
         this.finalStatus = finalStatus;
+        this.startedTime = startedTime;
     }
 
     public String getId() {
@@ -35,12 +38,17 @@ public class YarnApplication {
         return finalStatus;
     }
 
+    public Long getStartedTime() {
+        return startedTime;
+    }
+
     @Override
     public String toString() {
         return "YarnApplication{" +
                 "id='" + id + '\'' +
                 ", trackingUrl='" + trackingUrl + '\'' +
                 ", finalStatus='" + finalStatus + '\'' +
+                ", startedTime='" + startedTime + '\'' +
                 '}';
     }
 }

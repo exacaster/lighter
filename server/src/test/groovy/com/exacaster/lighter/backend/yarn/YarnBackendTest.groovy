@@ -82,7 +82,7 @@ class YarnBackendTest extends Specification {
 
     private mockYarnApp(app) {
         def yarnId = "app-sp123"
-        def yarnApp = new YarnApplication(yarnId, "track", "UNDEFINED")
+        def yarnApp = new YarnApplication(yarnId, "track", "UNDEFINED", 123456789012345)
         client.getApps(app.id) >> new YarnApplicationListResponse(new YarnApplicationWrapper([yarnApp]))
         client.getApplication(yarnId) >> new YarnApplicationResponse(yarnApp)
     }
