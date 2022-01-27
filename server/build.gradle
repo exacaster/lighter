@@ -43,6 +43,7 @@ dependencies {
 
     implementation "net.javacrumbs.shedlock:shedlock-micronaut:4.31.0"
     implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:4.31.0"
+    implementation "org.springframework.security.kerberos:spring-security-kerberos-client:1.0.1.RELEASE"
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
