@@ -69,6 +69,17 @@ class YarnBackendTest extends Specification {
         resource.endsWith("/shell_wrapper.py")
     }
 
+    def "kills application"() {
+        given:
+        def app = newApplication()
+
+        when:
+        backend.kill(app)
+
+        then:
+        noExceptionThrown()
+    }
+
     private mockYarnApp(app) {
         def yarnId = "app-sp123"
         def yarnApp = new YarnApplication(yarnId, "track", "UNDEFINED", 123456789012345)

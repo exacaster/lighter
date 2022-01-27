@@ -30,13 +30,14 @@ public class YarnBackend implements Backend {
     private final YarnProperties yarnProperties;
     private final YarnClient client;
     private final AppConfiguration conf;
-    private final KerberosRestTemplate krb;
+    private final Optional<KerberosRestTemplate> kerberosRestTemplate;
 
     public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf) {
         this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
-        this.krb = new KerberosRestTemplate(yarnProperties.getKerberosKeytab(), yarnProperties.getKerberosPrincipal());
+        this.kerberosRestTemplate = Optional.ofNullable(yarnProperties.getKerberosKeytab())
+                .map(it -> new KerberosRestTemplate(it, yarnProperties.getKerberosPrincipal()));
     }
 
     @Override
@@ -78,8 +79,9 @@ public class YarnBackend implements Backend {
 
     @Override
     public void kill(Application application) {
-        getYarnApplicationId(application)
-                .ifPresent(id -> krb.put(yarnProperties.getUrl() + STATE_ENDPOINT, new State("KILLED"), id));
+        var state = new State("KILLED");
+        getYarnApplicationId(application).ifPresent(id -> kerberosRestTemplate.ifPresentOrElse(
+                it -> it.put(yarnProperties.getUrl() + STATE_ENDPOINT, state, id), () -> client.setState(id, state)));
     }
 
     @Override

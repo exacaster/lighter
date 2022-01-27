@@ -15,7 +15,7 @@ public class YarnProperties {
     private final String url;
 
     @ConfigurationInject
-    public YarnProperties(@Nullable String kerberosPrincipal, @Nullable String kerberosKeytab, @Nullable String url) {
+    public YarnProperties(@Nullable String kerberosPrincipal, @Nullable String kerberosKeytab, String url) {
         this.kerberosPrincipal = kerberosPrincipal;
         this.kerberosKeytab = kerberosKeytab;
         this.url = url;
