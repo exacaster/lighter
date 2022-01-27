@@ -1,6 +1,6 @@
 FROM openjdk:11-jre-slim-stretch as server
 
-ARG SPARK_VERSION=3.2.0
+ARG SPARK_VERSION=3.2.1
 
 WORKDIR /home/app/
 COPY server/ ./server/
@@ -10,7 +10,7 @@ RUN ./gradlew build -PSPARK_VERSION=${SPARK_VERSION}
 
 FROM node:lts-alpine3.14 as frontend
 
-ARG SPARK_VERSION=3.2.0
+ARG SPARK_VERSION=3.2.1
 
 ENV REACT_APP_API_BASE_URL='/lighter'
 
@@ -23,7 +23,7 @@ RUN yarn install && yarn build
 
 FROM openjdk:11-jre-slim-stretch
 
-ARG SPARK_VERSION=3.2.0
+ARG SPARK_VERSION=3.2.1
 
 ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
