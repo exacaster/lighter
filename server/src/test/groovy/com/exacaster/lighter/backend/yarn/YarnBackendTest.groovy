@@ -17,7 +17,7 @@ class YarnBackendTest extends Specification {
 
     def config = appConfiguration()
 
-    def yarnProps = new YarnProperties(null, null);
+    def yarnProps = new YarnProperties(null, null, null);
 
     @Subject
     def backend = new YarnBackend(yarnProps, client, config)
@@ -67,17 +67,6 @@ class YarnBackendTest extends Specification {
 
         then:
         resource.endsWith("/shell_wrapper.py")
-    }
-
-    def "kills application"() {
-        given:
-        def app = newApplication()
-
-        when:
-        backend.kill(app)
-
-        then:
-        noExceptionThrown()
     }
 
     private mockYarnApp(app) {

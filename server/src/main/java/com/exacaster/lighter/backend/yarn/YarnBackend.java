@@ -21,17 +21,22 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.security.kerberos.client.KerberosRestTemplate;
 
 public class YarnBackend implements Backend {
+
+    private static final String STATE_ENDPOINT = "/ws/v1/cluster/apps/{appId}/state";
 
     private final YarnProperties yarnProperties;
     private final YarnClient client;
     private final AppConfiguration conf;
+    private final KerberosRestTemplate krb;
 
     public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf) {
         this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
+        this.krb = new KerberosRestTemplate(yarnProperties.getKerberosKeytab(), yarnProperties.getKerberosPrincipal());
     }
 
     @Override
@@ -74,7 +79,7 @@ public class YarnBackend implements Backend {
     @Override
     public void kill(Application application) {
         getYarnApplicationId(application)
-                .ifPresent(id -> client.setState(id, new State("KILLED")));
+                .ifPresent(id -> krb.put(yarnProperties.getUrl() + STATE_ENDPOINT, new State("KILLED"), id));
     }
 
     @Override
