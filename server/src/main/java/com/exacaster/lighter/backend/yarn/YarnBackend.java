@@ -7,6 +7,7 @@ import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.yarn.resources.State;
+import com.exacaster.lighter.backend.yarn.resources.Token;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplication;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationListResponse;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse;
@@ -21,11 +22,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.springframework.http.HttpEntity;
 import org.springframework.security.kerberos.client.KerberosRestTemplate;
 
 public class YarnBackend implements Backend {
 
-    private static final String STATE_ENDPOINT = "/ws/v1/cluster/apps/{appId}/state";
+    private static final String TOKEN_ENDPOINT = "/ws/v1/cluster/delegation-token";
 
     private final YarnProperties yarnProperties;
     private final YarnClient client;
@@ -80,8 +82,17 @@ public class YarnBackend implements Backend {
     @Override
     public void kill(Application application) {
         var state = new State("KILLED");
-        getYarnApplicationId(application).ifPresent(id -> kerberosRestTemplate.ifPresentOrElse(
-                it -> it.put(yarnProperties.getUrl() + STATE_ENDPOINT, state, id), () -> client.setState(id, state)));
+        getYarnApplicationId(application).ifPresent(
+                id -> getToken().ifPresentOrElse(t -> client.setState(id, state, t), () -> client.setState(id, state)));
+    }
+
+    private Optional<String> getToken() {
+        var url = yarnProperties.getUrl() + TOKEN_ENDPOINT;
+        var body = Map.of("renewer", "lighter");
+        return kerberosRestTemplate
+                .map(it -> it.postForEntity(url, body, Token.class))
+                .map(HttpEntity::getBody)
+                .map(Token::getToken);
     }
 
     @Override
