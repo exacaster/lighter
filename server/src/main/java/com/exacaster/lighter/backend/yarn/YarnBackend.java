@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import org.springframework.http.HttpEntity;
 import org.springframework.security.kerberos.client.KerberosRestTemplate;
 
 public class YarnBackend implements Backend {
@@ -90,8 +89,7 @@ public class YarnBackend implements Backend {
         var url = yarnProperties.getUrl() + TOKEN_ENDPOINT;
         var body = Map.of("renewer", "lighter");
         return kerberosRestTemplate
-                .map(it -> it.postForEntity(url, body, Token.class))
-                .map(HttpEntity::getBody)
+                .map(it -> it.postForObject(url, body, Token.class))
                 .map(Token::getToken);
     }
 
