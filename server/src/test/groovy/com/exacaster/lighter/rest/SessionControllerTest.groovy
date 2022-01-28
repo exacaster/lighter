@@ -47,7 +47,7 @@ class SessionControllerTest extends Specification {
     def "returns permanent session"() {
         when:
         def result = client.toBlocking()
-                .exchange(HttpRequest.GET("/sessions/permanent"), Map.class).body()
+                .exchange(HttpRequest.GET("/sessions/permanentSessionId"), Map.class).body()
 
         then:
         result.id == "permanentSessionId"

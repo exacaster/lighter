@@ -62,11 +62,6 @@ public class SessionController {
         return sessionService.fetchOne(id, true);
     }
 
-    @Get("/permanent")
-    public Optional<Application> getPermanent() {
-        return sessionService.fetchPermanentSession();
-    }
-
     @Delete("/{id}")
     public void delete(@PathVariable String id) {
         sessionService.deleteOne(id);

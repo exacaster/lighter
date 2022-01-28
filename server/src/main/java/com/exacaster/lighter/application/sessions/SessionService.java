@@ -111,8 +111,4 @@ public class SessionService {
     public Statement cancelStatement(String id, String statementId) {
         return statementHandler.cancelStatement(id, statementId);
     }
-
-    public Optional<Application> fetchPermanentSession() {
-        return Optional.ofNullable(sessionConfiguration.getPermanentSessionId()).flatMap(this::fetchOne);
-    }
 }
