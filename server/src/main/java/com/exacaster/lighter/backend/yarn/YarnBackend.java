@@ -1,6 +1,7 @@
 package com.exacaster.lighter.backend.yarn;
 
 import static java.util.stream.Stream.of;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
@@ -22,10 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import org.slf4j.Logger;
 import org.springframework.security.kerberos.client.KerberosRestTemplate;
 
 public class YarnBackend implements Backend {
 
+    private static final Logger LOG = getLogger(YarnBackend.class);
     private static final String TOKEN_ENDPOINT = "/ws/v1/cluster/delegation-token";
 
     private final YarnProperties yarnProperties;
@@ -81,8 +84,13 @@ public class YarnBackend implements Backend {
     @Override
     public void kill(Application application) {
         var state = new State("KILLED");
-        getYarnApplicationId(application).ifPresent(
-                id -> getToken().ifPresentOrElse(t -> client.setState(id, state, t), () -> client.setState(id, state)));
+        // TODO remove after fixed
+        try {
+            getYarnApplicationId(application).ifPresent(id -> getToken()
+                    .ifPresentOrElse(t -> client.setState(id, state, t), () -> client.setState(id, state)));
+        } catch (Exception e) {
+            LOG.error("Can't kill Yarn app: {}", application, e);
+        }
     }
 
     private Optional<String> getToken() {
