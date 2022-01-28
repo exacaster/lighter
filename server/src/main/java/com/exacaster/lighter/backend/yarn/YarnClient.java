@@ -21,6 +21,9 @@ public interface YarnClient {
     @Put("/apps/{appId}/state")
     State setState(String appId, @Body State state);
 
+    @Put("/apps/{appId}/state")
+    State setState(String appId, @Body State state, @Header("X-Hadoop-Delegation-Token") String token);
+
     @Get("/apps/{appId}")
     YarnApplicationResponse getApplication(String appId);
 
