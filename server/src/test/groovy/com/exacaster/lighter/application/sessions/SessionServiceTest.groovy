@@ -66,11 +66,5 @@ class SessionServiceTest extends Specification {
 
         then: "returns empty"
         session.isEmpty()
-
-        when: "fetch permanent"
-        session = service.fetchPermanentSession()
-
-        then: "returns empty"
-        session.isEmpty()
     }
 }
