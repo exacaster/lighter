@@ -29,7 +29,7 @@ import org.springframework.security.kerberos.client.KerberosRestTemplate;
 public class YarnBackend implements Backend {
 
     private static final Logger LOG = getLogger(YarnBackend.class);
-    private static final String TOKEN_ENDPOINT = "/ws/v1/cluster/delegation-token";
+    private static final String TOKEN_ENDPOINT = "/webhdfs/v1/?op=GETDELEGATIONTOKEN&renewer=lighter";
 
     private final YarnProperties yarnProperties;
     private final YarnClient client;
@@ -40,8 +40,9 @@ public class YarnBackend implements Backend {
         this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
-        this.kerberosRestTemplate = Optional.ofNullable(yarnProperties.getKerberosKeytab())
-                .map(it -> new KerberosRestTemplate(it, yarnProperties.getKerberosPrincipal()));
+        this.kerberosRestTemplate = Optional.ofNullable(yarnProperties.getTokenUrl())
+                .map(it -> new KerberosRestTemplate(yarnProperties.getKerberosKeytab(),
+                        yarnProperties.getKerberosPrincipal()));
     }
 
     @Override
@@ -94,10 +95,8 @@ public class YarnBackend implements Backend {
     }
 
     private Optional<String> getToken() {
-        var url = yarnProperties.getUrl() + TOKEN_ENDPOINT;
-        var body = Map.of("renewer", "lighter");
         return kerberosRestTemplate
-                .map(it -> it.postForObject(url, body, Token.class))
+                .map(it -> it.getForObject(yarnProperties.getTokenUrl() + TOKEN_ENDPOINT, Token.class))
                 .map(Token::getToken);
     }
 
