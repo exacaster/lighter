@@ -1,6 +1,8 @@
 package com.exacaster.lighter.backend.yarn;
 
 import static io.micronaut.http.HttpHeaders.ACCEPT;
+import static io.micronaut.http.HttpHeaders.CONTENT_TYPE;
+import static io.micronaut.http.MediaType.APPLICATION_JSON;
 
 import com.exacaster.lighter.backend.yarn.resources.State;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationListResponse;
@@ -15,7 +17,8 @@ import io.micronaut.http.client.annotation.Client;
 
 @Requires(beans = YarnProperties.class)
 @Client("${lighter.yarn.url}/ws/v1/cluster/")
-@Header(name = ACCEPT, value = "application/json")
+@Header(name = ACCEPT, value = APPLICATION_JSON)
+@Header(name = CONTENT_TYPE, value = APPLICATION_JSON)
 public interface YarnClient {
 
     @Put("/apps/{appId}/state")
