@@ -8,8 +8,6 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.configuration.AppConfiguration;
-import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import jakarta.inject.Singleton;
@@ -23,14 +21,11 @@ public class SessionService {
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
     private final StatementHandler statementHandler;
-    private final SessionConfiguration sessionConfiguration;
 
-    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler,
-            AppConfiguration appConfiguration) {
+    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
         this.statementHandler = statementHandler;
-        this.sessionConfiguration = appConfiguration.getSessionConfiguration();
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -43,12 +38,14 @@ public class SessionService {
 
     public Application createSession(SubmitParams params, String sessionId) {
         var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), backend.getSessionJobResources());
+        var now = LocalDateTime.now();
         var entity = ApplicationBuilder.builder()
                 .setId(sessionId)
                 .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
-                .setCreatedAt(LocalDateTime.now())
+                .setCreatedAt(now)
+                .setContactedAt(now)
                 .build();
         return applicationStorage.saveApplication(entity);
     }
