@@ -1,49 +1,42 @@
 package com.exacaster.lighter.backend.yarn;
 
-import static java.util.stream.Stream.of;
+import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.backend.yarn.resources.State;
-import com.exacaster.lighter.backend.yarn.resources.Token;
-import com.exacaster.lighter.backend.yarn.resources.Token.TokenWrapper;
-import com.exacaster.lighter.backend.yarn.resources.YarnApplication;
-import com.exacaster.lighter.backend.yarn.resources.YarnApplicationListResponse;
-import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse;
-import com.exacaster.lighter.backend.yarn.resources.YarnApplicationWrapper;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import java.io.File;
+import java.io.IOException;
 import java.net.URI;
-import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import org.apache.hadoop.yarn.api.records.ApplicationId;
+import org.apache.hadoop.yarn.api.records.ApplicationReport;
+import org.apache.hadoop.yarn.api.records.YarnApplicationState;
+import org.apache.hadoop.yarn.client.api.YarnClient;
+import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.slf4j.Logger;
-import org.springframework.security.kerberos.client.KerberosRestTemplate;
 
 public class YarnBackend implements Backend {
 
     private static final Logger LOG = getLogger(YarnBackend.class);
-    private static final String TOKEN_ENDPOINT = "/webhdfs/v1/?op=GETDELEGATIONTOKEN&renewer=lighter";
 
     private final YarnProperties yarnProperties;
     private final YarnClient client;
     private final AppConfiguration conf;
-    private final Optional<KerberosRestTemplate> kerberosRestTemplate;
 
     public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf) {
         this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
-        this.kerberosRestTemplate = Optional.ofNullable(yarnProperties.getTokenUrl())
-                .map(it -> new KerberosRestTemplate(yarnProperties.getKerberosKeytab(),
-                        yarnProperties.getKerberosPrincipal()));
     }
 
     @Override
@@ -53,26 +46,37 @@ public class YarnBackend implements Backend {
     }
 
     private ApplicationState getState(String id) {
-        var yarnApplication = client.getApplication(id).getApp();
-        switch (yarnApplication.getFinalStatus()) {
-            case "UNDEFINED":
-                return ApplicationState.BUSY;
-            case "SUCCEEDED":
-                return ApplicationState.SUCCESS;
-            case "FAILED":
-                return ApplicationState.ERROR;
-            case "KILLED":
-                return ApplicationState.KILLED;
-            default:
-                throw new IllegalStateException("Unexpected state: " + yarnApplication);
+        try {
+            var yarnApplication = client.getApplicationReport(fromString(id));
+            switch (yarnApplication.getFinalApplicationStatus()) {
+                case UNDEFINED:
+                    return ApplicationState.BUSY;
+                case SUCCEEDED:
+                    return ApplicationState.SUCCESS;
+                case FAILED:
+                    return ApplicationState.ERROR;
+                case KILLED:
+                    return ApplicationState.KILLED;
+            }
+        } catch (YarnException | IOException e) {
+            LOG.error("Unexpected error for appId: {}", id, e);
         }
+        throw new IllegalStateException("Unexpected state for appId: " + id);
     }
 
     @Override
     public Optional<Log> getLogs(Application application) {
         // TODO: extract yarn logs, returning tracking url for now
-        return getYarnApplicationId(application).map(client::getApplication)
-                .map(YarnApplicationResponse::getApp)
+        return getYarnApplicationId(application)
+                .map(ApplicationId::fromString)
+                .map(appId -> {
+                    try {
+                        return client.getApplicationReport(appId);
+                    } catch (YarnException | IOException e) {
+                        LOG.error("Failed to get logs for app: {}", application, e);
+                        return null;
+                    }
+                })
                 .map(a -> new Log(application.getId(), a.getTrackingUrl()));
     }
 
@@ -85,21 +89,14 @@ public class YarnBackend implements Backend {
 
     @Override
     public void kill(Application application) {
-        var state = new State("KILLED");
-        // TODO remove after fixed
-        try {
-            getYarnApplicationId(application).ifPresent(id -> getToken()
-                    .ifPresentOrElse(t -> client.setState(id, state, t), () -> client.setState(id, state)));
-        } catch (Exception e) {
-            LOG.error("Can't kill Yarn app: {}", application, e);
-        }
-    }
-
-    private Optional<String> getToken() {
-        return kerberosRestTemplate
-                .map(it -> it.getForObject(yarnProperties.getTokenUrl() + TOKEN_ENDPOINT, Token.class))
-                .map(Token::getTokenWrapper)
-                .map(TokenWrapper::getToken);
+        getYarnApplicationId(application)
+                .ifPresent(id -> {
+                    try {
+                        client.killApplication(ApplicationId.fromString(id));
+                    } catch (YarnException | IOException e) {
+                        LOG.error("Can't kill Yarn app: {}", application, e);
+                    }
+                });
     }
 
     @Override
@@ -114,7 +111,7 @@ public class YarnBackend implements Backend {
                 "spark.yarn.appMasterEnv.PY_GATEWAY_HOST", host,
                 "spark.yarn.appMasterEnv.LIGHTER_SESSION_ID", application.getId()
         ));
-        if (yarnProperties.getKerberosKeytab() != null) {
+        if (yarnProperties.getKerberosKeytab() != null && yarnProperties.getKerberosPrincipal() != null) {
             props.put("spark.kerberos.keytab", yarnProperties.getKerberosKeytab());
             props.put("spark.kerberos.principal", yarnProperties.getKerberosPrincipal());
         }
@@ -122,15 +119,18 @@ public class YarnBackend implements Backend {
     }
 
     private Optional<String> getYarnApplicationId(Application application) {
+        var allStates = EnumSet.allOf(YarnApplicationState.class);
         return Optional.ofNullable(application.getAppId())
-                .or(() -> of(client.getApps(application.getId()))
-                        .map(YarnApplicationListResponse::getApps)
-                        .filter(Objects::nonNull)
-                        .map(YarnApplicationWrapper::getApp)
-                        .filter(Objects::nonNull)
-                        .flatMap(Collection::stream)
-                        .filter(Objects::nonNull)
-                        .max(Comparator.comparing(YarnApplication::getStartedTime))
-                        .map(YarnApplication::getId));
+                .or(() -> {
+                    try {
+                        return client.getApplications(Set.of("SPARK"), allStates, Set.of(application.getId())).stream()
+                                .max(Comparator.comparing(ApplicationReport::getStartTime))
+                                .map(ApplicationReport::getApplicationId)
+                                .map(ApplicationId::toString);
+                    } catch (YarnException | IOException e) {
+                        LOG.error("Failed to get app id for app: {}", application, e);
+                        return Optional.empty();
+                    }
+                });
     }
 }

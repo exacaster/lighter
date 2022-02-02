@@ -25,7 +25,7 @@ class Factories {
         )
     }
 
-    static newApplication(appId="app123") {
+    static newApplication(appId="application_123_0123") {
         ApplicationBuilder.builder().setAppId(appId)
                 .setType(ApplicationType.BATCH)
                 .setState(ApplicationState.NOT_STARTED)
@@ -37,7 +37,7 @@ class Factories {
     }
 
     static newSession(state=ApplicationState.NOT_STARTED) {
-        ApplicationBuilder.builder().setAppId("app123")
+        ApplicationBuilder.builder().setAppId("application_123_0123")
                 .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)
                 .setAppInfo("info")
