@@ -9,6 +9,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.yarn.resources.State;
 import com.exacaster.lighter.backend.yarn.resources.Token;
+import com.exacaster.lighter.backend.yarn.resources.Token.TokenWrapper;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplication;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationListResponse;
 import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse;
@@ -97,7 +98,8 @@ public class YarnBackend implements Backend {
     private Optional<String> getToken() {
         return kerberosRestTemplate
                 .map(it -> it.getForObject(yarnProperties.getTokenUrl() + TOKEN_ENDPOINT, Token.class))
-                .map(Token::getToken);
+                .map(Token::getTokenWrapper)
+                .map(TokenWrapper::getToken);
     }
 
     @Override
