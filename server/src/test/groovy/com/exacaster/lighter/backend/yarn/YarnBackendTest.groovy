@@ -18,7 +18,7 @@ class YarnBackendTest extends Specification {
 
     def config = appConfiguration()
 
-    def yarnProps = new YarnProperties(null, null, null)
+    def yarnProps = new YarnProperties(null, null)
 
     @Subject
     def backend = new YarnBackend(yarnProps, client, config)
