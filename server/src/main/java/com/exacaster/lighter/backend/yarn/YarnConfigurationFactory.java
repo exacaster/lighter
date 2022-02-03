@@ -1,8 +1,8 @@
 package com.exacaster.lighter.backend.yarn;
 
+import static org.apache.hadoop.yarn.conf.YarnConfiguration.RM_ADDRESS;
 import static org.apache.hadoop.yarn.conf.YarnConfiguration.RM_KEYTAB;
 import static org.apache.hadoop.yarn.conf.YarnConfiguration.RM_PRINCIPAL;
-import static org.apache.hadoop.yarn.conf.YarnConfiguration.RM_WEBAPP_ADDRESS;
 
 import com.exacaster.lighter.configuration.AppConfiguration;
 import io.micronaut.context.annotation.Factory;
@@ -18,7 +18,9 @@ public class YarnConfigurationFactory {
     @Singleton
     public YarnBackend backend(YarnProperties yarnProperties, AppConfiguration conf) {
         YarnConfiguration yarnConfiguration = new YarnConfiguration();
-        yarnConfiguration.set(RM_WEBAPP_ADDRESS, yarnProperties.getUrl());
+        if (yarnProperties.getAddress() != null) {
+            yarnConfiguration.set(RM_ADDRESS, yarnProperties.getAddress());
+        }
         if (yarnProperties.getKerberosKeytab() != null && yarnProperties.getKerberosPrincipal() != null) {
             yarnConfiguration.set(RM_PRINCIPAL, yarnProperties.getKerberosPrincipal());
             yarnConfiguration.set(RM_KEYTAB, yarnProperties.getKerberosKeytab());
