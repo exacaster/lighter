@@ -5,6 +5,7 @@ import org.apache.hadoop.yarn.api.records.ApplicationId
 import org.apache.hadoop.yarn.api.records.ApplicationReport
 import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
 import org.apache.hadoop.yarn.client.api.YarnClient
+import org.apache.hadoop.yarn.exceptions.YarnException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -55,10 +56,24 @@ class YarnBackendTest extends Specification {
         mockYarnApp(app)
 
         when:
-        def logs = backend.getLogs(app).get()
+        def logs = backend.getLogs(app)
 
         then: "returns tracking url as logs"
-        logs.log == "track"
+        logs.isPresent()
+        logs.get().log == "track"
+    }
+
+    def "fetches logs empty"() {
+        given:
+        def app = newApplication(null)
+        client.getApplicationReport(_) >> {throw new YarnException()}
+        mockYarnApp(app)
+
+        when:
+        def logs = backend.getLogs(app)
+
+        then: "returns tracking url as logs"
+        logs.isEmpty()
     }
 
     def "get session job resource"() {

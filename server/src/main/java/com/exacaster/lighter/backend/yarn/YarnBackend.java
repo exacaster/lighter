@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.api.records.YarnApplicationState;
@@ -123,7 +124,9 @@ public class YarnBackend implements Backend {
         return Optional.ofNullable(application.getAppId())
                 .or(() -> {
                     try {
-                        return client.getApplications(Set.of("SPARK"), allStates, Set.of(application.getId())).stream()
+                        var request = GetApplicationsRequest.newInstance(Set.of("SPARK"));
+                        request.setApplicationTags(Set.of(application.getId()));
+                        return client.getApplications(request).stream()
                                 .max(Comparator.comparing(ApplicationReport::getStartTime))
                                 .map(ApplicationReport::getApplicationId)
                                 .map(ApplicationId::toString);
