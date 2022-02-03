@@ -13,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Comparator;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -21,7 +20,6 @@ import java.util.Set;
 import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
-import org.apache.hadoop.yarn.api.records.YarnApplicationState;
 import org.apache.hadoop.yarn.client.api.YarnClient;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.slf4j.Logger;
@@ -96,6 +94,7 @@ public class YarnBackend implements Backend {
                         client.killApplication(ApplicationId.fromString(id));
                     } catch (YarnException | IOException e) {
                         LOG.error("Can't kill Yarn app: {}", application, e);
+                        throw new IllegalStateException(e);
                     }
                 });
     }
@@ -120,11 +119,10 @@ public class YarnBackend implements Backend {
     }
 
     private Optional<String> getYarnApplicationId(Application application) {
-        var allStates = EnumSet.allOf(YarnApplicationState.class);
         return Optional.ofNullable(application.getAppId())
                 .or(() -> {
                     try {
-                        var request = GetApplicationsRequest.newInstance(Set.of("SPARK"));
+                        var request = GetApplicationsRequest.newInstance();
                         request.setApplicationTags(Set.of(application.getId()));
                         return client.getApplications(request).stream()
                                 .max(Comparator.comparing(ApplicationReport::getStartTime))
@@ -132,7 +130,7 @@ public class YarnBackend implements Backend {
                                 .map(ApplicationId::toString);
                     } catch (YarnException | IOException e) {
                         LOG.error("Failed to get app id for app: {}", application, e);
-                        return Optional.empty();
+                        throw new IllegalStateException(e);
                     }
                 });
     }
