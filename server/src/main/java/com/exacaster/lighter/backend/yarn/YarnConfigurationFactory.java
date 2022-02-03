@@ -8,9 +8,9 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
+import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.yarn.client.api.YarnClient;
-import org.apache.hadoop.yarn.conf.YarnConfiguration;
 
 @Factory
 @Requires(beans = YarnProperties.class)
@@ -19,7 +19,7 @@ public class YarnConfigurationFactory {
     @Singleton
     public YarnBackend backend(YarnProperties yarnProperties, AppConfiguration conf,
             @Property(name = "hadoop.conf.dir") String hadoopConfDir) {
-        YarnConfiguration yarnConfiguration = new YarnConfiguration();
+        var yarnConfiguration = new Configuration(false);
         yarnConfiguration.addResource(new Path(hadoopConfDir, "core-site.xml"));
         yarnConfiguration.addResource(new Path(hadoopConfDir, "yarn-site.xml"));
         if (yarnProperties.getKerberosKeytab() != null && yarnProperties.getKerberosPrincipal() != null) {
