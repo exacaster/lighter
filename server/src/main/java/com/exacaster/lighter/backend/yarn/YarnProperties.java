@@ -12,14 +12,13 @@ public class YarnProperties {
 
     private final String kerberosPrincipal;
     private final String kerberosKeytab;
-    private final String tokenUrl;
+    private final String url;
 
     @ConfigurationInject
-    public YarnProperties(@Nullable String kerberosPrincipal, @Nullable String kerberosKeytab,
-            @Nullable String tokenUrl) {
+    public YarnProperties(@Nullable String kerberosPrincipal, @Nullable String kerberosKeytab, String url) {
         this.kerberosPrincipal = kerberosPrincipal;
         this.kerberosKeytab = kerberosKeytab;
-        this.tokenUrl = tokenUrl;
+        this.url = url;
     }
 
     public String getKerberosPrincipal() {
@@ -30,8 +29,8 @@ public class YarnProperties {
         return kerberosKeytab;
     }
 
-    public String getTokenUrl() {
-        return tokenUrl;
+    public String getUrl() {
+        return url;
     }
 
     @Override
@@ -39,7 +38,7 @@ public class YarnProperties {
         return new StringJoiner(", ", YarnProperties.class.getSimpleName() + "[", "]")
                 .add("kerberosPrincipal='" + kerberosPrincipal + "'")
                 .add("kerberosKeytab='" + kerberosKeytab + "'")
-                .add("tokenUrl='" + tokenUrl + "'")
+                .add("url='" + url + "'")
                 .toString();
     }
 }

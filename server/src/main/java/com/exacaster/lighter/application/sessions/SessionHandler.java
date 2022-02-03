@@ -14,9 +14,8 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
-import io.micronaut.context.event.StartupEvent;
+import io.micronaut.context.event.ShutdownEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
-import io.micronaut.scheduling.annotation.Async;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
@@ -55,9 +54,11 @@ public class SessionHandler {
     }
 
     @EventListener
-    @Async
-    public void startPermanentSession(StartupEvent event) {
-        restartPermanentSession();
+    public void stopPermanentSession(ShutdownEvent event) {
+        var sessionId = sessionConfiguration.getPermanentSessionId();
+        if (sessionId != null) {
+            sessionService.deleteOne(sessionId);
+        }
     }
 
     @SchedulerLock(name = "keepPermanentSession")
@@ -65,21 +66,14 @@ public class SessionHandler {
     public void keepPermanentSession() {
         assertLocked();
         var sessionId = sessionConfiguration.getPermanentSessionId();
-        if (sessionId == null) {
+        var params = sessionConfiguration.getPermanentSessionParams();
+        if (sessionId == null || params == null) {
             return;
         }
         var session = sessionService.fetchOne(sessionId);
         var running = not(ApplicationState::isComplete);
         if (session.map(Application::getState).filter(running).isEmpty() ||
                 session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(running).isEmpty()) {
-            restartPermanentSession();
-        }
-    }
-
-    private void restartPermanentSession() {
-        var sessionId = sessionConfiguration.getPermanentSessionId();
-        var params = sessionConfiguration.getPermanentSessionParams();
-        if (sessionId != null && params != null) {
             sessionService.deleteOne(sessionId);
             launchSession(sessionService.createSession(params, sessionId));
         }

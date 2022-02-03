@@ -1,10 +1,11 @@
 package com.exacaster.lighter.backend.yarn
 
 import com.exacaster.lighter.application.ApplicationState
-import com.exacaster.lighter.backend.yarn.resources.YarnApplication
-import com.exacaster.lighter.backend.yarn.resources.YarnApplicationListResponse
-import com.exacaster.lighter.backend.yarn.resources.YarnApplicationResponse
-import com.exacaster.lighter.backend.yarn.resources.YarnApplicationWrapper
+import org.apache.hadoop.yarn.api.records.ApplicationId
+import org.apache.hadoop.yarn.api.records.ApplicationReport
+import org.apache.hadoop.yarn.api.records.FinalApplicationStatus
+import org.apache.hadoop.yarn.client.api.YarnClient
+import org.apache.hadoop.yarn.exceptions.YarnException
 import spock.lang.Specification
 import spock.lang.Subject
 
@@ -17,7 +18,7 @@ class YarnBackendTest extends Specification {
 
     def config = appConfiguration()
 
-    def yarnProps = new YarnProperties(null, null, null);
+    def yarnProps = new YarnProperties(null, null, null)
 
     @Subject
     def backend = new YarnBackend(yarnProps, client, config)
@@ -44,7 +45,7 @@ class YarnBackendTest extends Specification {
         def info = backend.getInfo(app).get()
 
         then:
-        info.applicationId == "app-sp123"
+        info.applicationId == "application_123_0123"
         info.state == ApplicationState.BUSY
     }
 
@@ -55,10 +56,24 @@ class YarnBackendTest extends Specification {
         mockYarnApp(app)
 
         when:
-        def logs = backend.getLogs(app).get()
+        def logs = backend.getLogs(app)
 
         then: "returns tracking url as logs"
-        logs.log == "track"
+        logs.isPresent()
+        logs.get().log == "track"
+    }
+
+    def "fetches logs empty"() {
+        given:
+        def app = newApplication(null)
+        client.getApplicationReport(_) >> {throw new YarnException()}
+        mockYarnApp(app)
+
+        when:
+        def logs = backend.getLogs(app)
+
+        then: "returns tracking url as logs"
+        logs.isEmpty()
     }
 
     def "get session job resource"() {
@@ -81,9 +96,12 @@ class YarnBackendTest extends Specification {
     }
 
     private mockYarnApp(app) {
-        def yarnId = "app-sp123"
-        def yarnApp = new YarnApplication(yarnId, "track", "UNDEFINED", 123456789012345)
-        client.getApps(app.id) >> new YarnApplicationListResponse(new YarnApplicationWrapper([yarnApp]))
-        client.getApplication(yarnId) >> new YarnApplicationResponse(yarnApp)
+        def yarnId = ApplicationId.fromString("application_123_0123")
+        def yarnApp = Mock(ApplicationReport)
+        yarnApp.getTrackingUrl() >> 'track'
+        yarnApp.getApplicationId() >> yarnId
+        yarnApp.getFinalApplicationStatus() >> FinalApplicationStatus.UNDEFINED
+        client.getApplications(*_) >> [yarnApp]
+        client.getApplicationReport(yarnId) >> yarnApp
     }
 }
