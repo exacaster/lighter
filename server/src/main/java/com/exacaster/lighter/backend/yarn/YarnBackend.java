@@ -72,7 +72,7 @@ public class YarnBackend implements Backend {
                     try {
                         return client.getApplicationReport(appId);
                     } catch (YarnException | IOException e) {
-                        LOG.error("Failed to get logs for app: {}", application, e);
+                        LOG.warn("Failed to get logs for app: {}", application, e);
                         return null;
                     }
                 })

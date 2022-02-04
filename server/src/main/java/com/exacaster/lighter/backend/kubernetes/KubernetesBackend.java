@@ -71,7 +71,7 @@ public class KubernetesBackend implements Backend {
                                 .withName(pod.getMetadata().getName())
                                 .tailingLines(properties.getMaxLogSize()).getLog(true);
                     } catch (KubernetesClientException e) {
-                        LOG.debug("Error Retrieving logs: {}", e.getStatus());
+                        LOG.warn("Error Retrieving logs: {}", e.getStatus());
                     }
                     return ofNullable(log);
                 })
