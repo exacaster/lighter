@@ -1,5 +1,6 @@
 package com.exacaster.lighter.backend.yarn;
 
+import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS_KEYTAB_LOGIN_AUTORENEWAL_ENABLED;
 import static org.apache.hadoop.security.UserGroupInformation.loginUserFromKeytab;
 
 import com.exacaster.lighter.configuration.AppConfiguration;
@@ -24,6 +25,7 @@ public class YarnConfigurationFactory {
         yarnConfiguration.addResource(new Path(hadoopConfDir, "core-site.xml"));
         yarnConfiguration.addResource(new Path(hadoopConfDir, "yarn-site.xml"));
         if (yarnProperties.getKerberosKeytab() != null && yarnProperties.getKerberosPrincipal() != null) {
+            yarnConfiguration.setBoolean(HADOOP_KERBEROS_KEYTAB_LOGIN_AUTORENEWAL_ENABLED, true);
             UserGroupInformation.setConfiguration(yarnConfiguration);
             loginUserFromKeytab(yarnProperties.getKerberosPrincipal(), yarnProperties.getKerberosKeytab());
         }

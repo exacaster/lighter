@@ -48,7 +48,7 @@ public class PythonSessionIntegration implements StatementHandler {
 
     // Used By Py4J
     public void handleResponse(String sessionId, String statementId, Map<String, Object> result) {
-        LOG.debug("Handling response for {} : {} --- {}", sessionId, statementId, result);
+        LOG.warn("Handling response for {} : {} --- {}", sessionId, statementId, result);
         var sessionStatements = statements.get(sessionId);
         sessionStatements.stream()
                 .filter(st -> statementId.equals(st.getId()))
