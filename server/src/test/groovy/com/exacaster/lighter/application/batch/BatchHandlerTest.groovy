@@ -52,4 +52,25 @@ class BatchHandlerTest extends Specification {
         _ * service.fetchByState(ApplicationState.NOT_STARTED, config.getMaxRunningJobs() - 1) >> []
         0 * handler.launch(app, _) >> {  }
     }
+
+    def "tracks running jobs"() {
+        given:
+        def app = newApplication()
+        service.fetchRunning() >> [app]
+        service.fetchByState(*_) >> []
+
+        when:
+        handler.trackRunning()
+
+        then:
+        1 * statusHandler.processApplicationRunning(app) >> ApplicationState.BUSY
+        0 * handler.processScheduledBatches()
+
+        when:
+        handler.trackRunning()
+
+        then:
+        1 * statusHandler.processApplicationRunning(app) >> ApplicationState.SUCCESS
+        1 * handler.processScheduledBatches()
+    }
 }

@@ -45,11 +45,10 @@ public class ApplicationStatusHandler {
         );
     }
 
-    public void processApplicationRunning(Application app) {
-        backend.getInfo(app).ifPresentOrElse(
-                info -> trackStatus(app, info),
-                () -> checkZombie(app)
-        );
+    public ApplicationState processApplicationRunning(Application app) {
+        return backend.getInfo(app)
+                .map(info -> trackStatus(app, info))
+                .orElseGet(() -> checkZombie(app));
     }
 
     public void processApplicationError(Application application, Throwable error) {
@@ -69,7 +68,7 @@ public class ApplicationStatusHandler {
         );
     }
 
-    private void trackStatus(Application app, ApplicationInfo info) {
+    private ApplicationState trackStatus(Application app, ApplicationInfo info) {
         LOG.info("Tracking {}, info: {}", app, info);
         applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                 .setState(info.getState())
@@ -80,9 +79,11 @@ public class ApplicationStatusHandler {
         if (info.getState().isComplete()) {
             backend.getLogs(app).ifPresent(logService::save);
         }
+
+        return info.getState();
     }
 
-    private void checkZombie(Application app) {
+    private ApplicationState checkZombie(Application app) {
         LOG.info("No info for {}", app);
         if (app.getContactedAt() != null && app.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
             LOG.info("Assuming zombie ({})", app.getId());
@@ -91,6 +92,8 @@ public class ApplicationStatusHandler {
                     .build());
             logService.save(new Log(app.getId(),
                     "Application was not reachable for 10 minutes, so we assume something went wrong"));
+            return ApplicationState.ERROR;
         }
+        return app.getState();
     }
 }
