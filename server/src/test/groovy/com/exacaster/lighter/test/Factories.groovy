@@ -65,6 +65,6 @@ class Factories {
     }
 
     static appConfiguration() {
-        new AppConfiguration(10, "http://history", 5432, "http://lighter:8080", new AppConfiguration.SessionConfiguration(20, "permanentSessionId", submitParams()))
+        new AppConfiguration(10, "http://history", null, 5432, "http://lighter:8080", new AppConfiguration.SessionConfiguration(20, "permanentSessionId", submitParams()))
     }
 }

@@ -8,6 +8,7 @@ Lighter can be configured by using environment variables. Currently, Lighter sup
 | -------------------------------------- | ------------------------------------------------------ | -------------------------------- |
 | LIGHTER_MAX_RUNNING_JOBS               | Max running Batch jobs in parallel                     | 5                                |
 | LIGHTER_SPARK_HISTORY_SERVER_URL       | Spark history server URL used on frontend              | http://localhost/spark-history/  |
+| LIGHTER_EXTERNAL_LOGS_URL_TEMPLATE     | Template for link to external logs                     |                                  |
 | LIGHTER_PY_GATEWAY_PORT                | Port for live Spark session communication              | 25333                            |
 | LIGHETR_URL                            | URL which can be used to access Lighter form Spark Job | http://lighter.spark:8080        |
 | LIGHTER_SESSION_TIMEOUT_MINUTES        | Session lifetime in minutes                            | 90                               |

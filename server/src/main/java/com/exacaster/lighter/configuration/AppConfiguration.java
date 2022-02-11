@@ -9,6 +9,7 @@ import io.micronaut.context.annotation.Primary;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import java.util.StringJoiner;
+import javax.validation.constraints.Null;
 
 @ConfigurationProperties("lighter")
 @Introspected
@@ -16,6 +17,7 @@ public class AppConfiguration {
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer maxRunningJobs;
     private final String sparkHistoryServerUrl;
+    private final String externalLogsUrlTemplate;
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer pyGatewayPort;
     @JsonProperty(access = Access.WRITE_ONLY)
@@ -24,9 +26,11 @@ public class AppConfiguration {
 
     @ConfigurationInject
     public AppConfiguration(Integer maxRunningJobs, @Nullable String sparkHistoryServerUrl,
+            @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort, String url, SessionConfiguration sessionConfiguration){
         this.maxRunningJobs = maxRunningJobs;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
+        this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
         this.url = url;
         this.sessionConfiguration = sessionConfiguration;
@@ -38,6 +42,10 @@ public class AppConfiguration {
 
     public String getSparkHistoryServerUrl() {
         return sparkHistoryServerUrl;
+    }
+
+    public String getExternalLogsUrlTemplate() {
+        return externalLogsUrlTemplate;
     }
 
     public Integer getPyGatewayPort() {
