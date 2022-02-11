@@ -32,4 +32,5 @@ export type BatchPage = {
 
 export type Configuration = {
   sparkHistoryServerUrl?: string;
+  externalLogsUrlTemplate?: string;
 };
