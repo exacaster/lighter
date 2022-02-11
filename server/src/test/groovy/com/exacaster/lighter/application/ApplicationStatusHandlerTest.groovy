@@ -85,27 +85,30 @@ class ApplicationStatusHandlerTest extends Specification {
 
         when:
         1 * backend.getInfo(application) >> Optional.of(new ApplicationInfo(ApplicationState.BUSY, "we"))
-        handler.processApplicationRunning(application)
+        def returnedState = handler.processApplicationRunning(application)
         def updated = storage.findApplication(application.id).get()
 
         then:
+        returnedState == updated.state
         updated.state == ApplicationState.BUSY
 
         when:
         1 * backend.getInfo(updated) >> Optional.empty()
-        handler.processApplicationRunning(updated)
+        returnedState = handler.processApplicationRunning(updated)
         updated = storage.findApplication(application.id).get()
 
         then:
+        returnedState == updated.state
         updated.state == ApplicationState.BUSY
 
         when: "No info for more than 30 mins"
         updated = storage.saveApplication(ApplicationBuilder.builder(updated).setContactedAt(LocalDateTime.now().minusHours(1)).build())
         1 * backend.getInfo(updated) >> Optional.empty()
-        handler.processApplicationRunning(updated)
+        returnedState = handler.processApplicationRunning(updated)
         updated = storage.findApplication(application.id).get()
 
         then:
+        returnedState == updated.state
         updated.state == ApplicationState.ERROR
     }
 }

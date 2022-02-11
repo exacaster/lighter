@@ -58,10 +58,19 @@ public class BatchHandler {
     }
 
     @SchedulerLock(name = "trackRunning")
-    @Scheduled(fixedRate = "2m")
+    @Scheduled(fixedRate = "1m")
     public void trackRunning() {
         assertLocked();
-        batchService.fetchRunning().forEach(statusTracker::processApplicationRunning);
+        var completedCount = batchService.fetchRunning().stream()
+                .map(statusTracker::processApplicationRunning)
+                .filter(ApplicationState::isComplete)
+                .count();
+        LOG.info("Completed {} jobs", completedCount);
+
+        // If there are completed jobs, we can launch scheduled jobs immediately
+        if (completedCount > 0) {
+            this.processScheduledBatches();
+        }
     }
 
 }
