@@ -3,6 +3,7 @@ package com.exacaster.lighter.application.sessions;
 import com.exacaster.lighter.application.sessions.processors.Output;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
 @Introspected
@@ -11,20 +12,14 @@ public class Statement {
     private final String code;
     private final Output output;
     private final String state;
+    private final LocalDateTime createdAt;
 
-    public Statement(@Nullable String id, String code, @Nullable Output output, @Nullable String state) {
+    public Statement(@Nullable String id, String code, @Nullable Output output, @Nullable String state, LocalDateTime createdAt) {
         this.id = id;
         this.code = code;
         this.output = output;
         this.state = state;
-    }
-
-    public Statement withIdAndState(String id, String state) {
-        return new Statement(id, this.code, this.output, state);
-    }
-
-    public Statement withStateAndOutput(String state, Output output) {
-        return new Statement(this.id, this.code, output, state);
+        this.createdAt = createdAt;
     }
 
     public String getId() {
@@ -43,6 +38,10 @@ public class Statement {
         return state;
     }
 
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", Statement.class.getSimpleName() + "[", "]")
@@ -50,6 +49,7 @@ public class Statement {
                 .add("code='" + code + "'")
                 .add("output=" + output)
                 .add("state='" + state + "'")
+                .add("createdAt='" + createdAt + "'")
                 .toString();
     }
 }

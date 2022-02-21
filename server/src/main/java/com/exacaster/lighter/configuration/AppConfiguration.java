@@ -8,8 +8,8 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import java.util.Map;
 import java.util.StringJoiner;
-import javax.validation.constraints.Null;
 
 @ConfigurationProperties("lighter")
 @Introspected
@@ -74,36 +74,28 @@ public class AppConfiguration {
     @ConfigurationProperties("session")
     public static class SessionConfiguration {
         private final Integer timeoutMinutes;
-        private final String permanentSessionId;
-        private final SubmitParams permanentSessionParams;
+        private final Map<String, SubmitParams> permanentSessions;
 
         @ConfigurationInject
         public SessionConfiguration(@Nullable Integer timeoutMinutes,
-                @Nullable String permanentSessionId,
-                @Nullable SubmitParams permanentSessionParams) {
+                Map<String, SubmitParams> permanentSessions) {
             this.timeoutMinutes = timeoutMinutes;
-            this.permanentSessionId = permanentSessionId;
-            this.permanentSessionParams = permanentSessionParams;
+            this.permanentSessions = permanentSessions;
         }
 
         public Integer getTimeoutMinutes() {
             return timeoutMinutes;
         }
 
-        public String getPermanentSessionId() {
-            return permanentSessionId;
-        }
-
-        public SubmitParams getPermanentSessionParams() {
-            return permanentSessionParams;
+        public Map<String, SubmitParams> getPermanentSessions() {
+            return permanentSessions;
         }
 
         @Override
         public String toString() {
             return new StringJoiner(", ", SessionConfiguration.class.getSimpleName() + "[", "]")
                     .add("timeoutMinutes=" + timeoutMinutes)
-                    .add("permanentSessionId=" + permanentSessionId)
-                    .add("permanentSessionParams=" + permanentSessionParams)
+                    .add("permanentSessions=" + permanentSessions)
                     .toString();
         }
     }

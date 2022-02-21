@@ -33,13 +33,16 @@ class SessionHandlerTest extends Specification {
 
     def "kills timeouted sessions"() {
         given:
-        def oldSession = ApplicationBuilder.builder(newSession())
-                .setCreatedAt(LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1))
-                .build()
+        def oldSession = newSession()
+        service.lastUsed(oldSession.id) >> LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1)
+
         def newSession = app()
+        service.lastUsed(newSession.id) >> newSession.createdAt
+
         def permanentSession = ApplicationBuilder.builder(oldSession)
-                .setId(conf.sessionConfiguration.permanentSessionId)
+                .setId(conf.sessionConfiguration.permanentSessions.keySet().iterator().next())
                 .build()
+
         1 * service.fetchRunning() >> [
                 oldSession,
                 newSession,
@@ -61,7 +64,7 @@ class SessionHandlerTest extends Specification {
         def session2 = app()
         def permanentSession = ApplicationBuilder.builder(app())
                 .setState(ApplicationState.STARTING)
-                .setId(conf.sessionConfiguration.permanentSessionId)
+                .setId(conf.sessionConfiguration.permanentSessions.keySet().iterator().next())
                 .build()
         service.fetchRunning() >> [session, session2, permanentSession]
         statementHandler.hasWaitingStatement(session) >> false
@@ -82,8 +85,8 @@ class SessionHandlerTest extends Specification {
 
     def "keeps permanent session"() {
         given:
-        def sessionId = conf.sessionConfiguration.permanentSessionId
-        def params = conf.sessionConfiguration.permanentSessionParams
+        def sessionId = conf.sessionConfiguration.permanentSessions.keySet().iterator().next()
+        def params = conf.sessionConfiguration.permanentSessions.values().iterator().next()
         def permanentSession = ApplicationBuilder.builder(app())
                 .setSubmitParams(params)
                 .setState(ApplicationState.STARTING)
@@ -93,7 +96,7 @@ class SessionHandlerTest extends Specification {
         1 * backend.getInfo(permanentSession) >> Optional.of(new ApplicationInfo(permanentSession.getState(), sessionId))
 
         when: "exists healthy permanent session"
-        handler.keepPermanentSession()
+        handler.keepPermanentSessions()
 
         then: "do nothing"
         0 * service.deleteOne(sessionId)
@@ -104,7 +107,7 @@ class SessionHandlerTest extends Specification {
                 .setState(ApplicationState.ERROR)
                 .build()
         1 * service.fetchOne(sessionId) >> Optional.of(permanentSession)
-        handler.keepPermanentSession()
+        handler.keepPermanentSessions()
 
         then: "restart permanent session"
         1 * service.deleteOne(sessionId)
@@ -114,6 +117,7 @@ class SessionHandlerTest extends Specification {
 
     def app() {
         ApplicationBuilder.builder(newSession())
+                .setId("1")
                 .setContactedAt(LocalDateTime.now())
                 .build()
     }

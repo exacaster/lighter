@@ -6,6 +6,7 @@ lighter:
     url: http://lighter.spark:8080
     session:
         timeout-minutes: 90
+        permanent-sessions: {}
     kubernetes:
         enabled: true
         master: k8s://kubernetes.default.svc.cluster.local:443

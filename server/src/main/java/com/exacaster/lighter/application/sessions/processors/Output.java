@@ -1,5 +1,7 @@
 package com.exacaster.lighter.application.sessions.processors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Map;
 import java.util.StringJoiner;
 
@@ -10,7 +12,12 @@ public class Output {
     private final String evalue;
     private final String traceback;
 
-    public Output(String status, int executionCount, Map<String, Object> data, String evalue, String traceback) {
+    @JsonCreator
+    public Output(@JsonProperty("status") String status,
+            @JsonProperty("executionCount") int executionCount,
+            @JsonProperty("data") Map<String, Object> data,
+            @JsonProperty("evalue") String evalue,
+            @JsonProperty("traceback") String traceback) {
         this.status = status;
         this.executionCount = executionCount;
         this.data = data;

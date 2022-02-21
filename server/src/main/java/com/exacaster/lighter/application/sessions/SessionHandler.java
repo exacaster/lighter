@@ -1,7 +1,6 @@
 package com.exacaster.lighter.application.sessions;
 
 import static java.util.Optional.ofNullable;
-import static java.util.function.Predicate.not;
 import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -14,8 +13,6 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
-import io.micronaut.context.event.ShutdownEvent;
-import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
@@ -53,30 +50,18 @@ public class SessionHandler {
         app.launch(backend.getSubmitConfiguration(application));
     }
 
-    @EventListener
-    public void stopPermanentSession(ShutdownEvent event) {
-        var sessionId = sessionConfiguration.getPermanentSessionId();
-        if (sessionId != null) {
-            sessionService.deleteOne(sessionId);
-        }
-    }
-
     @SchedulerLock(name = "keepPermanentSession")
     @Scheduled(fixedRate = "1m")
-    public void keepPermanentSession() {
+    public void keepPermanentSessions() {
         assertLocked();
-        var sessionId = sessionConfiguration.getPermanentSessionId();
-        var params = sessionConfiguration.getPermanentSessionParams();
-        if (sessionId == null || params == null) {
-            return;
-        }
-        var session = sessionService.fetchOne(sessionId);
-        var running = not(ApplicationState::isComplete);
-        if (session.map(Application::getState).filter(running).isEmpty() ||
-                session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(running).isEmpty()) {
-            sessionService.deleteOne(sessionId);
-            launchSession(sessionService.createSession(params, sessionId));
-        }
+        sessionConfiguration.getPermanentSessions().forEach((sessionId, params) -> {
+            var session = sessionService.fetchOne(sessionId);
+            if (session.map(Application::getState).filter(this::running).isEmpty() ||
+                    session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
+                sessionService.deleteOne(sessionId);
+                launchSession(sessionService.createSession(params, sessionId));
+            }
+        });
     }
 
     @SchedulerLock(name = "processScheduledSessions")
@@ -101,7 +86,7 @@ public class SessionHandler {
         var idleAndRunning = running.stream()
                 .collect(Collectors.groupingBy(statementStatusChecker::hasWaitingStatement));
 
-        selfOrEmpty(selfOrEmpty(idleAndRunning.get(false))).forEach(statusTracker::processApplicationIdle);
+        selfOrEmpty(idleAndRunning.get(false)).forEach(statusTracker::processApplicationIdle);
         selfOrEmpty(idleAndRunning.get(true)).forEach(statusTracker::processApplicationRunning);
     }
 
@@ -113,8 +98,8 @@ public class SessionHandler {
         if (timeout != null) {
             sessionService.fetchRunning()
                     .stream()
-                    .filter(s -> !s.getId().equals(sessionConfiguration.getPermanentSessionId()))
-                    .filter(s -> s.getCreatedAt().isBefore(LocalDateTime.now().minusMinutes(timeout)))
+                    .filter(s -> !sessionConfiguration.getPermanentSessions().containsKey(s.getId()))
+                    .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minusMinutes(timeout)))
                     .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
                     .forEach(sessionService::killOne);
         }
@@ -123,5 +108,9 @@ public class SessionHandler {
 
     private <T> List<T> selfOrEmpty(List<T> list) {
         return ofNullable(list).orElse(List.of());
+    }
+
+    private boolean running(ApplicationState state) {
+        return !state.isComplete();
     }
 }

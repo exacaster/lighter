@@ -102,7 +102,7 @@ public class SessionController {
 
     @Post("/{id}/statements/{statementId}/cancel")
     @Status(HttpStatus.CREATED)
-    public Statement cancelStatements(@PathVariable String id, @PathVariable String statementId) {
+    public Optional<Statement> cancelStatements(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.cancelStatement(id, statementId);
     }
 }
