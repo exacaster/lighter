@@ -1,0 +1,7 @@
+lighter:
+    session:
+        permanent-sessions:
+            - id: "permanentId1"
+              submit-params:
+                  conf:
+                      "spark.kubernetes.namespace": "spark"

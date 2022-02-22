@@ -40,7 +40,7 @@ class SessionHandlerTest extends Specification {
         service.lastUsed(newSession.id) >> newSession.createdAt
 
         def permanentSession = ApplicationBuilder.builder(oldSession)
-                .setId(conf.sessionConfiguration.permanentSessions.keySet().iterator().next())
+                .setId(conf.sessionConfiguration.permanentSessions.iterator().next().id)
                 .build()
 
         1 * service.fetchRunning() >> [
@@ -64,7 +64,7 @@ class SessionHandlerTest extends Specification {
         def session2 = app()
         def permanentSession = ApplicationBuilder.builder(app())
                 .setState(ApplicationState.STARTING)
-                .setId(conf.sessionConfiguration.permanentSessions.keySet().iterator().next())
+                .setId(conf.sessionConfiguration.permanentSessions.iterator().next().id)
                 .build()
         service.fetchRunning() >> [session, session2, permanentSession]
         statementHandler.hasWaitingStatement(session) >> false
@@ -85,33 +85,32 @@ class SessionHandlerTest extends Specification {
 
     def "keeps permanent session"() {
         given:
-        def sessionId = conf.sessionConfiguration.permanentSessions.keySet().iterator().next()
-        def params = conf.sessionConfiguration.permanentSessions.values().iterator().next()
+        def session = conf.sessionConfiguration.permanentSessions.iterator().next()
         def permanentSession = ApplicationBuilder.builder(app())
-                .setSubmitParams(params)
+                .setSubmitParams(session.submitParams)
                 .setState(ApplicationState.STARTING)
-                .setId(sessionId)
+                .setId(session.id)
                 .build()
-        1 * service.fetchOne(sessionId) >> Optional.of(permanentSession)
-        1 * backend.getInfo(permanentSession) >> Optional.of(new ApplicationInfo(permanentSession.getState(), sessionId))
+        1 * service.fetchOne(session.id) >> Optional.of(permanentSession)
+        1 * backend.getInfo(permanentSession) >> Optional.of(new ApplicationInfo(permanentSession.getState(), session.id))
 
         when: "exists healthy permanent session"
         handler.keepPermanentSessions()
 
         then: "do nothing"
-        0 * service.deleteOne(sessionId)
+        0 * service.deleteOne(session.id)
         0 * service.createSession(*_)
 
         when: "exists unhealthy permanent session"
         permanentSession = ApplicationBuilder.builder(permanentSession)
                 .setState(ApplicationState.ERROR)
                 .build()
-        1 * service.fetchOne(sessionId) >> Optional.of(permanentSession)
+        1 * service.fetchOne(session.id) >> Optional.of(permanentSession)
         handler.keepPermanentSessions()
 
         then: "restart permanent session"
-        1 * service.deleteOne(sessionId)
-        1 * service.createSession(params, sessionId) >> permanentSession
+        1 * service.deleteOne(session.id)
+        1 * service.createSession(session.submitParams, session.id) >> permanentSession
         1 * handler.launch(permanentSession, _) >> {}
     }
 

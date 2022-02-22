@@ -25,7 +25,7 @@ class Factories {
         )
     }
 
-    static newApplication(appId="application_123_0123") {
+    static newApplication(appId = "application_123_0123") {
         ApplicationBuilder.builder().setAppId(appId)
                 .setType(ApplicationType.BATCH)
                 .setState(ApplicationState.NOT_STARTED)
@@ -36,7 +36,7 @@ class Factories {
                 .build()
     }
 
-    static newSession(state=ApplicationState.NOT_STARTED) {
+    static newSession(state = ApplicationState.NOT_STARTED) {
         ApplicationBuilder.builder().setAppId("application_123_0124")
                 .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)
@@ -65,6 +65,6 @@ class Factories {
     }
 
     static appConfiguration() {
-        new AppConfiguration(10, "http://history", null, 5432, "http://lighter:8080", new AppConfiguration.SessionConfiguration(20, ["permanentSessionId": submitParams()]))
+        new AppConfiguration(10, "http://history", null, 5432, "http://lighter:8080", new AppConfiguration.SessionConfiguration(20, [new AppConfiguration.PermanentSession("permanentSessionId", submitParams())]))
     }
 }

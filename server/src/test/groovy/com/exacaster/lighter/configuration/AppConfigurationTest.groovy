@@ -15,6 +15,11 @@ class AppConfigurationTest extends Specification {
         expect:
         appConfiguration.maxRunningJobs == 5
         appConfiguration.sessionConfiguration.timeoutMinutes == 90
+        appConfiguration.sessionConfiguration.permanentSessions.size() == 1
+        appConfiguration.sessionConfiguration.permanentSessions.get(0).id == "permanentId1"
+        appConfiguration.sessionConfiguration.permanentSessions.get(0).submitParams.conf == [
+                "spark.kubernetes.namespace": "spark"
+        ]
     }
 
 }

@@ -8,12 +8,13 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
-import java.util.Map;
+import java.util.List;
 import java.util.StringJoiner;
 
 @ConfigurationProperties("lighter")
 @Introspected
 public class AppConfiguration {
+
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer maxRunningJobs;
     private final String sparkHistoryServerUrl;
@@ -25,9 +26,12 @@ public class AppConfiguration {
     private final SessionConfiguration sessionConfiguration;
 
     @ConfigurationInject
-    public AppConfiguration(Integer maxRunningJobs, @Nullable String sparkHistoryServerUrl,
+    public AppConfiguration(Integer maxRunningJobs,
+            @Nullable String sparkHistoryServerUrl,
             @Nullable String externalLogsUrlTemplate,
-            Integer pyGatewayPort, String url, SessionConfiguration sessionConfiguration){
+            Integer pyGatewayPort,
+            String url,
+            SessionConfiguration sessionConfiguration) {
         this.maxRunningJobs = maxRunningJobs;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
@@ -69,16 +73,45 @@ public class AppConfiguration {
                 .toString();
     }
 
+    @Introspected
+    public static class PermanentSession {
+
+        private final String id;
+        private final SubmitParams submitParams;
+
+        public PermanentSession(String id, SubmitParams submitParams) {
+            this.id = id;
+            this.submitParams = submitParams;
+        }
+
+        public String getId() {
+            return id;
+        }
+
+        public SubmitParams getSubmitParams() {
+            return submitParams;
+        }
+
+        @Override
+        public String toString() {
+            return "PermanentSession{" +
+                    "id='" + id + '\'' +
+                    ", submitParams=" + submitParams +
+                    '}';
+        }
+    }
+
     @Primary
     @Introspected
     @ConfigurationProperties("session")
     public static class SessionConfiguration {
+
         private final Integer timeoutMinutes;
-        private final Map<String, SubmitParams> permanentSessions;
+        private final List<PermanentSession> permanentSessions;
 
         @ConfigurationInject
         public SessionConfiguration(@Nullable Integer timeoutMinutes,
-                Map<String, SubmitParams> permanentSessions) {
+                List<PermanentSession> permanentSessions) {
             this.timeoutMinutes = timeoutMinutes;
             this.permanentSessions = permanentSessions;
         }
@@ -87,7 +120,7 @@ public class AppConfiguration {
             return timeoutMinutes;
         }
 
-        public Map<String, SubmitParams> getPermanentSessions() {
+        public List<PermanentSession> getPermanentSessions() {
             return permanentSessions;
         }
 

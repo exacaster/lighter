@@ -54,12 +54,12 @@ public class SessionHandler {
     @Scheduled(fixedRate = "1m")
     public void keepPermanentSessions() {
         assertLocked();
-        sessionConfiguration.getPermanentSessions().forEach((sessionId, params) -> {
-            var session = sessionService.fetchOne(sessionId);
+        sessionConfiguration.getPermanentSessions().forEach(sessionConf -> {
+            var session = sessionService.fetchOne(sessionConf.getId());
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
-                sessionService.deleteOne(sessionId);
-                launchSession(sessionService.createSession(params, sessionId));
+                sessionService.deleteOne(sessionConf.getId());
+                launchSession(sessionService.createSession(sessionConf.getSubmitParams(), sessionConf.getId()));
             }
         });
     }
@@ -98,7 +98,8 @@ public class SessionHandler {
         if (timeout != null) {
             sessionService.fetchRunning()
                     .stream()
-                    .filter(s -> !sessionConfiguration.getPermanentSessions().containsKey(s.getId()))
+                    .filter(s -> sessionConfiguration.getPermanentSessions().stream()
+                            .noneMatch(conf -> conf.getId().equals(s.getId())))
                     .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minusMinutes(timeout)))
                     .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
                     .forEach(sessionService::killOne);
