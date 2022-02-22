@@ -54,6 +54,7 @@ public class JdbcStatementStorage implements StatementStorage, RowMapper<Stateme
     }
 
     @Override
+    @Transactional
     public Optional<Statement> findLatest(String sessionId) {
         return jdbi.withHandle(handle -> handle
                 .createQuery("SELECT * FROM application_statement WHERE application_id=:application_id AND state=:state ORDER BY created_at DESC LIMIT 1")
