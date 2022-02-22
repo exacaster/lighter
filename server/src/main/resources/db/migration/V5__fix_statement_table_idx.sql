@@ -1,0 +1,2 @@
+drop index application_statement_idx;
+create index application_statement_idx on application_statement(application_id);
