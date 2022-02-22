@@ -10,6 +10,7 @@ import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
+import com.exacaster.lighter.storage.StatementStorage;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,11 +20,15 @@ import java.util.UUID;
 @Singleton
 public class SessionService {
     private final ApplicationStorage applicationStorage;
+    private final StatementStorage statementStorage;
     private final Backend backend;
     private final StatementHandler statementHandler;
 
-    public SessionService(ApplicationStorage applicationStorage, Backend backend, StatementHandler statementHandler) {
+    public SessionService(ApplicationStorage applicationStorage,
+            StatementStorage statementStorage, Backend backend,
+            StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
+        this.statementStorage = statementStorage;
         this.backend = backend;
         this.statementHandler = statementHandler;
     }
@@ -58,11 +63,6 @@ public class SessionService {
     public List<Application> fetchByState(ApplicationState state, Integer limit) {
         return applicationStorage.findApplicationsByStates(ApplicationType.SESSION, List.of(state), limit);
     }
-
-    public Application update(Application application) {
-        return applicationStorage.saveApplication(application);
-    }
-
 
     public Optional<Application> fetchOne(String id, boolean liveStatus) {
         return applicationStorage.findApplication(id)
@@ -105,7 +105,13 @@ public class SessionService {
         return statementHandler.getStatement(id, statementId);
     }
 
-    public Statement cancelStatement(String id, String statementId) {
+    public Optional<Statement> cancelStatement(String id, String statementId) {
         return statementHandler.cancelStatement(id, statementId);
+    }
+
+    public LocalDateTime lastUsed(String id) {
+        return statementStorage.findLatest(id)
+                .map(Statement::getCreatedAt)
+                .orElseGet(() -> fetchOne(id).map(Application::getCreatedAt).orElse(null));
     }
 }

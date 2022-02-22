@@ -37,12 +37,12 @@ class Factories {
     }
 
     static newSession(state=ApplicationState.NOT_STARTED) {
-        ApplicationBuilder.builder().setAppId("application_123_0123")
+        ApplicationBuilder.builder().setAppId("application_123_0124")
                 .setType(ApplicationType.SESSION)
                 .setState(ApplicationState.NOT_STARTED)
                 .setAppInfo("info")
                 .setCreatedAt(LocalDateTime.MAX)
-                .setId("1")
+                .setId("2")
                 .setSubmitParams(null)
                 .build()
     }
@@ -56,7 +56,7 @@ class Factories {
     }
 
     static statement() {
-        new Statement("id", "code", new Output("error", 1, [:], "evalue", "traceback"), "ok")
+        new Statement("id", "code", new Output("error", 1, [:], "evalue", "traceback"), "ok", null)
     }
 
     static kubernetesProperties() {
@@ -65,6 +65,6 @@ class Factories {
     }
 
     static appConfiguration() {
-        new AppConfiguration(10, "http://history", null, 5432, "http://lighter:8080", new AppConfiguration.SessionConfiguration(20, "permanentSessionId", submitParams()))
+        new AppConfiguration(10, "http://history", null, 5432, "http://lighter:8080", new AppConfiguration.SessionConfiguration(20, ["permanentSessionId": submitParams()]))
     }
 }

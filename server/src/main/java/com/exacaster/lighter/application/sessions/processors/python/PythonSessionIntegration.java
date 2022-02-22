@@ -7,17 +7,15 @@ import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.processors.Output;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.storage.StatementStorage;
 import io.micronaut.context.event.StartupEvent;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.scheduling.annotation.Async;
+import jakarta.inject.Singleton;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.stream.Collectors;
-import jakarta.inject.Singleton;
+import java.util.Optional;
 import org.slf4j.Logger;
 import py4j.GatewayServer;
 
@@ -26,20 +24,17 @@ public class PythonSessionIntegration implements StatementHandler {
 
     private static final Logger LOG = getLogger(PythonSessionIntegration.class);
 
-    private final Map<String, List<Statement>> statements = new HashMap<>();
     private final Integer gatewayPort;
+    private final StatementStorage statementStorage;
 
-    public PythonSessionIntegration(AppConfiguration conf) {
+    public PythonSessionIntegration(AppConfiguration conf, StatementStorage statementStorage) {
         this.gatewayPort = conf.getPyGatewayPort();
+        this.statementStorage = statementStorage;
     }
 
     // Used By Py4J
     public List<Statement> statementsToProcess(String id) {
-        var result = statements.get(id);
-        if (result == null) {
-            return List.of();
-        }
-        var statementQueue = result.stream().filter(statement -> statement.getState().equals("waiting")).collect(Collectors.toList());
+        var statementQueue = statementStorage.findByState(id, "waiting");
         if (!statementQueue.isEmpty()) {
             LOG.info("Waiting: {}", statementQueue);
         }
@@ -49,25 +44,17 @@ public class PythonSessionIntegration implements StatementHandler {
     // Used By Py4J
     public void handleResponse(String sessionId, String statementId, Map<String, Object> result) {
         LOG.warn("Handling response for {} : {} --- {}", sessionId, statementId, result);
-        var sessionStatements = statements.get(sessionId);
-        sessionStatements.stream()
-                .filter(st -> statementId.equals(st.getId()))
-                .findFirst()
-                .ifPresent(st ->{
-                    var index = sessionStatements.indexOf(st);
-                    var error = string(result.get("error"));
-                    var status = error != null ? "error" : "available";
-                    var outputStatus = error != null ? "error" : "ok";
-                    var output = new Output(
-                            outputStatus,
-                            1,
-                            (Map<String, Object>) result.get("content"),
-                            error,
-                            string(result.get("traceback"))
-                    );
-                    var newSt = st.withStateAndOutput(status, output);
-                    sessionStatements.set(index, newSt);
-                });
+        var error = string(result.get("error"));
+        var outputStatus = error != null ? "error" : "ok";
+        var output = new Output(
+                outputStatus,
+                1,
+                (Map<String, Object>) result.get("content"),
+                error,
+                string(result.get("traceback"))
+        );
+        var status = error != null ? "error" : "available";
+        statementStorage.update(sessionId, statementId, status, output);
     }
 
     private String string(Object obj) {
@@ -76,18 +63,12 @@ public class PythonSessionIntegration implements StatementHandler {
 
     @Override
     public Statement processStatement(String id, Statement statement) {
-        // cleanup statements, keep only the last one.
-        var sessionStatements = new ArrayList<Statement>();
-        var newStatement = statement.withIdAndState(UUID.randomUUID().toString(), "waiting");
-        sessionStatements.add(newStatement);
-        statements.put(id, sessionStatements);
-
-        return newStatement;
+        return statementStorage.create(id, statement);
     }
 
     @Override
     public Statement getStatement(String id, String statementId) {
-        var sessionStatements = statements.get(id);
+        var sessionStatements = statementStorage.find(id);
         if (sessionStatements != null) {
             return sessionStatements.stream()
                     .filter(st -> st.getId().equals(statementId))
@@ -98,10 +79,8 @@ public class PythonSessionIntegration implements StatementHandler {
     }
 
     @Override
-    public Statement cancelStatement(String id, String statementId) {
-        // TODO: Not sure what to do. Send interrupt?
-        LOG.info("Want to cancel: {} : {}", id, statementId);
-        return null;
+    public Optional<Statement> cancelStatement(String id, String statementId) {
+        return statementStorage.updateState(id, statementId, "canceled");
     }
 
     @EventListener
@@ -116,10 +95,7 @@ public class PythonSessionIntegration implements StatementHandler {
 
     @Override
     public boolean hasWaitingStatement(Application application) {
-        var appStatements = statements.get(application.getAppId());
-        if (appStatements == null) {
-            return false;
-        }
-        return appStatements.stream().allMatch(st -> "waiting".equals(st.getState()));
+        var waitingStatements = statementStorage.findByState(application.getAppId(), "waiting");
+        return !waitingStatements.isEmpty();
     }
 }
