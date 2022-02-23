@@ -1,6 +1,7 @@
 package com.exacaster.lighter.configuration;
 
 import com.exacaster.lighter.spark.SubmitParams;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 import io.micronaut.context.annotation.ConfigurationInject;
@@ -77,6 +78,7 @@ public class AppConfiguration {
     public static class PermanentSession {
 
         private final String id;
+        @JsonAlias("submit-params")
         private final SubmitParams submitParams;
 
         public PermanentSession(String id, SubmitParams submitParams) {

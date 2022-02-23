@@ -5,3 +5,4 @@ lighter:
               submit-params:
                   conf:
                       "spark.kubernetes.namespace": "spark"
+                      "spark.kubernetes.driver.secrets.spark-secret": "/etc/secret"
