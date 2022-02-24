@@ -26,7 +26,6 @@ public class ApplicationStatusHandler {
         this.logService = logService;
     }
 
-
     public void processApplicationStarting(Application application) {
         applicationStorage.saveApplication(ApplicationBuilder.builder(application)
                 .setState(ApplicationState.STARTING)
