@@ -3,6 +3,7 @@ package com.exacaster.lighter.application.batch
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.backend.Backend
+import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
@@ -37,7 +38,7 @@ class BatchHandlerTest extends Specification {
         then:
         _ * service.fetchRunning() >> []
         1 * service.fetchByState(ApplicationState.NOT_STARTED, _) >> [app]
-        1 * handler.launch(app, _) >> {  }
+        1 * handler.launch(app, _) >> EmptyWaitable.INSTANCE
     }
 
     def "does not trigger when there are no empty slots"() {
