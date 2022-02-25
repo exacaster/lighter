@@ -10,6 +10,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
 import com.exacaster.lighter.spark.SparkApp;
@@ -45,9 +46,9 @@ public class SessionHandler {
         this.sessionConfiguration = appConfiguration.getSessionConfiguration();
     }
 
-    public void launch(Application application, Consumer<Throwable> errorHandler) {
+    public Waitable launch(Application application, Consumer<Throwable> errorHandler) {
         var app = new SparkApp(application.getSubmitParams(), errorHandler);
-        app.launch(backend.getSubmitConfiguration(application));
+        return app.launch(backend.getSubmitConfiguration(application));
     }
 
     @SchedulerLock(name = "keepPermanentSession")
@@ -66,15 +67,21 @@ public class SessionHandler {
 
     @SchedulerLock(name = "processScheduledSessions")
     @Scheduled(fixedRate = "1m")
-    public void processScheduledSessions() {
+    public void processScheduledSessions() throws InterruptedException {
         assertLocked();
-        sessionService.fetchByState(ApplicationState.NOT_STARTED, 10).forEach(this::launchSession);
+        var waitables = sessionService.fetchByState(ApplicationState.NOT_STARTED, 10).stream()
+                .map(this::launchSession)
+                .collect(Collectors.toList());
+
+        for (var waitable : waitables) {
+            waitable.waitCompletion();
+        }
     }
 
-    private void launchSession(Application session) {
+    private Waitable launchSession(Application session) {
         LOG.info("Launching {}", session);
         statusTracker.processApplicationStarting(session);
-        launch(session, error -> statusTracker.processApplicationError(session, error));
+        return launch(session, error -> statusTracker.processApplicationError(session, error));
     }
 
     @SchedulerLock(name = "trackRunningSessions")
