@@ -36,4 +36,4 @@ Lighter can be configured by using environment variables. Currently, Lighter sup
 | ---------------------------------- | ---------------------------------------------------- | ---------------------------------------------- |
 | LIGHTER_YARN_ENABLED               | Yarn enabled (Kubernetes should be disabled)         | false                                          |
 | LIGHTER_YARN_URL                   | Yarn API URL, `/ws/v1/cluster/` will be appended     |                                                |
-| HADOOP_CONF_DIR                    | Path to `core-site.xml`,`hdfs-site.xml` and `yarn-site.xml`     |                                                |
+| HADOOP_CONF_DIR                    | Path to `core-site.xml`,`hdfs-site.xml` and `yarn-site.xml` files |                                   |
