@@ -9,6 +9,7 @@ sys_stdin = sys.stdin
 sys_stdout = sys.stdout
 
 is_test = os.environ.get("LIGHTER_TEST") == "true"
+is_yarn = os.environ.get("LIGHTER_YARN_ENABLED") == "true"
 logging.basicConfig(stream=sys.stdout,
                     level=logging.FATAL if is_test else logging.INFO)
 log = logging.getLogger("session")
@@ -109,10 +110,14 @@ def init_globals(name):
 
     from pyspark.sql import SparkSession
 
-    spark = SparkSession \
+    spark_builder = SparkSession \
         .builder \
-        .appName(name) \
-        .getOrCreate()
+        .appName(name)
+
+    if is_yarn:
+        spark_builder = spark_builder.enableHiveSupport()
+
+    spark = spark_builder.getOrCreate()
 
     return {"spark": spark}
 
