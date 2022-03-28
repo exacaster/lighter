@@ -23,7 +23,7 @@ const AppActions: React.FC<Props> = ({app, onDelete}) => {
           aria-label="History"
           as={ExLink}
           target="_blank"
-          href={`${conf.sparkHistoryServerUrl}/history/${app.appId}/jobs`}
+          href={`${conf.sparkHistoryServerUrl}/history/${app.appId}`}
         />
       )}
       {!!conf?.externalLogsUrlTemplate && !!app.appId && (
