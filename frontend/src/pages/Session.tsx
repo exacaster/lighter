@@ -7,9 +7,9 @@ import AppLogs from '../components/AppLogs';
 import AppTitle from '../components/AppTitle';
 
 const Session: React.FC = () => {
-  const {id} = useParams<{id: string}>();
-  const {data: logs} = useSessionLog(id);
-  const {data: session} = useSession(id);
+  const {id} = useParams();
+  const {data: logs} = useSessionLog(id!);
+  const {data: session} = useSession(id!);
 
   if (!session) {
     return null;

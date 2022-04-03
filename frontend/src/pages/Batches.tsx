@@ -4,7 +4,7 @@ import {useBatchDelete, useBatches} from '../hooks/batch';
 import {Table, Thead, Tbody, Tr, Th, Td, Spinner} from '@chakra-ui/react';
 import {generatePath} from 'react-router';
 import {useQueryString} from '../hooks/common';
-import {pageSize} from '../configuration/consts';
+import {pageSize, RoutePath} from '../configuration/consts';
 import Pagination from '../components/Pagination';
 import Link from '../components/Link';
 import AppStatus from '../components/AppStatus';
@@ -37,7 +37,7 @@ const Batches: React.FC = () => {
           {data?.applications?.map((batch) => (
             <Tr key={batch.id}>
               <Td>
-                <Link to={generatePath('./batches/:id', {id: batch.id})}>{batch.id}</Link>
+                <Link to={generatePath(RoutePath.BATCH, {id: batch.id})}>{batch.id}</Link>
               </Td>
               <Td>{batch.submitParams.name}</Td>
               <Td>

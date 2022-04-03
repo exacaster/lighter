@@ -8,9 +8,9 @@ import AppSubmit from '../components/AppSubmit';
 import AppTitle from '../components/AppTitle';
 
 const Batch: React.FC = () => {
-  const {id} = useParams<{id: string}>();
-  const {data: logs} = useBatchLog(id);
-  const {data: batch} = useBatch(id);
+  const {id} = useParams();
+  const {data: logs} = useBatchLog(id!);
+  const {data: batch} = useBatch(id!);
 
   if (!batch) {
     return null;

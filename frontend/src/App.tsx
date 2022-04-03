@@ -1,5 +1,5 @@
 import React from 'react';
-import {BrowserRouter as Router, Switch, Route} from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Sessions from './pages/Sessions';
 import Batches from './pages/Batches';
 import {ChakraProvider} from '@chakra-ui/react';
@@ -12,6 +12,7 @@ import '@fontsource/open-sans/700.css';
 import '@fontsource/open-sans/600.css';
 import '@fontsource/open-sans';
 import Session from './pages/Session';
+import {RoutePath} from './configuration/consts';
 
 const theme = extendTheme({
   fonts: {
@@ -36,20 +37,13 @@ function App() {
       <QueryClientProvider client={queryClient}>
         <Router basename={process.env.PUBLIC_URL}>
           <Layout>
-            <Switch>
-              <Route path="/sessions/:id">
-                <Session />
-              </Route>
-              <Route path="/sessions">
-                <Sessions />
-              </Route>
-              <Route path="/batches/:id">
-                <Batch />
-              </Route>
-              <Route path="/">
-                <Batches />
-              </Route>
-            </Switch>
+            <Routes>
+              <Route path={RoutePath.SESSION} element={<Session />} />
+              <Route path={RoutePath.SESSIONS} element={<Sessions />} />
+              <Route path={RoutePath.BATCH} element={<Batch />} />
+              <Route path={RoutePath.BATCHES} element={<Batches />} />
+              <Route path="/" element={<Batches />} />
+            </Routes>
           </Layout>
         </Router>
       </QueryClientProvider>
