@@ -81,7 +81,7 @@ class YarnBackendTest extends Specification {
         def resource = backend.getSessionJobResources()
 
         then:
-        resource.endsWith("/shell_wrapper.py")
+        resource.endsWith("shell_wrapper.py")
     }
 
     def "kills application"() {
