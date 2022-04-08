@@ -37,10 +37,12 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
-    public Map<String, String> getSubmitConfiguration(Application application) {
+    public Map<String, String> getSubmitConfiguration(Application application,
+            Map<String, String> current) {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
-        var props = new HashMap<>(Map.of(
+        var props = new HashMap<>(current);
+        props.putAll(Map.of(
                 "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),

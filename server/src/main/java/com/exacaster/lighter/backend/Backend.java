@@ -16,7 +16,8 @@ public interface Backend {
 
     void kill(Application application);
 
-    default Map<String, String> getSubmitConfiguration(Application application) {
-        return Map.of();
+    default Map<String, String> getSubmitConfiguration(Application application,
+            Map<String, String> current) {
+        return current;
     }
 }

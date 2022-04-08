@@ -1,5 +1,9 @@
 package com.exacaster.lighter.configuration;
 
+import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
+import static io.micronaut.core.naming.conventions.StringConvention.RAW;
+import static java.util.Optional.ofNullable;
+
 import com.exacaster.lighter.spark.SubmitParams;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -9,7 +13,9 @@ import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Primary;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.core.convert.format.MapFormat;
 import java.util.List;
+import java.util.Map;
 import java.util.StringJoiner;
 
 @ConfigurationProperties("lighter")
@@ -25,6 +31,8 @@ public class AppConfiguration {
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
     private final SessionConfiguration sessionConfiguration;
+    private final Map<String, String> batchDefaultConf;
+    private final Map<String, String> sessionDefaultConf;
 
     @ConfigurationInject
     public AppConfiguration(Integer maxRunningJobs,
@@ -32,13 +40,18 @@ public class AppConfiguration {
             @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort,
             String url,
-            SessionConfiguration sessionConfiguration) {
+            SessionConfiguration sessionConfiguration,
+            @MapFormat(transformation = FLAT, keyFormat = RAW)
+            @Nullable Map<String, String> batchDefaultConf,
+            @Nullable Map<String, String> sessionDefaultConf) {
         this.maxRunningJobs = maxRunningJobs;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
         this.url = url;
         this.sessionConfiguration = sessionConfiguration;
+        this.batchDefaultConf = ofNullable(batchDefaultConf).orElse(Map.of());
+        this.sessionDefaultConf = ofNullable(sessionDefaultConf).orElse(Map.of());
     }
 
     public Integer getMaxRunningJobs() {
@@ -65,12 +78,22 @@ public class AppConfiguration {
         return sessionConfiguration;
     }
 
+    public Map<String, String> getBatchDefaultConf() {
+        return batchDefaultConf;
+    }
+
+    public Map<String, String> getSessionDefaultConf() {
+        return sessionDefaultConf;
+    }
+
     @Override
     public String toString() {
         return new StringJoiner(", ", AppConfiguration.class.getSimpleName() + "[", "]")
                 .add("maxRunningJobs=" + maxRunningJobs)
                 .add("sparkHistoryServerUrl=" + sparkHistoryServerUrl)
                 .add("sessionConfiguration=" + sessionConfiguration)
+                .add("batchDefaultConf=" + batchDefaultConf)
+                .add("sessionDefaultConf=" + sessionDefaultConf)
                 .toString();
     }
 

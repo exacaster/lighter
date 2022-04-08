@@ -10,6 +10,8 @@ import spock.lang.Subject
 @Property(name="lighter.yarn.enabled", value="true")
 @Property(name="lighter.yarn.url", value="http://localhost")
 @Property(name="lighter.kubernetes.enabled", value="false")
+@Property(name="lighter.yarn.kerberos.principal", value="principal")
+@Property(name="lighter.yarn.kerberos.keytab", value="keytab")
 class YarnPropertiesTest extends Specification {
     @Subject
     @Inject
@@ -18,6 +20,7 @@ class YarnPropertiesTest extends Specification {
     def "binds properties"() {
         expect:
         yarnProperties != null
+        yarnProperties.kerberos.keytab == "keytab"
     }
 
 }

@@ -18,7 +18,7 @@ class YarnBackendTest extends Specification {
 
     def config = appConfiguration()
 
-    def yarnProps = new YarnProperties(null, null)
+    def yarnProps = new YarnProperties(null)
 
     @Subject
     def backend = new YarnBackend(yarnProps, client, config)
@@ -28,7 +28,7 @@ class YarnBackendTest extends Specification {
         def app = newApplication()
 
         when:
-        def result = backend.getSubmitConfiguration(app)
+        def result = backend.getSubmitConfiguration(app, [:])
 
         then:
         result["spark.master"] == "yarn"

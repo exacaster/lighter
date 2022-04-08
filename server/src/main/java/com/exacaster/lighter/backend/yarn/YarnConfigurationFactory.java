@@ -24,10 +24,11 @@ public class YarnConfigurationFactory {
         var yarnConfiguration = new Configuration(false);
         yarnConfiguration.addResource(new Path(hadoopConfDir, "core-site.xml"));
         yarnConfiguration.addResource(new Path(hadoopConfDir, "yarn-site.xml"));
-        if (yarnProperties.getKerberosKeytab() != null && yarnProperties.getKerberosPrincipal() != null) {
+        var kerberos = yarnProperties.getKerberos();
+        if (kerberos != null) {
             yarnConfiguration.setBoolean(HADOOP_KERBEROS_KEYTAB_LOGIN_AUTORENEWAL_ENABLED, true);
             UserGroupInformation.setConfiguration(yarnConfiguration);
-            loginUserFromKeytab(yarnProperties.getKerberosPrincipal(), yarnProperties.getKerberosKeytab());
+            loginUserFromKeytab(kerberos.getPrincipal(), kerberos.getKeytab());
         }
         var yarnClient = YarnClient.createYarnClient();
         yarnClient.init(yarnConfiguration);
