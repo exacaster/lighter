@@ -24,10 +24,11 @@ class KubernetesBackendTest extends Specification {
         def app = newApplication()
 
         when:
-        def result = backend.getSubmitConfiguration(app)
+        def result = backend.getSubmitConfiguration(app, ["spark.kubernetes.driver.label.some-tag": "tag123"])
 
         then:
         result["spark.master"] == properties.master
+        result["spark.kubernetes.driver.label.some-tag"] == "tag123"
         result["spark.kubernetes.driver.label.spark-app-tag"] == app.id
         result["spark.kubernetes.executor.label.spark-app-tag"] == app.id
         result["spark.kubernetes.submission.waitAppCompletion"] == "false"

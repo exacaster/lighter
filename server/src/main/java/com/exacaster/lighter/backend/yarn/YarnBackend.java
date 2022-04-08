@@ -100,10 +100,12 @@ public class YarnBackend implements Backend {
     }
 
     @Override
-    public Map<String, String> getSubmitConfiguration(Application application) {
+    public Map<String, String> getSubmitConfiguration(Application application,
+            Map<String, String> current) {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
-        var props = new HashMap<>(Map.of(
+        var props = new HashMap<>(current);
+        props.putAll(Map.of(
                 "spark.master", "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
@@ -111,9 +113,9 @@ public class YarnBackend implements Backend {
                 "spark.yarn.appMasterEnv.PY_GATEWAY_HOST", host,
                 "spark.yarn.appMasterEnv.LIGHTER_SESSION_ID", application.getId()
         ));
-        if (yarnProperties.getKerberosKeytab() != null && yarnProperties.getKerberosPrincipal() != null) {
-            props.put("spark.kerberos.keytab", yarnProperties.getKerberosKeytab());
-            props.put("spark.kerberos.principal", yarnProperties.getKerberosPrincipal());
+        if (!props.containsKey("spark.kerberos.keytab") && yarnProperties.getKerberos() != null) {
+            props.put("spark.kerberos.keytab", yarnProperties.getKerberos().getKeytab());
+            props.put("spark.kerberos.principal", yarnProperties.getKerberos().getPrincipal());
         }
         return props;
     }

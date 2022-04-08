@@ -8,11 +8,12 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
+import com.exacaster.lighter.application.Utils;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
-import com.exacaster.lighter.configuration.AppConfiguration.SessionConfiguration;
+import com.exacaster.lighter.spark.ConfigModifier;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
@@ -32,7 +33,7 @@ public class SessionHandler {
     private final Backend backend;
     private final StatementHandler statementStatusChecker;
     private final ApplicationStatusHandler statusTracker;
-    private final SessionConfiguration sessionConfiguration;
+    private final AppConfiguration appConfiguration;
 
     public SessionHandler(SessionService sessionService,
             Backend backend,
@@ -43,19 +44,23 @@ public class SessionHandler {
         this.backend = backend;
         this.statementStatusChecker = statementStatusChecker;
         this.statusTracker = statusTracker;
-        this.sessionConfiguration = appConfiguration.getSessionConfiguration();
+        this.appConfiguration = appConfiguration;
     }
 
     public Waitable launch(Application application, Consumer<Throwable> errorHandler) {
-        var app = new SparkApp(application.getSubmitParams(), errorHandler);
-        return app.launch(backend.getSubmitConfiguration(application));
+        List<ConfigModifier> configModifiers = List.of(
+                (current) -> Utils.merge(current, appConfiguration.getSessionDefaultConf()),
+                (current) -> backend.getSubmitConfiguration(application, current)
+        );
+        var app = new SparkApp(application.getSubmitParams(), errorHandler, configModifiers);
+        return app.launch();
     }
 
     @SchedulerLock(name = "keepPermanentSession")
     @Scheduled(fixedRate = "1m")
     public void keepPermanentSessions() {
         assertLocked();
-        sessionConfiguration.getPermanentSessions().forEach(sessionConf -> {
+        appConfiguration.getSessionConfiguration().getPermanentSessions().forEach(sessionConf -> {
             var session = sessionService.fetchOne(sessionConf.getId());
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
@@ -101,6 +106,7 @@ public class SessionHandler {
     @Scheduled(fixedRate = "10m")
     public void handleTimeout() {
         assertLocked();
+        var sessionConfiguration = appConfiguration.getSessionConfiguration();
         var timeout = sessionConfiguration.getTimeoutMinutes();
         if (timeout != null) {
             sessionService.fetchRunning()

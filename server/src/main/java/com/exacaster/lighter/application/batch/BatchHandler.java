@@ -6,14 +6,16 @@ import static org.slf4j.LoggerFactory.getLogger;
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
+import com.exacaster.lighter.application.Utils;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.spark.ConfigModifier;
 import com.exacaster.lighter.spark.SparkApp;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
+import java.util.List;
 import java.util.function.Consumer;
-
 import java.util.stream.Collectors;
 import net.javacrumbs.shedlock.micronaut.SchedulerLock;
 import org.slf4j.Logger;
@@ -38,8 +40,12 @@ public class BatchHandler {
     }
 
     public Waitable launch(Application application, Consumer<Throwable> errorHandler) {
-        var app = new SparkApp(application.getSubmitParams(), errorHandler);
-        return app.launch(backend.getSubmitConfiguration(application));
+        List<ConfigModifier> configModifiers = List.of(
+                (current) -> Utils.merge(current, appConfiguration.getBatchDefaultConf()),
+                (current) -> backend.getSubmitConfiguration(application, current)
+        );
+        var app = new SparkApp(application.getSubmitParams(), errorHandler, configModifiers);
+        return app.launch();
     }
 
     @SchedulerLock(name = "processScheduledBatches")
