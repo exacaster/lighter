@@ -47,6 +47,7 @@ flyway:
 
 micronaut:
     server:
+        thread-selection: AUTO
         cors:
             enabled: true
     application:

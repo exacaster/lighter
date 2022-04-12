@@ -17,14 +17,14 @@ java {
 }
 
 micronaut {
-    version = "3.1.4"
+    version = "3.4.1"
     runtime "netty"
 }
 mainClassName = "com.exacaster.lighter.Application"
 
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.2.1'
 def hadoopVersion = '3.3.1'
-def k8sClientVersion = '5.12.1'
+def k8sClientVersion = '5.12.2'
 def shedlockVersion = '4.33.0'
 
 dependencies {
@@ -44,7 +44,7 @@ dependencies {
     implementation "io.fabric8:kubernetes-client:${k8sClientVersion}"
     implementation "org.apache.hadoop:hadoop-yarn-client:${hadoopVersion}"
     implementation "org.apache.hadoop:hadoop-common:${hadoopVersion}"
-    implementation "net.sf.py4j:py4j:0.10.9.3"
+    implementation 'net.sf.py4j:py4j:0.10.9.5'
 
     implementation "net.javacrumbs.shedlock:shedlock-micronaut:${shedlockVersion}"
     implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:${shedlockVersion}"

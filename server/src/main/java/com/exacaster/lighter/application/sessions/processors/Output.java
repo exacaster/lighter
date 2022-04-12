@@ -7,7 +7,7 @@ import java.util.StringJoiner;
 
 public class Output {
     private final String status;
-    private int executionCount;
+    private final int executionCount;
     private final Map<String, Object> data;
     private final String evalue;
     private final String traceback;
