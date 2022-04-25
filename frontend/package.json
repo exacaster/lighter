@@ -14,8 +14,8 @@
     "framer-motion": "^3.10.6",
     "moment": "^2.29.1",
     "query-string": "^7.0.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
     "react-moment": "^1.1.1",
     "react-query": "^3.16.0",
     "react-router-dom": "^6.3.0",
@@ -26,16 +26,19 @@
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.11.4",
-    "@testing-library/react": "^12.0.0",
+    "@testing-library/react": "^13.1.1",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.23",
-    "@types/react": "^17.0.0",
-    "@types/react-dom": "^17.0.0",
+    "@types/react": "^18.0.6",
+    "@types/react-dom": "^18.0.2",
     "@types/react-router-dom": "^5.1.7",
     "dotenv": "^16.0.0",
     "http-proxy-middleware": "^2.0.0",
     "prettier": "^2.3.1",
     "prop-types": "^15.8.1"
+  },
+  "resolutions": {
+    "@types/react": "^17.0.0"
   },
   "scripts": {
     "start": "react-scripts start",

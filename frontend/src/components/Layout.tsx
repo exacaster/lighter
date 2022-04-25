@@ -4,12 +4,12 @@ import ButtonLink from './ButtonLink';
 import {generatePath, useLocation} from 'react-router';
 import {RoutePath} from '../configuration/consts';
 
-type Props = {
+interface Props {
   children?: ReactNode;
   active?: string;
-};
+}
 
-const Layout: React.FC = ({children}: Props) => {
+const Layout: React.FC<Props> = ({children}) => {
   const match = useLocation();
 
   return (

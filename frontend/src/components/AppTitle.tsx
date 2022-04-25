@@ -1,5 +1,5 @@
 import {Grid, GridItem} from '@chakra-ui/react';
-import React from 'react';
+import React, {ReactNode} from 'react';
 import {Application} from '../client/types';
 import AppActions from './AppActions';
 import AppStatus from './AppStatus';
@@ -7,6 +7,7 @@ import PageHeading from './PageHeading';
 
 interface Props {
   app: Application;
+  children: ReactNode;
 }
 
 const AppTitle: React.FC<Props> = ({app, children}) => {

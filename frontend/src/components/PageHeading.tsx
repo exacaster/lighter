@@ -1,6 +1,11 @@
 import {Heading} from '@chakra-ui/layout';
+import {ReactNode} from 'react';
 
-const PageHeading: React.FC = ({children}) => {
+interface Props {
+  children: ReactNode;
+}
+
+const PageHeading: React.FC<Props> = ({children}) => {
   return (
     <>
       <Heading size="lg" mb="5">
