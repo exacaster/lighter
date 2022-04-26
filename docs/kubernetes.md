@@ -111,8 +111,6 @@ spec:
                             value: https://address_to_spark_history/spark-history
                         -   name: LIGHTER_MAX_RUNNING_JOBS
                             value: "15"
-                        -   name: LIGHTER_KUBERNETES_CONTAINER_IMAGE
-                            value: "ghcr.io/exacaster/spark:latest"
             serviceAccountName: spark
 ```
 

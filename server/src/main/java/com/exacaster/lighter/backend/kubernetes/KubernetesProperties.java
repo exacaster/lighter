@@ -1,13 +1,8 @@
 package com.exacaster.lighter.backend.kubernetes;
 
-import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
-import static io.micronaut.core.naming.conventions.StringConvention.RAW;
-
 import io.micronaut.context.annotation.ConfigurationInject;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
-import io.micronaut.core.convert.format.MapFormat;
-import java.util.Map;
 import java.util.StringJoiner;
 
 @ConfigurationProperties("lighter.kubernetes")
@@ -17,16 +12,14 @@ public class KubernetesProperties{
     private final String namespace;
     private final Integer maxLogSize;
     private final String master;
-    private final Map<String, String> submitProps;
+    private final String serviceAccount;
 
     @ConfigurationInject
-    public KubernetesProperties(String namespace, Integer maxLogSize, String master,
-            @MapFormat(transformation = FLAT, keyFormat = RAW)
-            Map<String, String> submitProps) {
+    public KubernetesProperties(String namespace, Integer maxLogSize, String master, String serviceAccount) {
         this.namespace = namespace;
         this.maxLogSize = maxLogSize;
         this.master = master;
-        this.submitProps = submitProps;
+        this.serviceAccount = serviceAccount;
     }
 
     public String getNamespace() {
@@ -41,8 +34,8 @@ public class KubernetesProperties{
         return master;
     }
 
-    public Map<String, String> getSubmitProps() {
-        return submitProps;
+    public String getServiceAccount() {
+        return serviceAccount;
     }
 
     @Override
@@ -51,7 +44,7 @@ public class KubernetesProperties{
                 .add("namespace='" + namespace + "'")
                 .add("maxLogSize=" + maxLogSize)
                 .add("master=" + master)
-                .add("submitProps=" + submitProps)
+                .add("serviceAccount=" + serviceAccount)
                 .toString();
     }
 }

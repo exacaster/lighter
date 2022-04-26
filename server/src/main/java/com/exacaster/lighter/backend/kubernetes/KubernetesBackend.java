@@ -26,6 +26,13 @@ public class KubernetesBackend implements Backend {
     private static final String SPARK_ROLE_LABEL = "spark-role";
     private static final String SPARK_APP_ID_LABEL = "spark-app-selector";
 
+    private static final Map<String, String> STATIC_SUBMIT_PROPS = Map.of(
+            "spark.kubernetes.driver.podTemplateFile", "/home/app/k8s/driver_pod_template.yaml",
+            "spark.kubernetes.executor.podTemplateFile", "/home/app/k8s/executor_pod_template.yaml",
+            "spark.hadoop.fs.s3a.fast.upload", "true",
+            "spark.kubernetes.submission.waitAppCompletion", "false"
+    );
+
     private final KubernetesClient client;
     private final KubernetesProperties properties;
     private final AppConfiguration conf;
@@ -43,15 +50,16 @@ public class KubernetesBackend implements Backend {
         var host = uri.getHost();
         var props = new HashMap<>(current);
         props.putAll(Map.of(
+                "spark.kubernetes.namespace", properties.getNamespace(),
+                "spark.kubernetes.authenticate.driver.serviceAccountName", properties.getServiceAccount(),
                 "spark.master", properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
-                "spark.kubernetes.submission.waitAppCompletion", "false",
                 "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
                 "spark.kubernetes.driverEnv.PY_GATEWAY_HOST", host,
                 "spark.kubernetes.driverEnv.LIGHTER_SESSION_ID", application.getId()
         ));
-        props.putAll(properties.getSubmitProps());
+        props.putAll(STATIC_SUBMIT_PROPS);
         return props;
     }
 
