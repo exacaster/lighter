@@ -31,7 +31,6 @@ Example of `LIGHTER_BATCH_DEFAULT_CONF`: `{"spark.kubernetes.driverEnv.TEST1":"t
 | LIGHTER_KUBERNETES_NAMESPACE       | Kubernetes namespace                                 | spark                                          |
 | LIGHTER_KUBERNETES_MAX_LOG_SIZE    | Max lines of log to store on DB                      | 500                                            |
 | LIGHTER_KUBERNETES_SERVICE_ACCOUNT | Kubernetes service account                           | spark                                          |
-| LIGHTER_KUBERNETES_CONTAINER_IMAGE | Container image to use for Spark driver and executor | TODO                                           |
 
 
 ## YARN configuration

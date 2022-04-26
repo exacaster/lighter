@@ -51,7 +51,7 @@ class Factories {
 
     static kubernetesProperties() {
         new KubernetesProperties("spark", 500, "k8s://kubernetes.default.svc.cluster.local:443",
-                ["spark.kubernetes.namespace": "spark"])
+                "spark")
     }
 
     static appConfiguration() {
