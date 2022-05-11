@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
+import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
@@ -111,7 +112,7 @@ class SessionHandlerTest extends Specification {
         then: "restart permanent session"
         1 * service.deleteOne(session.id)
         1 * service.createSession(session.submitParams, session.id) >> permanentSession
-        1 * handler.launch(permanentSession, _) >> {}
+        1 * handler.launch(permanentSession, _) >> EmptyWaitable.INSTANCE
     }
 
     def app() {
