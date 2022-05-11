@@ -56,19 +56,27 @@ public class SessionHandler {
         return app.launch();
     }
 
-    @SchedulerLock(name = "keepPermanentSession")
+    @SchedulerLock(name = "keepPermanentSession", lockAtLeastFor = "1m")
     @Scheduled(fixedRate = "1m")
     public void keepPermanentSessions() throws InterruptedException {
         assertLocked();
+        LOG.info("Start provisioning permanent sessions.");
         for (var sessionConf : appConfiguration.getSessionConfiguration().getPermanentSessions()) {
             var session = sessionService.fetchOne(sessionConf.getId());
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
-                sessionService.deleteOne(sessionConf.getId());
-                launchSession(sessionService.createSession(sessionConf.getSubmitParams(), sessionConf.getId()))
-                        .waitCompletion();
+                LOG.info("Permanent session {} needs to be (re)started.", sessionConf.getId());
+                var sessionToLaunch = sessionService.createSession(
+                        sessionConf.getSubmitParams(),
+                        sessionConf.getId()
+                );
+
+                sessionService.deleteOne(sessionToLaunch);
+                launchSession(sessionToLaunch).waitCompletion();
+                LOG.info("Permanent session {} (re)started.", sessionConf.getId());
             }
         }
+        LOG.info("End provisioning permanent sessions.");
     }
 
     @SchedulerLock(name = "processScheduledSessions")
