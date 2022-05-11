@@ -7,6 +7,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.function.Consumer;
 import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkAppHandle.Listener;
+import org.apache.spark.launcher.SparkAppHandle.State;
 import org.slf4j.Logger;
 
 public class SparkListener implements Listener, Waitable {
@@ -22,9 +23,12 @@ public class SparkListener implements Listener, Waitable {
 
     @Override
     public void stateChanged(SparkAppHandle handle) {
-        LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), handle.getState());
+        var state = handle.getState();
+        LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), state);
         handle.getError().ifPresent(errorHandler);
-        if (handle.getState() != null && handle.getState().isFinal()) {
+        // Disconnect when final or running.
+        // In case app fails after detach, status will be retrieved by ApplicationStatusHandler.
+        if (state != null && (state.isFinal() || State.RUNNING.equals(state))) {
             handle.disconnect();
             latch.countDown();
         }
