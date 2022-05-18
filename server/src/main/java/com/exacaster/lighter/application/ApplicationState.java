@@ -44,6 +44,10 @@ public enum ApplicationState {
     }
 
     public static Optional<ApplicationState> from(String state) {
+        if (state == null) {
+            return Optional.empty();
+        }
+
         try {
             return Optional.of(ApplicationState.valueOf(state));
         } catch (IllegalArgumentException e) {
