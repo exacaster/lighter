@@ -20,6 +20,7 @@ import java.util.UUID;
 
 @Singleton
 public class SessionService {
+
     private final ApplicationStorage applicationStorage;
     private final StatementStorage statementStorage;
     private final Backend backend;
@@ -87,10 +88,12 @@ public class SessionService {
     }
 
     public void deleteOne(String id) {
-        this.fetchOne(id).ifPresent(app -> {
-            backend.kill(app);
-            applicationStorage.deleteApplication(id);
-        });
+        this.fetchOne(id).ifPresent(this::deleteOne);
+    }
+
+    public void deleteOne(Application app) {
+        backend.kill(app);
+        applicationStorage.deleteApplication(app.getId());
     }
 
     public void killOne(Application app) {
