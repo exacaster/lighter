@@ -3,6 +3,7 @@ package com.exacaster.lighter.application.batch
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.backend.Backend
+import com.exacaster.lighter.storage.SortOrder
 import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
@@ -37,13 +38,13 @@ class BatchServiceTest extends Specification {
         resultList.size() == 1
 
         when: "fetch by status"
-        resultList = service.fetchByState(ApplicationState.DEAD, 10)
+        resultList = service.fetchByState(ApplicationState.DEAD, SortOrder.DESC, 0, 10)
 
         then: "returns list"
         resultList.size() == 1
 
         when: "fetch by missing status"
-        resultList = service.fetchByState(ApplicationState.SUCCESS, 10)
+        resultList = service.fetchByState(ApplicationState.SUCCESS, SortOrder.DESC, 0, 10)
 
         then: "returns empty list"
         resultList.isEmpty()

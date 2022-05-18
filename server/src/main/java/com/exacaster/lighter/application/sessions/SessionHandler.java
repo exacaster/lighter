@@ -15,6 +15,7 @@ import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.ConfigModifier;
 import com.exacaster.lighter.spark.SparkApp;
+import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import java.time.LocalDateTime;
@@ -75,7 +76,7 @@ public class SessionHandler {
     @Scheduled(fixedRate = "1m")
     public void processScheduledSessions() throws InterruptedException {
         assertLocked();
-        var waitables = sessionService.fetchByState(ApplicationState.NOT_STARTED, 10).stream()
+        var waitables = sessionService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 10).stream()
                 .map(this::launchSession)
                 .collect(Collectors.toList());
 

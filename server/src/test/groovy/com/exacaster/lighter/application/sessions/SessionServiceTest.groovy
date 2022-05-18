@@ -4,6 +4,7 @@ import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.storage.ApplicationStorage
+import com.exacaster.lighter.storage.SortOrder
 import com.exacaster.lighter.storage.StatementStorage
 import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
@@ -43,13 +44,13 @@ class SessionServiceTest extends Specification {
         sessions.isEmpty()
 
         when: "fetch by state"
-        sessions = service.fetchByState(created.state, 1)
+        sessions = service.fetchByState(created.state, SortOrder.DESC, 1)
 
         then: "returns existing app"
         sessions == [created]
 
         when: "fetch by other state"
-        sessions = service.fetchByState(ApplicationState.IDLE, 1)
+        sessions = service.fetchByState(ApplicationState.IDLE, SortOrder.DESC, 1)
 
         then: "returns empty list"
         sessions.isEmpty()

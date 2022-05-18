@@ -3,6 +3,7 @@ package com.exacaster.lighter.application;
 import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public enum ApplicationState {
@@ -40,6 +41,14 @@ public enum ApplicationState {
 
     public static List<ApplicationState> runningStates() {
         return RUNNING_STATES;
+    }
+
+    public static Optional<ApplicationState> from(String order) {
+        try {
+            return Optional.of(ApplicationState.valueOf(order));
+        } catch (IllegalArgumentException e) {
+            return Optional.empty();
+        }
     }
 
     public boolean isComplete() {

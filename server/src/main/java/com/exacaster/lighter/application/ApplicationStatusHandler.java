@@ -52,6 +52,13 @@ public class ApplicationStatusHandler {
 
     public void processApplicationError(Application application, Throwable error) {
         LOG.warn("Application {} error occurred", application, error);
+        // Workaround for case when Spark launcher logs
+        // DEBUG Configuration: Handling deprecation for hive.stats.ndv.error
+        // on org.apache.spark.launcher.OutputRedirector#redirect() it marks all stdout lines
+        // containing `error` string as Exceptions.
+        if (error.getMessage().contains("hive.stats.ndv.error")) {
+            return;
+        }
         var appId = backend.getInfo(application).map(ApplicationInfo::getApplicationId)
                 .orElse(null);
         applicationStorage.saveApplication(

@@ -7,6 +7,7 @@ import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
+import com.exacaster.lighter.storage.SortOrder;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -43,13 +44,13 @@ public class BatchService {
         return applicationStorage.saveApplication(application);
     }
 
-    public List<Application> fetchByState(ApplicationState state, Integer limit) {
-        return applicationStorage.findApplicationsByStates(ApplicationType.BATCH, List.of(state), limit);
+    public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer from, Integer limit) {
+        return applicationStorage.findApplicationsByStates(ApplicationType.BATCH, List.of(state), order, from, limit);
     }
 
     public List<Application> fetchRunning() {
         return applicationStorage
-                .findApplicationsByStates(ApplicationType.BATCH, ApplicationState.runningStates(), Integer.MAX_VALUE);
+                .findApplicationsByStates(ApplicationType.BATCH, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
     }
 
     public Optional<Application> fetchOne(String id) {

@@ -7,6 +7,7 @@ import com.exacaster.lighter.log.Log
 import com.exacaster.lighter.storage.ApplicationStorage
 import com.exacaster.lighter.storage.Entity
 import com.exacaster.lighter.storage.LogStorage
+import com.exacaster.lighter.storage.SortOrder
 
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Predicate
@@ -39,8 +40,10 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
-    List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, Integer limit) {
+    List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order, Integer offset, Integer limit) {
         return findMany({ type == it.getType() && states.contains(it.getState()) }, Application.class)
+                .sorted((app1, app2) -> order == SortOrder.DESC ? app1.createdAt <=> app2.createdAt : app2.createdAt <=> app1.createdAt)
+                .skip(offset)
                 .limit(limit)
                 .collect(Collectors.toList())
     }
