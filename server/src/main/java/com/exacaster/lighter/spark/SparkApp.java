@@ -71,9 +71,7 @@ public class SparkApp {
         return new SparkLauncher()
                 .setAppName(submitParams.getName())
                 .setDeployMode("cluster")
-                .setAppResource(submitParams.getFile())
-                .redirectOutput(ProcessBuilder.Redirect.INHERIT)
-                .redirectError(ProcessBuilder.Redirect.INHERIT);
+                .setAppResource(submitParams.getFile());
     }
 
 }
