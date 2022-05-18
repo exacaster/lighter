@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
+import com.exacaster.lighter.storage.SortOrder
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
@@ -37,7 +38,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> []
-        1 * service.fetchByState(ApplicationState.NOT_STARTED, _) >> [app]
+        1 * service.fetchByState(ApplicationState.NOT_STARTED, *_) >> [app]
         1 * handler.launch(app, _) >> EmptyWaitable.INSTANCE
     }
 
@@ -50,7 +51,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> [app]
-        _ * service.fetchByState(ApplicationState.NOT_STARTED, config.getMaxRunningJobs() - 1) >> []
+        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, config.getMaxRunningJobs() - 1) >> []
         0 * handler.launch(app, _) >> {  }
     }
 

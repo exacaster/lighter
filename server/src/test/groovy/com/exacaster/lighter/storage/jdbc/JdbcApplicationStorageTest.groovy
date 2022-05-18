@@ -3,6 +3,7 @@ package com.exacaster.lighter.storage.jdbc
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
+import com.exacaster.lighter.storage.SortOrder
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import javax.transaction.Transactional
@@ -48,14 +49,14 @@ class JdbcApplicationStorageTest extends Specification {
         apps.get(0).state == saved.getState()
 
         when: "fetch by state"
-        apps = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.ERROR], 10)
+        apps = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.ERROR], SortOrder.DESC, 0, 10)
 
         then: "returns apps"
         apps.size() == 1
         apps.get(0).id == saved.getId()
 
         when: "fetch by missing state"
-        apps = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.SHUTTING_DOWN], 1)
+        apps = storage.findApplicationsByStates(ApplicationType.BATCH, [ApplicationState.SHUTTING_DOWN], SortOrder.DESC, 0, 1)
 
         then: "returns empty"
         apps.isEmpty()

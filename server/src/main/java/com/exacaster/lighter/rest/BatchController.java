@@ -2,10 +2,12 @@ package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationList;
+import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.batch.BatchService;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Delete;
@@ -35,8 +37,12 @@ public class BatchController {
     }
 
     @Get
-    public ApplicationList get(@QueryValue(defaultValue = "0") Integer from, @QueryValue(defaultValue = "100") Integer size) {
-        var batches = batchService.fetch(from, size);
+    public ApplicationList get(@QueryValue(defaultValue = "0") Integer from,
+            @QueryValue(defaultValue = "100") Integer size,
+            @QueryValue String state) {
+        var batches = ApplicationState.from(state)
+                .map(st -> batchService.fetchByState(st, SortOrder.DESC, from, size))
+                .orElseGet(() -> batchService.fetch(from, size));
         return new ApplicationList(from, batches.size(), batches);
     }
 

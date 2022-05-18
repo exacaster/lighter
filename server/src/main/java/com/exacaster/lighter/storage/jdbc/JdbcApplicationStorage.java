@@ -6,16 +6,17 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
+import com.exacaster.lighter.storage.SortOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Requires;
+import jakarta.inject.Singleton;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import jakarta.inject.Singleton;
 import javax.sql.DataSource;
 import javax.transaction.Transactional;
 import org.jdbi.v3.core.Jdbi;
@@ -80,10 +81,10 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                         // TODO
                     }
                     var updated = handle.createUpdate("UPDATE application SET "
-                            + "app_id=:app_id, "
-                            + "app_info=:app_info, "
-                            + "state=:state, "
-                            + "contacted_at=:contacted_at WHERE id=:id")
+                                    + "app_id=:app_id, "
+                                    + "app_info=:app_info, "
+                                    + "state=:state, "
+                                    + "contacted_at=:contacted_at WHERE id=:id")
                             .bind("state", application.getState().name())
                             .bind("app_id", application.getAppId())
                             .bind("app_info", application.getAppInfo())
@@ -113,12 +114,14 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Override
     @Transactional
     public List<Application> findApplicationsByStates(ApplicationType type,
-            List<ApplicationState> states, Integer limit) {
+            List<ApplicationState> states, SortOrder order, Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) LIMIT :limit")
+                .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) ORDER BY created_at "
+                        + order.name() + " LIMIT :limit OFFSET :offset")
                 .bind("type", type.name())
                 .bindList("states", states.stream().map(ApplicationState::name).collect(Collectors.toList()))
-                .bind("limit", limit)
+                .bind("limit", size)
+                .bind("offset", from)
                 .map(this)
                 .list()
         );
@@ -133,7 +136,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
             // TODO
         }
 
-        var contactedAt = rs.getTimestamp("contacted_at") != null ? rs.getTimestamp("contacted_at").toLocalDateTime() : null;
+        var contactedAt =
+                rs.getTimestamp("contacted_at") != null ? rs.getTimestamp("contacted_at").toLocalDateTime() : null;
         return ApplicationBuilder.builder()
                 .setId(rs.getString("id"))
                 .setType(ApplicationType.valueOf(rs.getString("type")))

@@ -12,6 +12,7 @@ import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.spark.ConfigModifier;
 import com.exacaster.lighter.spark.SparkApp;
+import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import java.util.List;
@@ -55,7 +56,7 @@ public class BatchHandler {
         var emptySlots = countEmptySlots();
         var slotsToTake = Math.min(MAX_SLOTS_PER_ITERATION, emptySlots);
         LOG.info("Processing scheduled batches, found empty slots: {}, using {}", emptySlots, slotsToTake);
-        var waitables = batchService.fetchByState(ApplicationState.NOT_STARTED, slotsToTake)
+        var waitables = batchService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, slotsToTake)
                 .stream()
                 .map(batch -> {
                     LOG.info("Launching {}", batch);
