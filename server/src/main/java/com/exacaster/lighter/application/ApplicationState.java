@@ -43,9 +43,9 @@ public enum ApplicationState {
         return RUNNING_STATES;
     }
 
-    public static Optional<ApplicationState> from(String order) {
+    public static Optional<ApplicationState> from(String state) {
         try {
-            return Optional.of(ApplicationState.valueOf(order));
+            return Optional.of(ApplicationState.valueOf(state));
         } catch (IllegalArgumentException e) {
             return Optional.empty();
         }
