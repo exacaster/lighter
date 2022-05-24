@@ -25,8 +25,12 @@ public class SparkListener implements Listener, Waitable {
     public void stateChanged(SparkAppHandle handle) {
         var state = handle.getState();
         LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), state);
-        handle.getError().ifPresent(errorHandler);
-
+        handle.getError().ifPresent((error) -> {
+            LOG.warn("State changed with error: {} ", error.getMessage());
+            if (State.FAILED.equals(state)) {
+                errorHandler.accept(error);
+            }
+        });
         // Disconnect when final or submitted.
         // In case app fails after detach, status will be retrieved by ApplicationStatusHandler.
         if (state != null && (state.isFinal() || State.SUBMITTED.equals(state))) {
