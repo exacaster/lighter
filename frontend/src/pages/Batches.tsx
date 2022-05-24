@@ -10,10 +10,12 @@ import Link from '../components/Link';
 import AppStatus from '../components/AppStatus';
 import DateTime from '../components/DateTime';
 import AppActions from '../components/AppActions';
+import StatusFilter from '../components/StatusFilter';
 
 const Batches: React.FC = () => {
-  const from = Number(useQueryString().from) || 0;
-  const {data, isLoading} = useBatches(pageSize, from);
+  const {from, status} = useQueryString();
+  const fromInt = Number(from) || 0;
+  const {data, isLoading} = useBatches(pageSize, fromInt, status as string);
   const {mutate: doDelete, isLoading: isDeleting} = useBatchDelete();
 
   if (isLoading || isDeleting) {
@@ -23,6 +25,7 @@ const Batches: React.FC = () => {
   return (
     <>
       <PageHeading>Batches</PageHeading>
+      <StatusFilter path="./" status={status as string} />
       <Table variant="simple" size="sm">
         <Thead>
           <Tr>
@@ -53,7 +56,7 @@ const Batches: React.FC = () => {
           ))}
         </Tbody>
       </Table>
-      <Pagination path="./" from={from} size={pageSize} visibleSize={data?.applications?.length || 0} />
+      <Pagination path="./" size={pageSize} visibleSize={data?.applications?.length || 0} />
     </>
   );
 };

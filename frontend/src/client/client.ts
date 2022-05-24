@@ -16,8 +16,8 @@ export class Api {
     return this.client.delete(url);
   }
 
-  fetchBatches(size: number, from: number): Promise<BatchPage> {
-    return this.get(`/api/batches?size=${size}&from=${from}`);
+  fetchBatches(size: number, from: number, status?: string | null): Promise<BatchPage> {
+    return this.get(`/api/batches?size=${size}&from=${from}${status ? '&state=' + status : ''}`);
   }
 
   fetchBatch(id: string): Promise<Application> {
