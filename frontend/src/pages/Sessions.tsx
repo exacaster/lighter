@@ -53,7 +53,7 @@ const Sessions: React.FC = () => {
           ))}
         </Tbody>
       </Table>
-      <Pagination path="./" from={from} size={pageSize} visibleSize={data?.applications?.length || 0} />
+      <Pagination path="./" size={pageSize} visibleSize={data?.applications?.length || 0} />
     </>
   );
 };

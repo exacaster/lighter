@@ -4,14 +4,14 @@
   "homepage": "/lighter",
   "private": true,
   "dependencies": {
-    "@chakra-ui/icons": "^1.0.13",
-    "@chakra-ui/react": "^1.6.2",
-    "@chakra-ui/system": "^1.12.0",
+    "@chakra-ui/icons": "^2.0.1",
+    "@chakra-ui/react": "^2.1.1",
+    "@chakra-ui/system": "^2.1.1",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/open-sans": "^4.4.5",
-    "axios": "^0.26.1",
-    "framer-motion": "^3.10.6",
+    "axios": "^0.27.2",
+    "framer-motion": "^6.2.9",
     "moment": "^2.29.1",
     "query-string": "^7.0.0",
     "react": "^18.0.0",
@@ -29,7 +29,7 @@
     "@testing-library/react": "^13.1.1",
     "@types/jest": "^27.4.1",
     "@types/node": "^17.0.23",
-    "@types/react": "^18.0.6",
+    "@types/react": "^18.0.9",
     "@types/react-dom": "^18.0.2",
     "@types/react-router-dom": "^5.1.7",
     "dotenv": "^16.0.0",
@@ -38,7 +38,7 @@
     "prop-types": "^15.8.1"
   },
   "resolutions": {
-    "@types/react": "^17.0.0"
+    "@types/react": "^18.0.9"
   },
   "scripts": {
     "start": "react-scripts start",

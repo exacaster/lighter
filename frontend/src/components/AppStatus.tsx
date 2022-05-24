@@ -1,7 +1,7 @@
 import {Badge, BadgeProps} from '@chakra-ui/react';
-import React from 'react';
+import React, {ReactNode} from 'react';
 
-const statusMap: {[key: string]: BadgeProps['colorScheme']} = {
+export const statusMap: {[key: string]: BadgeProps['colorScheme']} = {
   NOT_STARTED: 'purple',
   // STARTING: '',
   // IDLE: '',
@@ -13,8 +13,18 @@ const statusMap: {[key: string]: BadgeProps['colorScheme']} = {
   SUCCESS: 'green',
 };
 
-const AppStatus: React.FC<{status: string}> = ({status}) => {
-  return <Badge colorScheme={statusMap[status.toUpperCase()]}>{status}</Badge>;
+interface Props {
+  status: string;
+  prefix?: ReactNode;
+}
+
+const AppStatus: React.FC<Props> = ({status, prefix}) => {
+  return (
+    <Badge colorScheme={statusMap[status.toUpperCase()]}>
+      {prefix}
+      {status}
+    </Badge>
+  );
 };
 
 export default AppStatus;
