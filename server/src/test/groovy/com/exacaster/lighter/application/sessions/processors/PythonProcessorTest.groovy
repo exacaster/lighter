@@ -1,6 +1,5 @@
 package com.exacaster.lighter.application.sessions.processors
 
-
 import spock.lang.Ignore
 import spock.lang.Specification
 
@@ -12,12 +11,13 @@ class PythonProcessorTest extends Specification {
     def processor
 
     def setup() {
-        def builder = new ProcessBuilder("python3", "/home/paulius/projects/lighter/server/src/main/resources/shell_wrapper.py")
+        def builder = new ProcessBuilder("python3", "./src/main/resources/shell_wrapper.py")
         builder.redirectErrorStream(true)
         def env = builder.environment()
         env.put("PYTHONINSPECT", "true")
         env.put("PYTHONUNBUFFERED", "true")
         env.put("LIGHTER_TEST", "true")
+        env.put("LIGHTER_SESSION_ID", "session1")
         process = builder.start()
         processor = new PythonProcessor(process)
     }
