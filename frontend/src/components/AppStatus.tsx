@@ -2,11 +2,11 @@ import {Badge, BadgeProps} from '@chakra-ui/react';
 import React, {ReactNode} from 'react';
 
 export const statusMap: {[key: string]: BadgeProps['colorScheme']} = {
-  NOT_STARTED: 'purple',
-  // STARTING: '',
-  // IDLE: '',
-  // BUSY: '',
-  // SHUTTING_DOWN: '',
+  NOT_STARTED: 'gray',
+  STARTING: 'gray',
+  IDLE: 'blue',
+  BUSY: 'blue',
+  SHUTTING_DOWN: 'purple',
   ERROR: 'red',
   DEAD: 'red',
   KILLED: 'red',
@@ -20,7 +20,7 @@ interface Props {
 
 const AppStatus: React.FC<Props> = ({status, prefix}) => {
   return (
-    <Badge colorScheme={statusMap[status.toUpperCase()]}>
+    <Badge colorScheme={statusMap[status.toUpperCase()] || 'white'}>
       {prefix}
       {status}
     </Badge>
