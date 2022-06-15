@@ -19,6 +19,17 @@ def setup_output():
     sys.stdout = io.StringIO()
     sys.stderr = io.StringIO()
 
+def _do_with_retry(attempts, action):
+    attempts_left = attempts
+    last_exception = None
+    while attempts_left:
+        try:
+            return action()
+        except Exception as e:
+            last_exception = e
+            attempts_left -= 1
+    raise last_exception
+
 
 class Controller:
     def __init__(self, session_id):
@@ -33,16 +44,18 @@ class Controller:
 
 class TestController(Controller):
     def read(self):
-        try:
+        def do_read():
             str_line = sys_stdin.readline()
             line = json.loads(str_line)
             return [line]
-        except:
-            return []
+        return _do_with_retry(2, do_read)
+
 
     def write(self, id, result):
-        print(json.dumps(result), file=sys_stdout)
-        sys_stdout.flush()
+        def do_write():
+            print(json.dumps(result), file=sys_stdout)
+            sys_stdout.flush()
+        _do_with_retry(2, do_write)
 
 
 class GatewayController(Controller):
@@ -56,17 +69,18 @@ class GatewayController(Controller):
         self.endpoint = self.gateway.entry_point
 
     def read(self):
-        try:
-            return [{"id": stmt.getId(), "code": stmt.getCode()} for stmt in self.endpoint.statementsToProcess(self.session_id)]
-        except Exception as e:
-            log.exception(e)
-            return []
+        return _do_with_retry(
+            3,
+            lambda: [
+              {"id": stmt.getId(), "code": stmt.getCode()} for stmt in self.endpoint.statementsToProcess(self.session_id)
+            ]
+        )
 
     def write(self, id, result):
-        try:
-            self.endpoint.handleResponse(self.session_id, id, result)
-        except Exception as e:
-            log.exception(e)
+        _do_with_retry(
+            3,
+            lambda: self.endpoint.handleResponse(self.session_id, id, result)
+        )
 
 
 class CommandHandler:
