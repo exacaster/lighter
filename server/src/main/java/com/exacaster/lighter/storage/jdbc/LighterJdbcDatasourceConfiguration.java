@@ -17,7 +17,6 @@ import java.util.Map;
 public class LighterJdbcDatasourceConfiguration {
 
     @Singleton
-    @Primary
     @Named("default")
     public DatasourceConfiguration datasourceConfiguration(JdbcConnectionConfiguration configuration) {
         var ds = new DatasourceConfiguration("default");
