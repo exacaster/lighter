@@ -89,7 +89,7 @@ public class SubmitParams {
     }
 
     public Integer getExecutorCores() {
-        return ofNullable(executorCores).orElse(2);
+        return ofNullable(executorCores).orElse(1);
     }
 
     public String getExecutorMemory() {
@@ -97,7 +97,7 @@ public class SubmitParams {
     }
 
     public Integer getDriverCores() {
-        return ofNullable(driverCores).orElse(2);
+        return ofNullable(driverCores).orElse(1);
     }
 
     public String getDriverMemory() {

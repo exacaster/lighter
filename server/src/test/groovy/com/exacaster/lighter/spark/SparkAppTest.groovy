@@ -27,7 +27,7 @@ class SparkAppTest extends Specification {
         result == [
                 "spark.executor.memory":"1000M",
                 "spark.driver.memory":"1000M",
-                "spark.executor.cores":"2",
+                "spark.executor.cores":"1",
                 "spark.driver.cores":"1",
                 "spark.executor.instances":"0",
                 "spark.kubernetes.driverEnv.TEST1":"test1"
