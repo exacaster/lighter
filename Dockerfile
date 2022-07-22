@@ -1,6 +1,7 @@
 FROM openjdk:11-jre-slim-stretch as server
 
 ARG SPARK_VERSION=3.3.0
+ARG HADOOP_VERSION=3
 
 WORKDIR /home/app/
 COPY server/ ./server/
@@ -25,6 +26,7 @@ RUN yarn install && yarn build
 FROM openjdk:11-jre-slim-stretch
 
 ARG SPARK_VERSION=3.3.0
+ARG HADOOP_VERSION=3
 
 ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
@@ -39,7 +41,7 @@ COPY --from=server /home/app/server/build/docker/main/layers/resources /home/app
 COPY --from=server /home/app/server/build/docker/main/layers/application.jar /home/app/application.jar
 
 COPY --from=frontend /home/app/frontend/build/ ./frontend/
-COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop3.2/ ./spark/
+COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/ ./spark/
 
 COPY k8s/ ./k8s/
 
