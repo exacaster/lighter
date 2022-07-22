@@ -50,7 +50,7 @@ public class BatchHandler {
     }
 
     @SchedulerLock(name = "processScheduledBatches")
-    @Scheduled(fixedRate = "1m")
+    @Scheduled(fixedDelay = "30s")
     public void processScheduledBatches() throws InterruptedException {
         assertLocked();
         var emptySlots = countEmptySlots();
@@ -75,7 +75,7 @@ public class BatchHandler {
     }
 
     @SchedulerLock(name = "trackRunning")
-    @Scheduled(fixedRate = "1m")
+    @Scheduled(fixedDelay = "30s")
     public void trackRunning() throws InterruptedException {
         assertLocked();
         var completedCount = batchService.fetchRunning().stream()
