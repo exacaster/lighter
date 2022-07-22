@@ -11,12 +11,13 @@ RUN ./gradlew build -PSPARK_VERSION=${SPARK_VERSION}
 FROM node:lts-alpine3.14 as frontend
 
 ARG SPARK_VERSION=3.3.0
+ARG HADOOP_VERSION=3
 
 ENV REACT_APP_API_BASE_URL='/lighter'
 
 WORKDIR /home/app/
 COPY frontend/ ./frontend/
-RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop3.tgz" -O - | tar -xz
+RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" -O - | tar -xz
 
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
