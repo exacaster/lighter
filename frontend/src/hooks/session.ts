@@ -1,5 +1,5 @@
 import {useApi} from '../client/hooks';
-import {useMutation, useQuery, useQueryClient} from 'react-query';
+import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 
 export function useSessions(size: number, from: number) {
   const api = useApi();
