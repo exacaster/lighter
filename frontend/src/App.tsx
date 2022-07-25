@@ -4,7 +4,7 @@ import Sessions from './pages/Sessions';
 import Batches from './pages/Batches';
 import {ChakraProvider} from '@chakra-ui/react';
 import Layout from './components/Layout';
-import {QueryCache, QueryClient, QueryClientProvider} from 'react-query';
+import {QueryCache, QueryClient, QueryClientProvider} from '@tanstack/react-query';
 import Batch from './pages/Batch';
 
 import {extendTheme} from '@chakra-ui/react';
