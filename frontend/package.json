@@ -24,7 +24,7 @@
     "web-vitals": "^2.1.4"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.11.4",
+    "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.1.1",
     "@types/jest": "^28.1.1",
     "@types/node": "^18.6.1",
