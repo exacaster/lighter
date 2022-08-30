@@ -1,14 +1,14 @@
 name: publish docker image
 on:
-  release:
-    types:
-      - released
+    release:
+        types:
+            - released
 
 jobs:
-  build-frontend:
-    uses: exacaster/lighter/.github/workflows/build-frontend.yml@master
-  build-java:
-    uses: exacaster/lighter/.github/workflows/build-java.yml@master
-  publish-registry:
-    uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
-    needs: [build-frontend, build-java]
+    build-frontend:
+        uses: exacaster/lighter/.github/workflows/build-frontend.yml@master
+    build-java:
+        uses: exacaster/lighter/.github/workflows/build-java.yml@master
+    publish-registry:
+        uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
+        needs: [ build-frontend, build-java ]
