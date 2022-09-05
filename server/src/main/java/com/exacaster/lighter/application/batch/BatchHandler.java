@@ -55,7 +55,7 @@ public class BatchHandler {
         assertLocked();
         var emptySlots = countEmptySlots();
         var slotsToTake = Math.min(MAX_SLOTS_PER_ITERATION, emptySlots);
-        LOG.info("Processing scheduled batches. Total empty slots: {}/{}. Can be used for this iteration: {}", emptySlots, appConfiguration.getMaxRunningJobs(), slotsToTake);
+        LOG.info("Processing scheduled batches. Total empty slots: {}/{}. {} can be used for this iteration", emptySlots, appConfiguration.getMaxRunningJobs(), slotsToTake);
         var waitables = batchService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, slotsToTake)
                 .stream()
                 .map(batch -> {
