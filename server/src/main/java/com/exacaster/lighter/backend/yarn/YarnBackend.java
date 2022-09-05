@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
@@ -121,19 +122,16 @@ public class YarnBackend implements Backend {
     }
 
     private Optional<String> getYarnApplicationId(Application application) {
-        return Optional.ofNullable(application.getAppId())
-                .or(() -> {
-                    try {
-                        var request = GetApplicationsRequest.newInstance();
-                        request.setApplicationTags(Set.of(application.getId()));
-                        return client.getApplications(request).stream()
-                                .max(Comparator.comparing(ApplicationReport::getStartTime))
-                                .map(ApplicationReport::getApplicationId)
-                                .map(ApplicationId::toString);
-                    } catch (YarnException | IOException e) {
-                        LOG.error("Failed to get app id for app: {}", application, e);
-                        throw new IllegalStateException(e);
-                    }
-                });
+        try {
+            var request = GetApplicationsRequest.newInstance();
+            request.setApplicationTags(Set.of(application.getId()));
+            return client.getApplications(request).stream()
+                    .max(Comparator.comparing(ApplicationReport::getStartTime))
+                    .map(ApplicationReport::getApplicationId)
+                    .map(ApplicationId::toString);
+        } catch (YarnException | IOException e) {
+            LOG.error("Failed to get YARN app id for app: {}", application, e);
+            throw new IllegalStateException(e);
+        }
     }
 }

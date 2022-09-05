@@ -87,6 +87,7 @@ class YarnBackendTest extends Specification {
     def "kills application"() {
         given:
         def app = newApplication()
+        mockYarnApp(app)
 
         when:
         backend.kill(app)

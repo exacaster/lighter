@@ -55,7 +55,7 @@ public class BatchHandler {
         assertLocked();
         var emptySlots = countEmptySlots();
         var slotsToTake = Math.min(MAX_SLOTS_PER_ITERATION, emptySlots);
-        LOG.info("Processing scheduled batches, found empty slots: {}, using {}", emptySlots, slotsToTake);
+        LOG.info("Processing scheduled batches. Total empty slots: {}/{}. Can be used for this iteration: {}", emptySlots, appConfiguration.getMaxRunningJobs(), slotsToTake);
         var waitables = batchService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, slotsToTake)
                 .stream()
                 .map(batch -> {
@@ -64,9 +64,13 @@ public class BatchHandler {
                     return launch(batch, error -> statusTracker.processApplicationError(batch, error));
                 })
                 .collect(Collectors.toList());
-        LOG.info("Waiting launches to complete");
-        for (var waitable : waitables) {
-            waitable.waitCompletion();
+        if (waitables.isEmpty()) {
+            LOG.info("No jobs waiting with '{}' status", ApplicationState.NOT_STARTED);
+        } else {
+            LOG.info("Launched {} jobs this iteration. Waiting launches to complete", waitables.size());
+            for (var waitable : waitables) {
+                waitable.waitCompletion();
+            }
         }
     }
 
