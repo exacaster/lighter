@@ -12,14 +12,14 @@
     "@fontsource/open-sans": "^4.4.5",
     "@tanstack/react-query": "^4.2.3",
     "axios": "^0.27.2",
-    "framer-motion": "^7.2.1",
+    "framer-motion": "^7.3.2",
     "moment": "^2.29.1",
     "query-string": "^7.0.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-moment": "^1.1.1",
     "react-router-dom": "^6.3.0",
-    "sass": "^1.54.8",
+    "sass": "^1.54.9",
     "typescript": "^4.8.2"
   },
   "devDependencies": {
