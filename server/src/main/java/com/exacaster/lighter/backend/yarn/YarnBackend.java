@@ -3,9 +3,7 @@ package com.exacaster.lighter.backend.yarn;
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import com.exacaster.lighter.application.Application;
-import com.exacaster.lighter.application.ApplicationInfo;
-import com.exacaster.lighter.application.ApplicationState;
+import com.exacaster.lighter.application.*;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
@@ -17,10 +15,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import com.exacaster.lighter.storage.ApplicationStorage;
 import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.client.api.YarnClient;
+import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.slf4j.Logger;
 
@@ -31,11 +32,16 @@ public class YarnBackend implements Backend {
     private final YarnProperties yarnProperties;
     private final YarnClient client;
     private final AppConfiguration conf;
+    private final ApplicationStatusHandler applicationStatusHandler;
 
-    public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf) {
+    private final ApplicationStorage applicationStorage;
+
+    public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf, ApplicationStatusHandler applicationStatusHandler, ApplicationStorage applicationStorage) {
         this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
+        this.applicationStatusHandler = applicationStatusHandler;
+        this.applicationStorage = applicationStorage;
     }
 
     @Override
@@ -57,6 +63,10 @@ public class YarnBackend implements Backend {
                 case KILLED:
                     return ApplicationState.KILLED;
             }
+        } catch (ApplicationNotFoundException e) {
+            LOG.error("Application not found in YARN: {}", id, e);
+            applicationStorage.findApplication(id)
+                    .ifPresent(application -> applicationStatusHandler.processApplicationError(application, e));
         } catch (YarnException | IOException e) {
             LOG.error("Unexpected error for appId: {}", id, e);
         }

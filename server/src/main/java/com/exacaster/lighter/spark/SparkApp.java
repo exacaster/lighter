@@ -48,6 +48,9 @@ public class SparkApp {
             if (submitParams.getMainClass() != null) {
                 launcher.setMainClass(submitParams.getMainClass());
             }
+            if (submitParams.getMaster() != null) {
+                launcher.setMaster(submitParams.getMaster());
+            }
             submitParams.getArgs().forEach(launcher::addAppArgs);
             submitParams.getJars().forEach(launcher::addJar);
             submitParams.getFiles().forEach(launcher::addFile);

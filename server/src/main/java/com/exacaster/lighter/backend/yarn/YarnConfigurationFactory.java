@@ -3,7 +3,9 @@ package com.exacaster.lighter.backend.yarn;
 import static org.apache.hadoop.fs.CommonConfigurationKeysPublic.HADOOP_KERBEROS_KEYTAB_LOGIN_AUTORENEWAL_ENABLED;
 import static org.apache.hadoop.security.UserGroupInformation.loginUserFromKeytab;
 
+import com.exacaster.lighter.application.ApplicationStatusHandler;
 import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.storage.ApplicationStorage;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.context.annotation.Requires;
@@ -17,6 +19,14 @@ import org.apache.hadoop.yarn.client.api.YarnClient;
 @Factory
 @Requires(beans = YarnProperties.class)
 public class YarnConfigurationFactory {
+    private final ApplicationStatusHandler applicationStatusHandler;
+
+    private final ApplicationStorage applicationStorage;
+
+    public YarnConfigurationFactory(ApplicationStatusHandler applicationStatusHandler, ApplicationStorage applicationStorage) {
+        this.applicationStatusHandler = applicationStatusHandler;
+        this.applicationStorage = applicationStorage;
+    }
 
     @Singleton
     public YarnBackend backend(YarnProperties yarnProperties, AppConfiguration conf,
@@ -33,6 +43,6 @@ public class YarnConfigurationFactory {
         var yarnClient = YarnClient.createYarnClient();
         yarnClient.init(yarnConfiguration);
         yarnClient.start();
-        return new YarnBackend(yarnProperties, yarnClient, conf);
+        return new YarnBackend(yarnProperties, yarnClient, conf, applicationStatusHandler, applicationStorage);
     }
 }
