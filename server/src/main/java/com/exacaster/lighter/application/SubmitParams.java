@@ -1,4 +1,4 @@
-package com.exacaster.lighter.spark;
+package com.exacaster.lighter.application;
 
 import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
 import static io.micronaut.core.naming.conventions.StringConvention.RAW;

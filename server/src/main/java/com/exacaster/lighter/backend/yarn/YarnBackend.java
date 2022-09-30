@@ -1,5 +1,6 @@
 package com.exacaster.lighter.backend.yarn;
 
+import static com.exacaster.lighter.backend.CommonUtils.buildLauncherBase;
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -7,6 +8,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.backend.SparkApp;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import java.io.File;
@@ -17,6 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Consumer;
 import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
@@ -100,11 +103,18 @@ public class YarnBackend implements Backend {
     }
 
     @Override
-    public Map<String, String> getSubmitConfiguration(Application application,
-            Map<String, String> current) {
+    public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
+            Consumer<Throwable> errorHandler) {
+        var launcher = buildLauncherBase(application.getSubmitParams(), configDefaults)
+                .setDeployMode("cluster");
+        getSubmitConfiguration(application).forEach(launcher::setConf);
+        return new SparkApp(launcher, errorHandler);
+    }
+
+    Map<String, String> getSubmitConfiguration(Application application) {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
-        var props = new HashMap<>(current);
+        var props = new HashMap<String, String>();
         props.putAll(Map.of(
                 "spark.master", "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),

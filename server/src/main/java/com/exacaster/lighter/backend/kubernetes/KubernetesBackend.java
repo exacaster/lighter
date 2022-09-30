@@ -1,5 +1,6 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import static com.exacaster.lighter.backend.CommonUtils.buildLauncherBase;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -7,6 +8,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.backend.SparkApp;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import io.fabric8.kubernetes.api.model.Pod;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import org.slf4j.Logger;
 
 public class KubernetesBackend implements Backend {
@@ -44,11 +47,18 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
-    public Map<String, String> getSubmitConfiguration(Application application,
-            Map<String, String> current) {
+    public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
+            Consumer<Throwable> errorHandler) {
+        var launcher = buildLauncherBase(application.getSubmitParams(), configDefaults)
+                .setDeployMode("cluster");
+        getSubmitConfiguration(application).forEach(launcher::setConf);
+        return new SparkApp(launcher, errorHandler);
+    }
+
+    Map<String, String> getSubmitConfiguration(Application application) {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
-        var props = new HashMap<>(current);
+        var props = new HashMap<String, String>();
         props.putAll(Map.of(
                 "spark.kubernetes.namespace", properties.getNamespace(),
                 "spark.kubernetes.authenticate.driver.serviceAccountName", properties.getServiceAccount(),

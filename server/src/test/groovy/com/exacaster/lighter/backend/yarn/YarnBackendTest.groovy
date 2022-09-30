@@ -28,7 +28,7 @@ class YarnBackendTest extends Specification {
         def app = newApplication()
 
         when:
-        def result = backend.getSubmitConfiguration(app, [:])
+        def result = backend.getSubmitConfiguration(app)
 
         then:
         result["spark.master"] == "yarn"

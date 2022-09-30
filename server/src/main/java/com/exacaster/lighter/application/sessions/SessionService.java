@@ -8,7 +8,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.exacaster.lighter.storage.StatementStorage;
