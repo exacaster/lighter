@@ -4,7 +4,7 @@
   "homepage": "/lighter",
   "private": true,
   "dependencies": {
-    "@chakra-ui/icons": "^2.0.10",
+    "@chakra-ui/icons": "^2.0.11",
     "@chakra-ui/react": "^2.3.5",
     "@chakra-ui/system": "^2.1.1",
     "@emotion/react": "^11",
