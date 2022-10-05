@@ -12,7 +12,7 @@
     "@fontsource/open-sans": "^4.5.12",
     "@tanstack/react-query": "^4.10.1",
     "axios": "^1.0.0",
-    "framer-motion": "^7.5.1",
+    "framer-motion": "^7.5.2",
     "moment": "^2.29.1",
     "query-string": "^7.0.0",
     "react": "^18.0.0",
