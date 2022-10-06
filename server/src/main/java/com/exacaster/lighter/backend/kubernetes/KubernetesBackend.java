@@ -49,9 +49,11 @@ public class KubernetesBackend implements Backend {
     @Override
     public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
-        var launcher = buildLauncherBase(application.getSubmitParams(), configDefaults)
+        var conf = new HashMap<>(configDefaults);
+        conf.putAll(getSubmitConfiguration(application));
+
+        var launcher = buildLauncherBase(application.getSubmitParams(), conf)
                 .setDeployMode("cluster");
-        getSubmitConfiguration(application).forEach(launcher::setConf);
         return new SparkApp(launcher, errorHandler);
     }
 

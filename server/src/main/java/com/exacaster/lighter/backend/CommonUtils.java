@@ -37,6 +37,7 @@ public final class CommonUtils {
 
         configs.forEach(launcher::setConf);
         submitParams.getConf().forEach(launcher::setConf);
+
         return launcher;
     }
 }
