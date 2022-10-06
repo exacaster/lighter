@@ -24,7 +24,7 @@ class KubernetesBackendTest extends Specification {
         def app = newApplication()
 
         when:
-        def result = backend.getSubmitConfiguration(app)
+        def result = backend.getBackendConfiguration(app)
 
         then:
         result["spark.master"] == properties.master

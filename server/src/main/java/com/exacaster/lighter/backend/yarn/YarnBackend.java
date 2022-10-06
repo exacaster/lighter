@@ -106,14 +106,14 @@ public class YarnBackend implements Backend {
     public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
         var conf = new HashMap<>(configDefaults);
-        conf.putAll(getSubmitConfiguration(application));
+        conf.putAll(getBackendConfiguration(application));
 
         var launcher = buildLauncherBase(application.getSubmitParams(), conf)
                 .setDeployMode("cluster");
         return new SparkApp(launcher, errorHandler);
     }
 
-    Map<String, String> getSubmitConfiguration(Application application) {
+    Map<String, String> getBackendConfiguration(Application application) {
         URI uri = URI.create(conf.getUrl());
         var host = uri.getHost();
         var props = new HashMap<String, String>();
