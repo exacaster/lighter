@@ -1,6 +1,5 @@
 package com.exacaster.lighter.application;
 
-import com.exacaster.lighter.spark.SubmitParams;
 import com.exacaster.lighter.storage.Entity;
 import io.micronaut.core.annotation.Introspected;
 

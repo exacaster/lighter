@@ -6,7 +6,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.batch.BatchService;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
-import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Body;

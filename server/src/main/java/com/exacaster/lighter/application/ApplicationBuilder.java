@@ -1,6 +1,5 @@
 package com.exacaster.lighter.application;
 
-import com.exacaster.lighter.spark.SubmitParams;
 import java.time.LocalDateTime;
 
 public class ApplicationBuilder {

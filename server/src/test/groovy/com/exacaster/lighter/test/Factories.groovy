@@ -7,7 +7,7 @@ import com.exacaster.lighter.application.sessions.Statement
 import com.exacaster.lighter.application.sessions.processors.Output
 import com.exacaster.lighter.backend.kubernetes.KubernetesProperties
 import com.exacaster.lighter.configuration.AppConfiguration
-import com.exacaster.lighter.spark.SubmitParams
+import com.exacaster.lighter.application.SubmitParams
 
 import java.time.LocalDateTime
 

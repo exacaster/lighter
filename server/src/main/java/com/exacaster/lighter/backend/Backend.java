@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.log.Log;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 public interface Backend {
 
@@ -16,8 +17,5 @@ public interface Backend {
 
     void kill(Application application);
 
-    default Map<String, String> getSubmitConfiguration(Application application,
-            Map<String, String> current) {
-        return current;
-    }
+    SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults, Consumer<Throwable> errorHandler);
 }
