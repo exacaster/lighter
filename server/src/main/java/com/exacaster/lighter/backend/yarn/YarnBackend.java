@@ -1,6 +1,5 @@
 package com.exacaster.lighter.backend.yarn;
 
-import static com.exacaster.lighter.backend.CommonUtils.buildLauncherBase;
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -105,12 +104,7 @@ public class YarnBackend implements Backend {
     @Override
     public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
-        var conf = new HashMap<>(configDefaults);
-        conf.putAll(getBackendConfiguration(application));
-
-        var launcher = buildLauncherBase(application.getSubmitParams(), conf)
-                .setDeployMode("cluster");
-        return new SparkApp(launcher, errorHandler);
+        return new SparkApp(application, configDefaults, getBackendConfiguration(application), errorHandler);
     }
 
     Map<String, String> getBackendConfiguration(Application application) {
@@ -118,6 +112,7 @@ public class YarnBackend implements Backend {
         var host = uri.getHost();
         var props = new HashMap<String, String>();
         props.putAll(Map.of(
+                "spark.submit.deployMode", "cluster",
                 "spark.master", "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",

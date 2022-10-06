@@ -1,6 +1,5 @@
 package com.exacaster.lighter.backend.kubernetes;
 
-import static com.exacaster.lighter.backend.CommonUtils.buildLauncherBase;
 import static java.util.Optional.ofNullable;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -23,6 +22,7 @@ import java.util.function.Consumer;
 import org.slf4j.Logger;
 
 public class KubernetesBackend implements Backend {
+
     private static final Logger LOG = getLogger(KubernetesBackend.class);
 
     private static final String SPARK_APP_TAG_LABEL = "spark-app-tag";
@@ -49,12 +49,7 @@ public class KubernetesBackend implements Backend {
     @Override
     public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
-        var conf = new HashMap<>(configDefaults);
-        conf.putAll(getBackendConfiguration(application));
-
-        var launcher = buildLauncherBase(application.getSubmitParams(), conf)
-                .setDeployMode("cluster");
-        return new SparkApp(launcher, errorHandler);
+        return new SparkApp(application, configDefaults, getBackendConfiguration(application), errorHandler);
     }
 
     Map<String, String> getBackendConfiguration(Application application) {
@@ -62,6 +57,7 @@ public class KubernetesBackend implements Backend {
         var host = uri.getHost();
         var props = new HashMap<String, String>();
         props.putAll(Map.of(
+                "spark.submit.deployMode", "cluster",
                 "spark.kubernetes.namespace", properties.getNamespace(),
                 "spark.kubernetes.authenticate.driver.serviceAccountName", properties.getServiceAccount(),
                 "spark.master", properties.getMaster(),
