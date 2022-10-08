@@ -1,6 +1,8 @@
 package com.exacaster.lighter.backend.yarn;
 
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
+import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
+import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
@@ -112,8 +114,8 @@ public class YarnBackend implements Backend {
         var host = uri.getHost();
         var props = new HashMap<String, String>();
         props.putAll(Map.of(
-                "spark.submit.deployMode", "cluster",
-                "spark.master", "yarn",
+                DEPLOY_MODE, "cluster",
+                SPARK_MASTER, "yarn",
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
                 "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),

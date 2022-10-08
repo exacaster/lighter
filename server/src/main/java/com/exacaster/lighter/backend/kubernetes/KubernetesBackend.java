@@ -1,6 +1,8 @@
 package com.exacaster.lighter.backend.kubernetes;
 
 import static java.util.Optional.ofNullable;
+import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
+import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.application.Application;
@@ -57,10 +59,10 @@ public class KubernetesBackend implements Backend {
         var host = uri.getHost();
         var props = new HashMap<String, String>();
         props.putAll(Map.of(
-                "spark.submit.deployMode", "cluster",
+                DEPLOY_MODE, "cluster",
                 "spark.kubernetes.namespace", properties.getNamespace(),
                 "spark.kubernetes.authenticate.driver.serviceAccountName", properties.getServiceAccount(),
-                "spark.master", properties.getMaster(),
+                SPARK_MASTER, properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),

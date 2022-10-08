@@ -10,32 +10,41 @@ import com.exacaster.lighter.concurrency.Waitable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
+import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 
 public class SparkApp {
 
     private final Map<String, String> configDefaults;
     private final Map<String, String> backendConfiguration;
-    private final Consumer<Throwable> errorHandler;
     private final Application application;
+    private final SparkListener listener;
+    private SparkAppHandle handle;
 
-    public SparkApp(Application application, Map<String, String> configDefaults,
-            Map<String, String> backendConfiguration, Consumer<Throwable> errorHandler) {
-
+    public SparkApp(Application application,
+            Map<String, String> configDefaults,
+            Map<String, String> backendConfiguration,
+            SparkListener listener) {
         this.application = application;
         this.configDefaults = configDefaults;
         this.backendConfiguration = backendConfiguration;
-        this.errorHandler = errorHandler;
+        this.listener = listener;
+    }
+
+    public SparkApp(Application application,
+            Map<String, String> configDefaults,
+            Map<String, String> backendConfiguration,
+            Consumer<Throwable> errorHandler) {
+        this(application, configDefaults, backendConfiguration, new ClusterSparkListener(errorHandler));
     }
 
     public Waitable launch() {
         try {
             var launcher = buildLauncher();
-            var listener = new SparkListener(errorHandler);
-            launcher.startApplication(listener);
+            this.handle = launcher.startApplication(listener);
             return listener;
         } catch (IOException | IllegalArgumentException e) {
-            this.errorHandler.accept(e);
+            this.listener.onError(e);
         }
 
         return EmptyWaitable.INSTANCE;
