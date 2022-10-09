@@ -1,6 +1,7 @@
 # Lighter UI
 
-Frontend application used for tracking Apache Spark applications sbmitted via Lighter API. Application based on React framework.
+Frontend application used for tracking Apache Spark applications submitted via Lighter API.
+Application based on React framework.
 
 ## Available Scripts
 
@@ -13,6 +14,7 @@ Installs all dependencies, needed to run the application.
 ### `yarn start`
 
 Lighter API application should be running on `http://localhost:8080` for UI to work.
+[Click here](../dev/README.md) to see how to start Lighter backend locally.
 
 Runs the app in the development mode.\
 Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
