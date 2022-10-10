@@ -54,7 +54,7 @@ public class LocalBackend implements Backend {
     @Override
     public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
-        var localApp = new LocalApp(application, errorHandler);
+        var localApp = new LocalApp(application, errorHandler, () -> activeApps.remove(application.getId()));
         activeApps.put(application.getId(), localApp);
         return new SparkApp(
                 application,

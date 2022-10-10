@@ -10,7 +10,6 @@ import com.exacaster.lighter.concurrency.Waitable;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Consumer;
-import org.apache.spark.launcher.SparkAppHandle;
 import org.apache.spark.launcher.SparkLauncher;
 
 public class SparkApp {
@@ -19,7 +18,6 @@ public class SparkApp {
     private final Map<String, String> backendConfiguration;
     private final Application application;
     private final SparkListener listener;
-    private SparkAppHandle handle;
 
     public SparkApp(Application application,
             Map<String, String> configDefaults,
@@ -41,7 +39,7 @@ public class SparkApp {
     public Waitable launch() {
         try {
             var launcher = buildLauncher();
-            this.handle = launcher.startApplication(listener);
+            launcher.startApplication(listener);
             return listener;
         } catch (IOException | IllegalArgumentException e) {
             this.listener.onError(e);

@@ -19,11 +19,13 @@ public class LocalApp implements SparkListener {
     private final LogCollectingHandler logHandle;
     private final String loggerName;
     private final Consumer<Throwable> errorHandler;
+    private final Runnable finalizer;
     private State latestState;
     private SparkAppHandle handle;
 
-    public LocalApp(Application application, Consumer<Throwable> errorHandler) {
+    public LocalApp(Application application, Consumer<Throwable> errorHandler, Runnable finalizer) {
         this.errorHandler = errorHandler;
+        this.finalizer = finalizer;
         this.logHandle = new LogCollectingHandler(500);
         this.loggerName = "spark_app_" + application.getId();
         var logger = Logger.getLogger(loggerName);
@@ -80,7 +82,9 @@ public class LocalApp implements SparkListener {
         this.latestState = handle.getState();
         this.handle = handle;
         LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), latestState);
-        // TODO: cleanup on final state
+        if (latestState.isFinal()) {
+            finalizer.run();
+        }
         handle.getError().ifPresent((error) -> {
             LOG.warn("State changed with error: {} ", error.getMessage());
             if (State.FAILED.equals(latestState)) {
