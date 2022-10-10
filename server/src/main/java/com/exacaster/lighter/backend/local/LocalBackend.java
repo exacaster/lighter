@@ -10,7 +10,9 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.SparkApp;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
-import java.util.HashMap;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -18,7 +20,11 @@ import java.util.function.Consumer;
 public class LocalBackend implements Backend {
 
     private final AppConfiguration conf;
-    private final Map<String, LocalApp> activeApps = new HashMap<>();
+
+    private final Cache<String, LocalApp> activeApps = CacheBuilder.newBuilder()
+            .expireAfterAccess(Duration.ofHours(1))
+            .<String, LocalApp>removalListener(it -> it.getValue().kill())
+            .build();
 
     public LocalBackend(AppConfiguration conf) {
         this.conf = conf;
@@ -26,16 +32,14 @@ public class LocalBackend implements Backend {
 
     @Override
     public Optional<ApplicationInfo> getInfo(Application application) {
-        var localApp = activeApps.get(application.getId());
-        return Optional.ofNullable(localApp)
+        return handleForApp(application)
                 .flatMap(LocalApp::getState)
                 .map(it -> new ApplicationInfo(it, application.getId()));
     }
 
     @Override
     public Optional<Log> getLogs(Application application) {
-        var localApp = activeApps.get(application.getId());
-        return Optional.ofNullable(localApp)
+        return handleForApp(application)
                 .map(LocalApp::getLog)
                 .map(it -> new Log(application.getId(), it));
     }
@@ -47,14 +51,14 @@ public class LocalBackend implements Backend {
 
     @Override
     public void kill(Application application) {
-        var handle = activeApps.remove(application.getId());
-        if (handle != null) handle.kill();
+        handleForApp(application).ifPresent(LocalApp::kill);
+        activeApps.invalidate(application.getId());
     }
 
     @Override
     public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
-        var localApp = new LocalApp(application, errorHandler, () -> activeApps.remove(application.getId()));
+        var localApp = new LocalApp(application, errorHandler);
         activeApps.put(application.getId(), localApp);
         return new SparkApp(
                 application,
@@ -66,5 +70,9 @@ public class LocalBackend implements Backend {
                 ),
                 localApp
         );
+    }
+
+    Optional<LocalApp> handleForApp(Application application) {
+        return Optional.ofNullable(activeApps.getIfPresent(application.getId()));
     }
 }

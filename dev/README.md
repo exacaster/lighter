@@ -19,5 +19,5 @@ curl -X 'POST' \
 }'
 ```
 
-Lighter UI can be accessed on: [http://localhost:8080/lighter](http://localhost:8080/lighter).
+Lighter UI can be accessed on: [http://localhost:8080/lighter](http://localhost:8080/lighter).\
 You can also explore Lighter API by visiting Swagger UI on [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/).
