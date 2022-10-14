@@ -25,8 +25,8 @@ Example of `LIGHTER_BATCH_DEFAULT_CONF`: `{"spark.kubernetes.driverEnv.TEST1":"t
 ## Kubernetes configuration
 
 | Property                           | Description                                          | Default                                        |
-| ---------------------------------- | ---------------------------------------------------- | ---------------------------------------------- |
-| LIGHTER_KUBERNETES_ENABLED         | Kubernetes enabled                                   | true                                           |
+| ---------------------------------- | ---------------------------------------------------- |------------------------------------------------|
+| LIGHTER_KUBERNETES_ENABLED         | Kubernetes enabled                                   | false                                          |
 | LIGHTER_KUBERNETES_MASTER          | Kubernetes master URL                                | k8s://kubernetes.default.svc.cluster.local:443 |
 | LIGHTER_KUBERNETES_NAMESPACE       | Kubernetes namespace                                 | spark                                          |
 | LIGHTER_KUBERNETES_MAX_LOG_SIZE    | Max lines of log to store on DB                      | 500                                            |

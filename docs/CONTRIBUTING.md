@@ -4,11 +4,18 @@ Contributions are welcome and appreciated. This document aims to briefly explain
 
 ## Project structure
 
-Project consists of two main modules: frontend and server. Frontend module contains React SPA for Lighters frontend and server module contains backend code.
+Project consists of two main modules: frontend and server.\
+Frontend module contains React SPA for Lighters frontend and server module contains backend code.
 
 ## Frontend
 
-To run frontend application locally, you need to  set `LIGHTER_DEV_PROXY_URL` environment variable, so that it points to your production Lighter server. You can create `.env` file in your `frontend` directory and add env variables there, to make it easier to start a frontend application next time.
+To run frontend application locally, you need to  set `LIGHTER_DEV_PROXY_URL` environment variable,\
+so that it points to your production Lighter server.\
+You can create `.env` file in your `frontend` directory and add env variables there,\
+to make it easier to start a frontend application next time.
+
+If `LIGHTER_DEV_PROXY_URL` environment variable is not set, frontend application will try to call server application on [http://localhost:8080](http://localhost:8080).
+[Click here](../dev/README.md) for information on how to start Lighter server locally.
 
 To install frontend application requirements, run:
 ```
