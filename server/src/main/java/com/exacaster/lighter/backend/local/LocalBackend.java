@@ -1,5 +1,6 @@
 package com.exacaster.lighter.backend.local;
 
+import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLIENT;
 import static org.apache.spark.launcher.SparkLauncher.CHILD_PROCESS_LOGGER_NAME;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -64,7 +65,7 @@ public class LocalBackend implements Backend {
                 application,
                 configDefaults,
                 Map.of(
-                        DEPLOY_MODE, "client",
+                        DEPLOY_MODE, DEPLOY_MODE_CLIENT,
                         SPARK_MASTER, "local[*]",
                         CHILD_PROCESS_LOGGER_NAME, localApp.getLoggerName()
                 ),

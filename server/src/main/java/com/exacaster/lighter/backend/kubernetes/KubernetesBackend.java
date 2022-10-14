@@ -1,5 +1,6 @@
 package com.exacaster.lighter.backend.kubernetes;
 
+import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLUSTER;
 import static java.util.Optional.ofNullable;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -59,7 +60,7 @@ public class KubernetesBackend implements Backend {
         var host = uri.getHost();
         var props = new HashMap<String, String>();
         props.putAll(Map.of(
-                DEPLOY_MODE, "cluster",
+                DEPLOY_MODE, DEPLOY_MODE_CLUSTER,
                 "spark.kubernetes.namespace", properties.getNamespace(),
                 "spark.kubernetes.authenticate.driver.serviceAccountName", properties.getServiceAccount(),
                 SPARK_MASTER, properties.getMaster(),
