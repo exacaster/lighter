@@ -21,7 +21,7 @@ class YarnBackendTest extends Specification {
     def yarnProps = new YarnProperties(null)
 
     @Subject
-    def backend = new YarnBackend(yarnProps, client, config, null, null)
+    def backend = new YarnBackend(yarnProps, client, config)
 
     def "provides extra configs"() {
         given:

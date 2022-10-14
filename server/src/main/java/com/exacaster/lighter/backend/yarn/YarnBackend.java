@@ -21,13 +21,11 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import com.exacaster.lighter.storage.ApplicationStorage;
 import java.util.function.Consumer;
 import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
 import org.apache.hadoop.yarn.api.records.ApplicationReport;
 import org.apache.hadoop.yarn.client.api.YarnClient;
-import org.apache.hadoop.yarn.exceptions.ApplicationNotFoundException;
 import org.apache.hadoop.yarn.exceptions.YarnException;
 import org.slf4j.Logger;
 
@@ -38,45 +36,36 @@ public class YarnBackend implements Backend {
     private final YarnProperties yarnProperties;
     private final YarnClient client;
     private final AppConfiguration conf;
-    private final ApplicationStatusHandler applicationStatusHandler;
 
-    private final ApplicationStorage applicationStorage;
-
-    public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf, ApplicationStatusHandler applicationStatusHandler, ApplicationStorage applicationStorage) {
+    public YarnBackend(YarnProperties yarnProperties, YarnClient client, AppConfiguration conf) {
         this.yarnProperties = yarnProperties;
         this.client = client;
         this.conf = conf;
-        this.applicationStatusHandler = applicationStatusHandler;
-        this.applicationStorage = applicationStorage;
     }
 
     @Override
     public Optional<ApplicationInfo> getInfo(Application application) {
         return getYarnApplicationId(application)
-                .map(id -> new ApplicationInfo(getState(id), id));
+                .flatMap(id -> getState(id).map(state -> new ApplicationInfo(state, id)));
     }
 
-    private ApplicationState getState(String id) {
+    private Optional<ApplicationState> getState(String id) {
         try {
             var yarnApplication = client.getApplicationReport(fromString(id));
             switch (yarnApplication.getFinalApplicationStatus()) {
                 case UNDEFINED:
-                    return ApplicationState.BUSY;
+                    return Optional.of(ApplicationState.BUSY);
                 case SUCCEEDED:
-                    return ApplicationState.SUCCESS;
+                    return Optional.of(ApplicationState.SUCCESS);
                 case FAILED:
-                    return ApplicationState.ERROR;
+                    return Optional.of(ApplicationState.ERROR);
                 case KILLED:
-                    return ApplicationState.KILLED;
+                    return Optional.of(ApplicationState.KILLED);
             }
-        } catch (ApplicationNotFoundException e) {
-            LOG.error("Application not found in YARN: {}", id, e);
-            applicationStorage.findApplication(id)
-                    .ifPresent(application -> applicationStatusHandler.processApplicationError(application, e));
         } catch (YarnException | IOException e) {
             LOG.error("Unexpected error for appId: {}", id, e);
         }
-        throw new IllegalStateException("Unexpected state for appId: " + id);
+        return Optional.empty();
     }
 
     @Override
