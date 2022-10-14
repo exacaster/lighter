@@ -7,7 +7,7 @@ import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.rest.magic.SessionList;
 import com.exacaster.lighter.rest.magic.SparkMagicCompatibility;
-import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.application.SubmitParams;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;

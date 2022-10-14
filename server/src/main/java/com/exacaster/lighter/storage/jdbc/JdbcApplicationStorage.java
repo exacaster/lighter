@@ -4,7 +4,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
-import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;

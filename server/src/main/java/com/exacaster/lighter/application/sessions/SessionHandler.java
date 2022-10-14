@@ -8,13 +8,10 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
-import com.exacaster.lighter.application.Utils;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
-import com.exacaster.lighter.spark.ConfigModifier;
-import com.exacaster.lighter.spark.SparkApp;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
@@ -49,11 +46,7 @@ public class SessionHandler {
     }
 
     public Waitable launch(Application application, Consumer<Throwable> errorHandler) {
-        List<ConfigModifier> configModifiers = List.of(
-                (current) -> Utils.merge(current, appConfiguration.getSessionDefaultConf()),
-                (current) -> backend.getSubmitConfiguration(application, current)
-        );
-        var app = new SparkApp(application.getSubmitParams(), errorHandler, configModifiers);
+        var app = backend.prepareSparkApplication(application, appConfiguration.getSessionDefaultConf(), errorHandler);
         return app.launch();
     }
 

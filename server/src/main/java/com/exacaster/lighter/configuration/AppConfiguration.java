@@ -4,7 +4,7 @@ import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
 import static io.micronaut.core.naming.conventions.StringConvention.RAW;
 import static java.util.Optional.ofNullable;
 
-import com.exacaster.lighter.spark.SubmitParams;
+import com.exacaster.lighter.application.SubmitParams;
 import com.fasterxml.jackson.annotation.JsonAlias;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
