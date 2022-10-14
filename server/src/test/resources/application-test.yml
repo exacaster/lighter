@@ -1,4 +1,6 @@
 lighter:
+    kubernetes:
+        enabled: true
     session:
         permanent-sessions:
             - id: "permanentId1"

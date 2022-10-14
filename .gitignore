@@ -2,6 +2,7 @@
 .gradle
 .env
 build
+bin
 out
 generated
 lib

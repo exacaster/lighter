@@ -16,26 +16,33 @@ public class SparkApp {
 
     private final Map<String, String> configDefaults;
     private final Map<String, String> backendConfiguration;
-    private final Consumer<Throwable> errorHandler;
     private final Application application;
+    private final SparkListener listener;
 
-    public SparkApp(Application application, Map<String, String> configDefaults,
-            Map<String, String> backendConfiguration, Consumer<Throwable> errorHandler) {
-
+    public SparkApp(Application application,
+            Map<String, String> configDefaults,
+            Map<String, String> backendConfiguration,
+            SparkListener listener) {
         this.application = application;
         this.configDefaults = configDefaults;
         this.backendConfiguration = backendConfiguration;
-        this.errorHandler = errorHandler;
+        this.listener = listener;
+    }
+
+    public SparkApp(Application application,
+            Map<String, String> configDefaults,
+            Map<String, String> backendConfiguration,
+            Consumer<Throwable> errorHandler) {
+        this(application, configDefaults, backendConfiguration, new ClusterSparkListener(errorHandler));
     }
 
     public Waitable launch() {
         try {
             var launcher = buildLauncher();
-            var listener = new SparkListener(errorHandler);
             launcher.startApplication(listener);
             return listener;
         } catch (IOException | IllegalArgumentException e) {
-            this.errorHandler.accept(e);
+            this.listener.onError(e);
         }
 
         return EmptyWaitable.INSTANCE;
