@@ -65,7 +65,7 @@ public class LocalBackend implements Backend {
                 configDefaults,
                 Map.of(
                         DEPLOY_MODE, "client",
-                        SPARK_MASTER, "local",
+                        SPARK_MASTER, "local[*]",
                         CHILD_PROCESS_LOGGER_NAME, localApp.getLoggerName()
                 ),
                 localApp
