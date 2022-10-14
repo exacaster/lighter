@@ -19,7 +19,6 @@ public class LocalApp implements SparkListener {
     private final LogCollectingHandler logHandle;
     private final String loggerName;
     private final Consumer<Throwable> errorHandler;
-    private State latestState;
     private SparkAppHandle handle;
 
     public LocalApp(Application application, Consumer<Throwable> errorHandler) {
@@ -31,11 +30,11 @@ public class LocalApp implements SparkListener {
     }
 
     public Optional<ApplicationState> getState() {
-        if (latestState == null) {
+        if (handle == null) {
             return Optional.empty();
         }
 
-        switch (latestState) {
+        switch (handle.getState()) {
             case UNKNOWN:
                 return Optional.of(ApplicationState.NOT_STARTED);
             case CONNECTED:
@@ -77,12 +76,12 @@ public class LocalApp implements SparkListener {
 
     @Override
     public void stateChanged(SparkAppHandle handle) {
-        this.latestState = handle.getState();
         this.handle = handle;
-        LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), latestState);
+        var state = handle.getState();
+        LOG.info("State change. AppId: {}, State: {}", handle.getAppId(), state);
         handle.getError().ifPresent((error) -> {
             LOG.warn("State changed with error: {} ", error.getMessage());
-            if (State.FAILED.equals(latestState)) {
+            if (State.FAILED.equals(state)) {
                 onError(error);
             }
         });

@@ -7,6 +7,8 @@ import java.util.logging.LogRecord
 
 class LogCollectingHandlerTest extends Specification {
 
+    static NL = System.lineSeparator();
+
     def "keeps defined number of lines"() {
         given:
         def handler = new LogCollectingHandler(4)
@@ -18,6 +20,6 @@ class LogCollectingHandlerTest extends Specification {
         }
 
         then:
-        handler.getLogs() == "message 4\nmessage 5\nmessage 6\nmessage 7\n"
+        handler.getLogs() == "message 4${NL}message 5${NL}message 6${NL}message 7${NL}"
     }
 }

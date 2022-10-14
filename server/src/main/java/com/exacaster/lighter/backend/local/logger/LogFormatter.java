@@ -8,6 +8,6 @@ public class LogFormatter extends Formatter {
     @Override
     public String format(LogRecord record) {
         String message = formatMessage(record);
-        return message + "\n";
+        return message + System.lineSeparator();
     }
 }
