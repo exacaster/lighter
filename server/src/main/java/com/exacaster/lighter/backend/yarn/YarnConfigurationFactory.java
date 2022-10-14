@@ -17,7 +17,6 @@ import org.apache.hadoop.yarn.client.api.YarnClient;
 @Factory
 @Requires(beans = YarnProperties.class)
 public class YarnConfigurationFactory {
-
     @Singleton
     public YarnBackend backend(YarnProperties yarnProperties, AppConfiguration conf,
             @Property(name = "hadoop.conf.dir") String hadoopConfDir) throws IOException {

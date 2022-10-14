@@ -7,9 +7,7 @@ import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
 import static org.slf4j.LoggerFactory.getLogger;
 
-import com.exacaster.lighter.application.Application;
-import com.exacaster.lighter.application.ApplicationInfo;
-import com.exacaster.lighter.application.ApplicationState;
+import com.exacaster.lighter.application.*;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.backend.SparkApp;
 import com.exacaster.lighter.configuration.AppConfiguration;
@@ -22,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
 import java.util.function.Consumer;
 import org.apache.hadoop.yarn.api.protocolrecords.GetApplicationsRequest;
 import org.apache.hadoop.yarn.api.records.ApplicationId;
@@ -47,26 +46,26 @@ public class YarnBackend implements Backend {
     @Override
     public Optional<ApplicationInfo> getInfo(Application application) {
         return getYarnApplicationId(application)
-                .map(id -> new ApplicationInfo(getState(id), id));
+                .flatMap(id -> getState(id).map(state -> new ApplicationInfo(state, id)));
     }
 
-    private ApplicationState getState(String id) {
+    private Optional<ApplicationState> getState(String id) {
         try {
             var yarnApplication = client.getApplicationReport(fromString(id));
             switch (yarnApplication.getFinalApplicationStatus()) {
                 case UNDEFINED:
-                    return ApplicationState.BUSY;
+                    return Optional.of(ApplicationState.BUSY);
                 case SUCCEEDED:
-                    return ApplicationState.SUCCESS;
+                    return Optional.of(ApplicationState.SUCCESS);
                 case FAILED:
-                    return ApplicationState.ERROR;
+                    return Optional.of(ApplicationState.ERROR);
                 case KILLED:
-                    return ApplicationState.KILLED;
+                    return Optional.of(ApplicationState.KILLED);
             }
         } catch (YarnException | IOException e) {
             LOG.error("Unexpected error for appId: {}", id, e);
         }
-        throw new IllegalStateException("Unexpected state for appId: " + id);
+        return Optional.empty();
     }
 
     @Override
