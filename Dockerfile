@@ -7,7 +7,7 @@ WORKDIR /home/app/
 COPY server/ ./server/
 
 WORKDIR /home/app/server/
-RUN ./gradlew build -PSPARK_VERSION=${SPARK_VERSION}
+RUN ./gradlew build -x test -PSPARK_VERSION=${SPARK_VERSION}
 
 FROM node:lts-alpine3.14 as frontend
 

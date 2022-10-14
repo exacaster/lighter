@@ -8,7 +8,7 @@ lighter:
         timeout-minutes: 90
         permanent-sessions: []
     kubernetes:
-        enabled: true
+        enabled: false
         master: k8s://kubernetes.default.svc.cluster.local:443
         namespace: spark
         service-account: spark
