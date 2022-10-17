@@ -2067,10 +2067,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@fontsource/open-sans@^4.5.12":
-  version "4.5.12"
-  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-4.5.12.tgz#2c430aa1b1ce94d69a4d78292e96bdf822431955"
-  integrity sha512-WKCexsVbOECJUSOgG7GnrUxe+3ds4Sa1yhsTjSnszI+0TaJvMZnDnn5YDKwA/KwLbkZqCaV3nvMTH97jJuxWNA==
+"@fontsource/open-sans@^4.5.13":
+  version "4.5.13"
+  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-4.5.13.tgz#2c99e4c055d129a75f14c11b77d040282e0388b8"
+  integrity sha512-/UzqP7ZFk145XAq8KG4pvFPP7UQhtreDGXgqXZjagCDreKxcrhwn/x7DYz9rPcycWkLUVApIybcoczGZiM0cRg==
 
 "@humanwhocodes/config-array@^0.10.4":
   version "0.10.4"
