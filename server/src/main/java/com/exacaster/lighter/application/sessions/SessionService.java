@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application.sessions;
 
 import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
+import static java.util.Optional.ofNullable;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
@@ -44,7 +45,10 @@ public class SessionService {
     }
 
     public Application createSession(SubmitParams params, String sessionId) {
-        var submitParams = params.withNameAndFile("session_" + UUID.randomUUID(), backend.getSessionJobResources());
+        var name = ofNullable(params.getName())
+                .orElseGet(() -> "session_" + UUID.randomUUID());
+        var submitParams = params
+                .withNameAndFile(name, backend.getSessionJobResources());
         var now = LocalDateTime.now();
         var entity = ApplicationBuilder.builder()
                 .setId(sessionId)
