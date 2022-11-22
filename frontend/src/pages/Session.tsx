@@ -17,7 +17,7 @@ const Session: React.FC = () => {
 
   return (
     <div>
-      <AppTitle app={session}>Session {id}</AppTitle>
+      <AppTitle app={session} />
       <Box textStyle="caption" mt="5">
         Logs:
       </Box>

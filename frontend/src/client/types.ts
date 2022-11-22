@@ -2,6 +2,7 @@ export type Application = {
   id: string;
   state: string;
   createdAt: string;
+  contactedAt: string;
   appId?: string;
   submitParams: {
     name: string;

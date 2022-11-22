@@ -18,7 +18,7 @@ const Batch: React.FC = () => {
 
   return (
     <div>
-      <AppTitle app={batch}>Batch {id}</AppTitle>
+      <AppTitle app={batch} />
       <Box textStyle="caption" mt="5">
         Logs:
       </Box>

@@ -9,7 +9,7 @@ interface Props {
 
 const AppInfo: React.FC<Props> = ({app}) => {
   return (
-    <Box mt="5">
+    <Box mt="5" className={styles.appInfo}>
       <Table className={styles.noWrapTable} variant="simple" size="sm">
         <Thead>
           <Tr>
