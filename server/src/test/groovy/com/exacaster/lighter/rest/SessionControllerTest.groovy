@@ -37,6 +37,25 @@ class SessionControllerTest extends Specification {
 
         then:
         result.log == []
+        result.submitParams.name == "test"
+        result.state == "not_started"
+        result.kind == "pyspark"
+    }
+
+    def "returns new session with generated name, when name not provided"() {
+        when:
+        def result = client.toBlocking()
+                .exchange(HttpRequest.POST("/sessions", String).body(
+                        """
+                    {
+                        "args": ["test"]
+                    }
+                    """
+                ), Map.class).body()
+
+        then:
+        result.log == []
+        result.submitParams.name.startsWith("session_")
         result.state == "not_started"
         result.kind == "pyspark"
     }
