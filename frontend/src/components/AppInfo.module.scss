@@ -1,5 +1,10 @@
-.noWrapTable {
-  td {
-    white-space: nowrap;
+.appInfo {
+  max-width: 100%;
+  overflow-y: auto;
+
+  .noWrapTable {
+    td {
+      white-space: nowrap;
+    }
   }
 }
