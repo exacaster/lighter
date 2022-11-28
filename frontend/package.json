@@ -10,7 +10,7 @@
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
     "@fontsource/open-sans": "^4.5.13",
-    "@tanstack/react-query": "^4.16.1",
+    "@tanstack/react-query": "^4.18.0",
     "axios": "^1.2.0",
     "framer-motion": "^7.6.12",
     "moment": "^2.29.1",
