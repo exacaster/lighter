@@ -4521,10 +4521,10 @@ decimal.js@^10.2.1:
   resolved "https://registry.yarnpkg.com/decimal.js/-/decimal.js-10.4.0.tgz#97a7448873b01e92e5ff9117d89a7bca8e63e0fe"
   integrity sha512-Nv6ENEzyPQ6AItkGwLE2PGKinZZ9g59vSh2BeH6NqPu0OTKZ5ruJsVqh/orbAnqXc9pBbgXAIrc2EyaCj8NpGg==
 
-decode-uri-component@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.0.tgz#eb3913333458775cb84cd1a1fae062106bb87545"
-  integrity sha512-hjf+xovcEn31w/EUYdTXQh/8smFL/dzYjohQGEIgjyNavaJfBY2p5F527Bo1VPATxv0VYTUC2bOcXvqFwk78Og==
+decode-uri-component@^0.2.1:
+  version "0.2.2"
+  resolved "https://registry.yarnpkg.com/decode-uri-component/-/decode-uri-component-0.2.2.tgz#e69dbe25d37941171dd540e024c444cd5188e1e9"
+  integrity sha512-FqUYQ+8o158GyGTrMFJms9qh3CqTKvAqgqsTnkLI8sKu0028orqBhxNMFkFen0zGyg6epACD32pjVk58ngIErQ==
 
 dedent@^0.7.0:
   version "0.7.0"
@@ -8345,12 +8345,12 @@ qs@6.10.3:
   dependencies:
     side-channel "^1.0.4"
 
-query-string@^7.0.0:
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.1.1.tgz#754620669db978625a90f635f12617c271a088e1"
-  integrity sha512-MplouLRDHBZSG9z7fpuAAcI7aAYjDLhtsiVZsevsfaHWDS2IDdORKbSd1kWUA+V4zyva/HZoSfpwnYMMQDhb0w==
+query-string@^7.1.2:
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/query-string/-/query-string-7.1.2.tgz#5a3bf43013e102773c2f80bb5d8517997fe98267"
+  integrity sha512-KPbFzz/8pmtYOMH6zlYZgqTYJKQ18FxwfW3RLHIBwHWQ0iQG18X16XtIOk68ddfaM6j3grjYSnMPMrqQEjwR4w==
   dependencies:
-    decode-uri-component "^0.2.0"
+    decode-uri-component "^0.2.1"
     filter-obj "^1.1.0"
     split-on-first "^1.0.0"
     strict-uri-encode "^2.0.0"
