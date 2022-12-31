@@ -99,6 +99,8 @@ spec:
                     ports:
                         -   containerPort: 8080
                     env:
+                        -   name: LIGHTER_KUBERNETES_ENABLED
+                            value: "true"
                         -   name: LIGHTER_STORAGE_JDBC_USERNAME
                             value: postgres_user
                         -   name: LIGHTER_STORAGE_JDBC_PASSWORD
