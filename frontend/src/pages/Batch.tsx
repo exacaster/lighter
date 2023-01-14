@@ -1,16 +1,27 @@
 import React from 'react';
-import {useParams} from 'react-router';
-import {useBatchLog, useBatch} from '../hooks/batch';
-import {Box} from '@chakra-ui/react';
+import {useNavigate, useParams} from 'react-router';
+import {useBatchLog, useBatch, useBatchDelete} from '../hooks/batch';
+import {Box, Spinner} from '@chakra-ui/react';
 import AppInfo from '../components/AppInfo';
 import AppLogs from '../components/AppLogs';
 import AppSubmit from '../components/AppSubmit';
 import AppTitle from '../components/AppTitle';
+import {RoutePath} from '../configuration/consts';
 
 const Batch: React.FC = () => {
   const {id} = useParams();
   const {data: logs} = useBatchLog(id!);
   const {data: batch} = useBatch(id!);
+  const {mutateAsync: doDelete, isLoading: isDeleting} = useBatchDelete();
+  const navigate = useNavigate();
+
+  const onDelete = () => {
+    doDelete(id!).then(() => navigate(RoutePath.BATCHES));
+  };
+
+  if (isDeleting) {
+    return <Spinner />;
+  }
 
   if (!batch) {
     return null;
@@ -18,7 +29,7 @@ const Batch: React.FC = () => {
 
   return (
     <div>
-      <AppTitle app={batch} />
+      <AppTitle app={batch} onDelete={onDelete} />
       <Box textStyle="caption" mt="5">
         Logs:
       </Box>

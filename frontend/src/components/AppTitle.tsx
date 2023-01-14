@@ -8,9 +8,10 @@ import PageHeading from './PageHeading';
 
 interface Props {
   app: Application;
+  onDelete?: () => void;
 }
 
-const AppTitle: React.FC<Props> = ({app}) => {
+const AppTitle: React.FC<Props> = ({app, onDelete}) => {
   return (
     <>
       <PageHeading mb="3">
@@ -19,7 +20,7 @@ const AppTitle: React.FC<Props> = ({app}) => {
             {app.submitParams.name} <AppStatus status={app.state} />
           </GridItem>
           <GridItem colSpan={1} justifySelf="end">
-            <AppActions app={app} />
+            <AppActions app={app} onDelete={onDelete} />
           </GridItem>
         </Grid>
       </PageHeading>
