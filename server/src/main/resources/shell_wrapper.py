@@ -108,10 +108,12 @@ class CommandHandler:
 
     def exec(self, request):
         try:
-            code = request["code"]
-            self._exec_then_eval(code.rstrip())
+            code = request["code"].rstrip()
+            if code:
+                self._exec_then_eval(code)
+                return {"content": {"text/plain": str(sys.stdout.getvalue()).rstrip()}}
 
-            return {"content": {"text/plain": str(sys.stdout.getvalue()).rstrip()}}
+            return {"content": {"text/plain": ""}}
         except Exception as e:
             log.exception(e)
             return self._error_response(e)

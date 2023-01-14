@@ -106,4 +106,18 @@ class PythonProcessorTest extends Specification {
         result.message == "name 'x' is not defined"
         result.traceback.size() > 0
     }
+
+    def "returns nothing for empty statement"() {
+        when:
+        def result = processor.process("")
+        then:
+        result.content[TEXT_PLAIN] == ""
+    }
+
+    def "returns nothing for new line statement"() {
+        when:
+        def result = processor.process("\n")
+        then:
+        result.content[TEXT_PLAIN] == ""
+    }
 }
