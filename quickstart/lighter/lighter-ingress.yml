@@ -1,0 +1,28 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: lighter-ingress-route
+  namespace: spark
+spec:
+  entryPoints:
+    - web
+  routes:
+    - match: PathPrefix(`/lighter`)
+      kind: Rule
+      services:
+        - name: lighter
+          port: 8080
+      middlewares:
+        - name: lighter-custom-headers
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: Middleware
+metadata:
+  name: lighter-custom-headers
+  namespace: spark
+spec:
+  headers:
+    customRequestHeaders:
+      X-Forwarded-Prefix: /lighter
+      X-Forwarded-Proto: https
+      X-Forwarded-Port: "443"
