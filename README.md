@@ -11,6 +11,7 @@ Lighter supports:
 You can read a breaf description on how Lighter works [here](./docs/architecture.md).
 
 ## Using Lighter
+- [Quickstart with Minikube](./quickstart/README.md)
 - [Installation on Kubernetes](./docs/kubernetes.md)
 - [Installation on Docker](./docs/docker.md)
 - [Configuration Properties](./docs/configuration.md)

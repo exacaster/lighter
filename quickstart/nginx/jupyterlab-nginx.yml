@@ -1,0 +1,19 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: jupyterlab
+  namespace: spark
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /jupyterlab/$2
+spec:
+  rules:
+    - host: spark.local
+      http:
+        paths:
+          - path: /jupyterlab(/|$)(.*)
+            pathType: Prefix
+            backend:
+              service:
+                name: jupyterlab
+                port:
+                  number: 8888

@@ -1,0 +1,191 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: jupyterlab
+  namespace: spark
+---
+kind: Role
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jupyterlab
+  namespace: spark
+rules:
+  - apiGroups: [ "" ]
+    resources: [ "pods", "services", "configmaps", "pods/log" ]
+    verbs: [ "*" ]
+---
+kind: RoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: jupyterlab
+  namespace: spark
+subjects:
+  - kind: ServiceAccount
+    name: jupyterlab
+    namespace: spark
+roleRef:
+  kind: Role
+  name: jupyterlab
+  apiGroup: rbac.authorization.k8s.io
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: jupyterlab
+  namespace: spark
+  labels:
+    run: jupyterlab
+spec:
+  ports:
+    - port: 8888
+      protocol: TCP
+  selector:
+    run: jupyterlab
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: spark
+  name: jupyterlab
+spec:
+  selector:
+    matchLabels:
+      run: jupyterlab
+  replicas: 1
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        run: jupyterlab
+    spec:
+      containers:
+        - image: jupyter/base-notebook:lab-3.5.2
+          name: jupyterlab
+          resources:
+            requests:
+              cpu: "0.25"
+              memory: "512Mi"
+          ports:
+            - containerPort: 8888
+          command: [ "start-notebook.sh" ]
+          args:
+            - "--NotebookApp.token="
+            - "--NotebookApp.base_url=jupyterlab"
+            - "--KernelSpecManager.ensure_native_kernel=False"
+            - "--NotebookApp.notebook_dir=/home/jovyan/work"
+          lifecycle:
+            postStart:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - |
+                    conda install sparkmagic -y
+                    jupyter kernelspec uninstall sparkkernel -y
+                    jupyter kernelspec uninstall sparkrkernel -y
+                    jupyter kernelspec uninstall python3 -y
+                    mkdir -p /home/jovyan/.sparkmagic/
+                    cp /tmp/sparkmagic.json /home/jovyan/.sparkmagic/config.json
+                    cp /tmp/quickstart.ipynb /home/jovyan/work/quickstart.ipynb
+          volumeMounts:
+            - name: sparkmagic
+              mountPath: /tmp/sparkmagic.json
+              subPath: sparkmagic
+            - name: quickstart
+              mountPath: /tmp/quickstart.ipynb
+              subPath: quickstart
+      serviceAccountName: jupyterlab
+      volumes:
+        - name: sparkmagic
+          configMap:
+            name: sparkmagic
+        - name: quickstart
+          configMap:
+            name: quickstart
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: sparkmagic
+  namespace: spark
+data:
+  sparkmagic: |
+    {
+      "kernel_python_credentials" : {
+        "username": "",
+        "password": "",
+        "url": "http://lighter.spark:8080/lighter/api",
+        "auth": "None"
+      },
+      "livy_session_startup_timeout_seconds": 600,
+      "custom_headers": {
+        "X-Compatibility-Mode": "sparkmagic"
+      }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: quickstart
+  namespace: spark
+data:
+  quickstart: |
+    {
+     "cells": [
+      {
+       "cell_type": "code",
+       "execution_count": null,
+       "id": "c72ef05c-13ee-4199-a002-b2be815ce419",
+       "metadata": {},
+       "outputs": [],
+       "source": [
+        "%%configure -f\n",
+        "{\n",
+        "    \"name\": \"Test Lighter\",\n",
+        "    \"conf\":{\n",
+        "        \"spark.kubernetes.container.image\": \"apache/spark-py:v3.3.1\"\n",
+        "    }\n",
+        "}"
+       ]
+      },
+      {
+       "cell_type": "code",
+       "execution_count": null,
+       "id": "94d68783-5c86-440e-84da-aa8be288cdd5",
+       "metadata": {},
+       "outputs": [],
+       "source": [
+        "df = spark.createDataFrame(\n",
+        "    [\n",
+        "        (1, \"foo\"),\n",
+        "        (2, \"bar\"),\n",
+        "    ],\n",
+        "    [\"id\", \"label\"]\n",
+        ")\n",
+        "df.collect()"
+       ]
+      }
+     ],
+     "metadata": {
+      "kernelspec": {
+       "display_name": "PySpark",
+       "language": "python",
+       "name": "pysparkkernel"
+      },
+      "language_info": {
+       "codemirror_mode": {
+        "name": "python",
+        "version": 3
+       },
+       "file_extension": ".py",
+       "mimetype": "text/x-python",
+       "name": "pyspark",
+       "pygments_lexer": "python3"
+      }
+     },
+     "nbformat": 4,
+     "nbformat_minor": 5
+    }
