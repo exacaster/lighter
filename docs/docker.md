@@ -3,7 +3,7 @@
 If you're thinking of running Lighter on docker, you are probably using it with YARN backend. When you are running it, you should expose two ports (REST API port and Python Gateway port), as shown in this example:
 
 ```bash
-docker run ghcr.io/exacaster/lighter:0.0.41-spark3.3.1 \
+docker run ghcr.io/exacaster/lighter:0.0.42-spark3.3.2 \
   -p 8080:8080 \
   -p 25333:25333 \
   -e LIGHTER_KUBERNETES_ENABLED=false \
