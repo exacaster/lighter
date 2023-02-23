@@ -7,6 +7,7 @@ Lighter can be configured by using environment variables. Currently, Lighter sup
 | Property                               | Description                                                    | Default                         |
 |----------------------------------------|----------------------------------------------------------------|---------------------------------|
 | LIGHTER_MAX_RUNNING_JOBS               | Max running Batch jobs in parallel                             | 5                               |
+| LIGHTER_MAX_STARTING_JOBS              | Max starting Batch jobs in parallel                            | 5                               |
 | LIGHTER_SPARK_HISTORY_SERVER_URL       | Spark history server URL used on frontend                      | http://localhost/spark-history/ |
 | LIGHTER_EXTERNAL_LOGS_URL_TEMPLATE     | Template for link to external logs                             |                                 |
 | LIGHTER_PY_GATEWAY_PORT                | Port for live Spark session communication                      | 25333                           |

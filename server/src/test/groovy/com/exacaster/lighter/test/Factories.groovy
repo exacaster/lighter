@@ -56,7 +56,8 @@ class Factories {
 
     static appConfiguration() {
         new AppConfiguration(
-                10,
+                3,
+                2,
                 "http://history",
                 null,
                 5432,

@@ -1,5 +1,6 @@
 package com.exacaster.lighter.application.batch
 
+import com.exacaster.lighter.Application
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.backend.Backend
@@ -51,8 +52,35 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> [app]
-        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, config.getMaxRunningJobs() - 1) >> []
-        0 * handler.launch(app, _) >> {  }
+        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, _) >> []
+    }
+
+    def "validate max running jobs limit"() {
+        given:
+        def app = newApplication()
+        def runningApps = [app, app]
+
+        when:
+        handler.processScheduledBatches()
+
+        then:
+        _ * service.fetchRunning() >> runningApps
+        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, config.getMaxRunningJobs() - runningApps.size()) >> [app]
+        (config.getMaxRunningJobs() - runningApps.size()) * handler.launch(app, _) >> EmptyWaitable.INSTANCE
+    }
+
+    def "validate max starting jobs limit"() {
+        given:
+        def app = newApplication()
+        def appsToRun = [app, app]
+
+        when:
+        handler.processScheduledBatches()
+
+        then:
+        _ * service.fetchRunning() >> []
+        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, config.getMaxStartingJobs()) >> appsToRun
+        config.getMaxStartingJobs() * handler.launch(app, _) >> EmptyWaitable.INSTANCE
     }
 
     def "tracks running jobs"() {

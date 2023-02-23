@@ -24,6 +24,8 @@ public class AppConfiguration {
 
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer maxRunningJobs;
+    @JsonProperty(access = Access.WRITE_ONLY)
+    private final Integer maxStartingJobs;
     private final String sparkHistoryServerUrl;
     private final String externalLogsUrlTemplate;
     @JsonProperty(access = Access.WRITE_ONLY)
@@ -36,6 +38,7 @@ public class AppConfiguration {
 
     @ConfigurationInject
     public AppConfiguration(Integer maxRunningJobs,
+            Integer maxStartingJobs,
             @Nullable String sparkHistoryServerUrl,
             @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort,
@@ -45,6 +48,7 @@ public class AppConfiguration {
             @Nullable Map<String, String> batchDefaultConf,
             @Nullable Map<String, String> sessionDefaultConf) {
         this.maxRunningJobs = maxRunningJobs;
+        this.maxStartingJobs = maxStartingJobs;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
@@ -56,6 +60,10 @@ public class AppConfiguration {
 
     public Integer getMaxRunningJobs() {
         return maxRunningJobs;
+    }
+
+    public Integer getMaxStartingJobs() {
+        return maxStartingJobs;
     }
 
     public String getSparkHistoryServerUrl() {
@@ -90,6 +98,7 @@ public class AppConfiguration {
     public String toString() {
         return new StringJoiner(", ", AppConfiguration.class.getSimpleName() + "[", "]")
                 .add("maxRunningJobs=" + maxRunningJobs)
+                .add("maxStartingJobs=" + maxStartingJobs)
                 .add("sparkHistoryServerUrl=" + sparkHistoryServerUrl)
                 .add("sessionConfiguration=" + sessionConfiguration)
                 .add("batchDefaultConf=" + batchDefaultConf)
