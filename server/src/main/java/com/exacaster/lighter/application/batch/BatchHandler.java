@@ -12,8 +12,10 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
+
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
+
 import net.javacrumbs.shedlock.micronaut.SchedulerLock;
 import org.slf4j.Logger;
 
@@ -21,7 +23,6 @@ import org.slf4j.Logger;
 public class BatchHandler {
 
     private static final Logger LOG = getLogger(BatchHandler.class);
-    private static final int MAX_SLOTS_PER_ITERATION = 10;
 
     private final Backend backend;
     private final BatchService batchService;
@@ -29,7 +30,7 @@ public class BatchHandler {
     private final ApplicationStatusHandler statusTracker;
 
     public BatchHandler(Backend backend, BatchService batchService, AppConfiguration appConfiguration,
-            ApplicationStatusHandler statusTracker) {
+                        ApplicationStatusHandler statusTracker) {
         this.backend = backend;
         this.batchService = batchService;
         this.appConfiguration = appConfiguration;
@@ -45,10 +46,8 @@ public class BatchHandler {
     @Scheduled(fixedDelay = "30s")
     public void processScheduledBatches() throws InterruptedException {
         assertLocked();
-        var emptySlots = countEmptySlots();
-        var slotsToTake = Math.min(MAX_SLOTS_PER_ITERATION, emptySlots);
-        LOG.info("Processing scheduled batches, found empty slots: {}, using {}", emptySlots, slotsToTake);
-        var waitables = batchService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, slotsToTake)
+        var maxSlotsForNewJobs = getMaxSlotsForNewJobs();
+        var batchesToStart = batchService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, maxSlotsForNewJobs)
                 .stream()
                 .map(batch -> {
                     LOG.info("Launching {}", batch);
@@ -56,14 +55,27 @@ public class BatchHandler {
                     return launch(batch, error -> statusTracker.processApplicationError(batch, error));
                 })
                 .collect(Collectors.toList());
-        LOG.info("Waiting launches to complete");
-        for (var waitable : waitables) {
-            waitable.waitCompletion();
+        LOG.info("Triggered {} new batch jobs. Waiting launches to complete.", batchesToStart.size());
+        for (var batchToStart : batchesToStart) {
+            batchToStart.waitCompletion();
         }
     }
 
-    private Integer countEmptySlots() {
-        return Math.max(this.appConfiguration.getMaxRunningJobs() - this.batchService.fetchRunning().size(), 0);
+    private Integer getMaxSlotsForNewJobs() {
+        var numberOfJobsRunning = this.batchService.fetchRunning().size();
+
+        var maxAvailableSlots = Math.max(this.appConfiguration.getMaxRunningJobs() - numberOfJobsRunning, 0);
+        var maxSlotsForNewJobs = Math.min(
+                this.appConfiguration.getMaxStartingJobs(),
+                maxAvailableSlots
+        );
+
+        LOG.info("Processing scheduled batches. Running jobs: {}/{}. {} slots can be used for new jobs.",
+                numberOfJobsRunning,
+                this.appConfiguration.getMaxRunningJobs(),
+                maxSlotsForNewJobs);
+
+        return maxSlotsForNewJobs;
     }
 
     @SchedulerLock(name = "trackRunning")
