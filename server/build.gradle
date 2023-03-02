@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "groovy"
-    id "io.micronaut.application" version "3.7.3"
+    id "io.micronaut.application" version "3.7.4"
     id "com.github.ben-manes.versions" version "0.46.0"
 }
 
