@@ -1733,6 +1733,15 @@
     csstype "^3.0.11"
     lodash.mergewith "4.6.2"
 
+"@chakra-ui/styled-system@2.6.2":
+  version "2.6.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/styled-system/-/styled-system-2.6.2.tgz#2c15386162474d947402d584391c05d313d244b5"
+  integrity sha512-BRKL0KVkukyZmK61PTOnNS/2S+RPYEJHxumj/3HdniSWQlmymRB+8NALtXfrS1G10cbRBkIglPY7/0VLNNr3OA==
+  dependencies:
+    "@chakra-ui/shared-utils" "2.0.5"
+    csstype "^3.0.11"
+    lodash.mergewith "4.6.2"
+
 "@chakra-ui/switch@2.0.22":
   version "2.0.22"
   resolved "https://registry.yarnpkg.com/@chakra-ui/switch/-/switch-2.0.22.tgz#7b35e2b10ea4cf91fb49f5175b4335c61dcd25b3"
@@ -1741,7 +1750,7 @@
     "@chakra-ui/checkbox" "2.2.10"
     "@chakra-ui/shared-utils" "2.0.5"
 
-"@chakra-ui/system@2.5.1", "@chakra-ui/system@^2.5.1":
+"@chakra-ui/system@2.5.1":
   version "2.5.1"
   resolved "https://registry.yarnpkg.com/@chakra-ui/system/-/system-2.5.1.tgz#bc03a11ae31e795966c7618280548d5cd866f47e"
   integrity sha512-4+86OrcSoq7lGkm5fh+sJ3IWXSTzjz+HOllRbCW2Rtnmcg7ritiXVNV2VygEg2DrCcx5+tNqRHDM764zW+AEug==
@@ -1751,6 +1760,19 @@
     "@chakra-ui/react-utils" "2.0.12"
     "@chakra-ui/styled-system" "2.6.1"
     "@chakra-ui/theme-utils" "2.0.11"
+    "@chakra-ui/utils" "2.0.15"
+    react-fast-compare "3.2.0"
+
+"@chakra-ui/system@^2.5.2":
+  version "2.5.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/system/-/system-2.5.2.tgz#9f21ac4bcd9d5db878f186cfe6f7843f40d66405"
+  integrity sha512-nmQZi/YeI6u0UkUHIRcS/iJ71DZDjD3Yk90IGElkkQdGMR4dYKGV3RwBMNoIbpRUKZXDuqUGsXGSLERXwwiqzw==
+  dependencies:
+    "@chakra-ui/color-mode" "2.1.12"
+    "@chakra-ui/object-utils" "2.0.8"
+    "@chakra-ui/react-utils" "2.0.12"
+    "@chakra-ui/styled-system" "2.6.2"
+    "@chakra-ui/theme-utils" "2.0.12"
     "@chakra-ui/utils" "2.0.15"
     react-fast-compare "3.2.0"
 
@@ -1809,6 +1831,16 @@
   dependencies:
     "@chakra-ui/shared-utils" "2.0.5"
     "@chakra-ui/styled-system" "2.6.1"
+    "@chakra-ui/theme" "2.2.5"
+    lodash.mergewith "4.6.2"
+
+"@chakra-ui/theme-utils@2.0.12":
+  version "2.0.12"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/theme-utils/-/theme-utils-2.0.12.tgz#f77c19dc4ae2fcb7e154e6dd2915f5ccc026104e"
+  integrity sha512-mxjeQRicCCj07RY2UXRRonlR4RETBsORlOD24mIip6GfrS1N0jx2FYUCTF8rMuVSjWrDvxeiyl+BVs6e8Fqv3w==
+  dependencies:
+    "@chakra-ui/shared-utils" "2.0.5"
+    "@chakra-ui/styled-system" "2.6.2"
     "@chakra-ui/theme" "2.2.5"
     lodash.mergewith "4.6.2"
 
