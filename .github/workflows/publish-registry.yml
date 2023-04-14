@@ -8,9 +8,11 @@ jobs:
     strategy:
       matrix:
         include:
-          - spark_version: 3.2.3
+          - spark_version: 3.2.4
             hadoop_version: 3.2
           - spark_version: 3.3.2
+            hadoop_version: 3
+          - spark_version: 3.4.0
             hadoop_version: 3
     steps:
       - uses: docker/setup-buildx-action@v2
