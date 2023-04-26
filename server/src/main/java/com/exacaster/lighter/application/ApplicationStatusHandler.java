@@ -9,6 +9,7 @@ import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import java.time.LocalDateTime;
 import jakarta.inject.Singleton;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 
 @Singleton
@@ -26,8 +27,8 @@ public class ApplicationStatusHandler {
         this.logService = logService;
     }
 
-    public void processApplicationStarting(Application application) {
-        applicationStorage.saveApplication(ApplicationBuilder.builder(application)
+    public Application processApplicationStarting(Application application) {
+        return applicationStorage.saveApplication(ApplicationBuilder.builder(application)
                 .setState(ApplicationState.STARTING)
                 .setContactedAt(LocalDateTime.now())
                 .build());
@@ -51,7 +52,7 @@ public class ApplicationStatusHandler {
     }
 
     public void processApplicationError(Application application, Throwable error) {
-        LOG.warn("Marking application {} failed because of error {}", application.getId(), error.getMessage());
+        LOG.warn("Marking application " + application.getId() + " failed because of error", error);
         var appId = backend.getInfo(application).map(ApplicationInfo::getApplicationId)
                 .orElse(null);
         applicationStorage.saveApplication(
@@ -63,7 +64,7 @@ public class ApplicationStatusHandler {
 
         backend.getLogs(application).ifPresentOrElse(
                 logService::save,
-                () -> logService.save(new Log(application.getId(), error.toString()))
+                () -> logService.save(new Log(application.getId(), ExceptionUtils.getStackTrace(error)))
         );
     }
 

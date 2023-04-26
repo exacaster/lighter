@@ -33,6 +33,7 @@ class JdbcApplicationStorageTest extends Specification {
 
         then: "returns saved"
         saved.id == app.id
+        saved.createdAt == app.createdAt
 
         when: "saving updated"
         saved = storage.saveApplication(ApplicationBuilder.builder(saved).setState(ApplicationState.ERROR).build())

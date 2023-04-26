@@ -30,8 +30,12 @@ const AppTitle: React.FC<Props> = ({app, onDelete}) => {
         <Text as="b">Created: </Text>
         <DateTime>{app.createdAt}</DateTime>
         {' | '}
-        <Text as="b">Last checked: </Text>
-        <DateTime>{app.contactedAt}</DateTime>
+        {app.contactedAt ? (
+          <>
+            <Text as="b">Last checked: </Text>
+            <DateTime>{app.contactedAt}</DateTime>
+          </>
+        ) : null}
       </Text>
     </>
   );

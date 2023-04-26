@@ -63,6 +63,7 @@ class ApplicationStatusHandlerTest extends Specification {
         then:
         updated.state == ApplicationState.ERROR
         updated.appId == "we"
+        1 * logService.save(_)
     }
 
     def "handles starting"() {
