@@ -1,5 +1,7 @@
 package com.exacaster.lighter.storage.jdbc;
 
+import static org.slf4j.LoggerFactory.getLogger;
+
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
@@ -13,7 +15,6 @@ import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,10 +23,12 @@ import javax.transaction.Transactional;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.slf4j.Logger;
 
 @Singleton
 @Requires(beans = DataSource.class)
 public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<Application> {
+    private static final Logger LOG = getLogger(JdbcApplicationStorage.class);
 
     private final Jdbi jdbi;
     private final ObjectMapper objectMapper;
@@ -72,14 +75,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Override
     @Transactional
     public Application saveApplication(Application application) {
-
         return jdbi.withHandle(handle -> {
-                    String conf = null;
-                    try {
-                        conf = objectMapper.writeValueAsString(application.getSubmitParams());
-                    } catch (JsonProcessingException e) {
-                        // TODO
-                    }
                     var updated = handle.createUpdate("UPDATE application SET "
                                     + "app_id=:app_id, "
                                     + "app_info=:app_info, "
@@ -88,22 +84,29 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                             .bind("state", application.getState().name())
                             .bind("app_id", application.getAppId())
                             .bind("app_info", application.getAppInfo())
-                            .bind("id", application.getId())
                             .bind("contacted_at", application.getContactedAt())
+                            .bind("id", application.getId())
                             .execute();
                     // Not all SQL databases support ON CONFLICT syntax, so doing fallback if nothing updated
                     if (updated == 0) {
+                        String conf = null;
+                        try {
+                            conf = objectMapper.writeValueAsString(application.getSubmitParams());
+                        } catch (JsonProcessingException e) {
+                            LOG.warn("Failed serializing submit params", e);
+                        }
                         handle
                                 .createCall(
-                                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at) "
-                                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at)")
+                                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at) "
+                                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at)")
                                 .bind("id", application.getId())
                                 .bind("type", application.getType().name())
                                 .bind("state", application.getState().name())
                                 .bind("app_id", application.getAppId())
                                 .bind("app_info", application.getAppInfo())
                                 .bind("submit_params", conf)
-                                .bind("created_at", Timestamp.valueOf(application.getCreatedAt()))
+                                .bind("created_at", application.getCreatedAt())
+                                .bind("contacted_at", application.getContactedAt())
                                 .invoke();
                     }
                     return application;
@@ -133,11 +136,11 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
         try {
             params = objectMapper.readValue(rs.getString("submit_params"), SubmitParams.class);
         } catch (JsonProcessingException e) {
-            // TODO
+            LOG.warn("Failed deserializing submit params", e);
         }
 
-        var contactedAt =
-                rs.getTimestamp("contacted_at") != null ? rs.getTimestamp("contacted_at").toLocalDateTime() : null;
+        var contactedAtTs = rs.getTimestamp("contacted_at");
+        var contactedAt = contactedAtTs != null ? contactedAtTs.toLocalDateTime() : null;
         return ApplicationBuilder.builder()
                 .setId(rs.getString("id"))
                 .setType(ApplicationType.valueOf(rs.getString("type")))
