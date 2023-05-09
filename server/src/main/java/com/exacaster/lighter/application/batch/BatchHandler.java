@@ -78,7 +78,7 @@ public class BatchHandler {
         return maxSlotsForNewJobs;
     }
 
-    @SchedulerLock(name = "trackRunning")
+    @SchedulerLock(name = "trackRunning", lockAtMostFor = "1m")
     @Scheduled(fixedDelay = "30s")
     public void trackRunning() throws InterruptedException {
         assertLocked();

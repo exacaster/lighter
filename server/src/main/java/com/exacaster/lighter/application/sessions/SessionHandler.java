@@ -92,7 +92,7 @@ public class SessionHandler {
         return launch(session, error -> statusTracker.processApplicationError(session, error));
     }
 
-    @SchedulerLock(name = "trackRunningSessions")
+    @SchedulerLock(name = "trackRunningSessions", lockAtMostFor = "1m")
     @Scheduled(fixedRate = "2m")
     public void trackRunning() {
         assertLocked();
