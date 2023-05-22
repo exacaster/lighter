@@ -2126,10 +2126,10 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
-"@fontsource/open-sans@^4.5.14":
-  version "4.5.14"
-  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-4.5.14.tgz#b3e1665c0b3fdfc1f030ded2843749e3cf3a5900"
-  integrity sha512-mBXIIETBlW8q/ocuUN0hyGow2iuf75hQEHQt8R/RJ/HcphVbLg8KB7pHYGbFGDqs75W+SWvTC7JkVeAjT65BuQ==
+"@fontsource/open-sans@^5.0.0":
+  version "5.0.0"
+  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-5.0.0.tgz#b4dd62e0034c03e5c75fcb20f60bcfc5074c1695"
+  integrity sha512-TS3+1CtAEpfI137qikncQtzo6g08aSm2iY6ebo/Wrp6u5LKeCv3XOo78KViGV/0GBt8G5OCg+sW7vrMFfbBzTQ==
 
 "@humanwhocodes/config-array@^0.11.8":
   version "0.11.8"
