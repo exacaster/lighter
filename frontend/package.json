@@ -27,7 +27,7 @@
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.2",
     "@types/node": "^20.2.5",
-    "@types/react": "^18.2.9",
+    "@types/react": "^18.2.11",
     "@types/react-dom": "^18.2.4",
     "@types/react-router-dom": "^5.1.7",
     "dotenv": "^16.1.4",
