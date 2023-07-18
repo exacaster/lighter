@@ -23,17 +23,13 @@ RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPAR
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
 
-FROM openjdk:11-jre-slim-stretch
+FROM openjdk:11.0.16-slim-bullseye
 
 ARG SPARK_VERSION=3.4.1
 ARG HADOOP_VERSION=3
 
 ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
-
-# There are some problems with TLSv1.3 & Java 11
-# We cannot upgrade Java to later versions due to Hadoop dependencies that are needed for Spark on Yarn mode.
-ENV KUBERNETES_TLS_VERSIONS=TLSv1.2
 
 # Add symlinks so that after deployment of CM configs symlinks are still in tact
 RUN ln -s /etc/hadoop/conf.cloudera.yarn /etc/alternatives/hadoop-conf \
