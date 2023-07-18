@@ -31,6 +31,10 @@ ARG HADOOP_VERSION=3
 ENV FRONTEND_PATH=/home/app/frontend/
 ENV SPARK_HOME=/home/app/spark/
 
+# There are some problems with TLSv1.3 & Java 11
+# We cannot upgrade Java to later versions due to Hadoop dependencies that are needed for Spark on Yarn mode.
+ENV KUBERNETES_TLS_VERSIONS=TLSv1.2
+
 # Add symlinks so that after deployment of CM configs symlinks are still in tact
 RUN ln -s /etc/hadoop/conf.cloudera.yarn /etc/alternatives/hadoop-conf \
   && ln -s /etc/hive/conf.cloudera.hive /etc/alternatives/hive-conf
