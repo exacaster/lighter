@@ -23,7 +23,7 @@ RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPAR
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
 
-FROM openjdk:11.0.16-jre-slim-bullseye
+FROM openjdk:11-jre-slim-bullseye
 
 ARG SPARK_VERSION=3.4.1
 ARG HADOOP_VERSION=3
