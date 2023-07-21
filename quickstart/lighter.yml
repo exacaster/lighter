@@ -71,7 +71,7 @@ spec:
         run: lighter
     spec:
       containers:
-        -   image: ghcr.io/exacaster/lighter:0.0.48-spark3.4.1
+        -   image: ghcr.io/exacaster/lighter:0.0.49-spark3.4.1
             name: lighter
             readinessProbe:
               httpGet:
