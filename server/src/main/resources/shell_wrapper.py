@@ -9,8 +9,8 @@ sys_stdin = sys.stdin
 sys_stdout = sys.stdout
 
 is_test = os.environ.get("LIGHTER_TEST") == "true"
-logging.basicConfig(stream=sys.stdout,
-                    level=logging.FATAL if is_test else logging.INFO)
+log_level = "FATAL" if is_test else os.environ.get("SESSION_LOGLEVEL", "INFO").upper()
+logging.basicConfig(stream=sys.stdout, level=log_level)
 log = logging.getLogger("session")
 
 def setup_output():
@@ -146,13 +146,13 @@ def main():
         while True:
             setup_output()
             for command in controller.read():
-                log.info(f"Processing command {command}")
+                log.debug(f"Processing command {command}")
                 result = handler.exec(command)
                 controller.write(command["id"], result)
-                log.info("Response sent")
+                log.debug("Response sent")
     except:
         exc_type, exc_value, exc_tb = sys.exc_info()
-        log.info(
+        log.error(
             f"Error: {traceback.format_exception(exc_type, exc_value, exc_tb)}")
         log.info("Exiting")
         return 1
