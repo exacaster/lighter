@@ -4,6 +4,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationList;
 import com.exacaster.lighter.application.sessions.SessionService;
 import com.exacaster.lighter.application.sessions.Statement;
+import com.exacaster.lighter.application.sessions.StatementList;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.rest.magic.SessionList;
 import com.exacaster.lighter.rest.magic.SparkMagicCompatibility;
@@ -95,8 +96,16 @@ public class SessionController {
         return sessionService.createStatement(id, statement);
     }
 
+    @Get("/{id}/statements")
+    public StatementList getStatements(@PathVariable String id,
+                                       @QueryValue(defaultValue = "0") Integer from,
+                                       @QueryValue(defaultValue = "100") Integer size) {
+        var statements = sessionService.getStatements(id, from, size);
+        return new StatementList(from, statements);
+    }
+
     @Get("/{id}/statements/{statementId}")
-    public Statement getStatements(@PathVariable String id, @PathVariable String statementId) {
+    public Statement getStatement(@PathVariable String id, @PathVariable String statementId) {
         return sessionService.getStatement(id, statementId);
     }
 
