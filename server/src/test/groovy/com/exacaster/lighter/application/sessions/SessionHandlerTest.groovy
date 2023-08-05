@@ -59,6 +59,23 @@ class SessionHandlerTest extends Specification {
         0 * service.killOne(permanentSession)
     }
 
+    def "preserves active timeouted sessions"() {
+        given:
+        def oldSession = newSession()
+        service.lastUsed(oldSession.id) >> LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1)
+        service.isActive(oldSession) >> true
+
+        1 * service.fetchRunning() >> [
+                oldSession,
+        ]
+
+        when:
+        handler.handleTimeout()
+
+        then:
+        0 * service.killOne(oldSession)
+    }
+
     def "tracks running"() {
         given:
         def session = app()

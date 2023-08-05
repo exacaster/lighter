@@ -141,17 +141,24 @@ public class AppConfiguration {
     public static class SessionConfiguration {
 
         private final Integer timeoutMinutes;
+        private final Boolean timeoutActive;
         private final List<PermanentSession> permanentSessions;
 
         @ConfigurationInject
         public SessionConfiguration(@Nullable Integer timeoutMinutes,
+                Boolean timeoutActive,
                 List<PermanentSession> permanentSessions) {
             this.timeoutMinutes = timeoutMinutes;
+            this.timeoutActive = timeoutActive;
             this.permanentSessions = permanentSessions;
         }
 
         public Integer getTimeoutMinutes() {
             return timeoutMinutes;
+        }
+
+        public boolean shouldTimeoutActive() {
+            return Boolean.TRUE.equals(timeoutActive);
         }
 
         public List<PermanentSession> getPermanentSessions() {

@@ -7,6 +7,7 @@ lighter:
     url: http://lighter.spark:8080
     session:
         timeout-minutes: 90
+        timeout-active: false
         permanent-sessions: []
     kubernetes:
         enabled: false

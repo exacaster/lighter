@@ -62,7 +62,8 @@ class Factories {
                 null,
                 5432,
                 "http://lighter:8080",
-                new AppConfiguration.SessionConfiguration(20, [new AppConfiguration.PermanentSession("permanentSessionId", submitParams())]),
+                new AppConfiguration.SessionConfiguration(20, false,
+                        [new AppConfiguration.PermanentSession("permanentSessionId", submitParams())]),
                 ["spark.kubernetes.driverEnv.TEST": "test"],
                 ["spark.kubernetes.driverEnv.TEST": "test"]
         )

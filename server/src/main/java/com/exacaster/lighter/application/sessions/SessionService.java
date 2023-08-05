@@ -131,4 +131,8 @@ public class SessionService {
                 .limit(size)
                 .collect(Collectors.toList());
     }
+
+    public boolean isActive(Application application) {
+        return statementHandler.hasWaitingStatement(application);
+    }
 }

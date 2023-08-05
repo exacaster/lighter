@@ -111,16 +111,21 @@ public class SessionHandler {
         assertLocked();
         var sessionConfiguration = appConfiguration.getSessionConfiguration();
         var timeout = sessionConfiguration.getTimeoutMinutes();
-        if (timeout != null) {
+        if (timeout != null && timeout > 0) {
             sessionService.fetchRunning()
                     .stream()
-                    .filter(s -> sessionConfiguration.getPermanentSessions().stream()
-                            .noneMatch(conf -> conf.getId().equals(s.getId())))
+                    .filter(s -> isNotPermanent(sessionConfiguration, s))
+                    .filter(s -> sessionConfiguration.shouldTimeoutActive() || !sessionService.isActive(s))
                     .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minusMinutes(timeout)))
                     .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
                     .forEach(sessionService::killOne);
         }
 
+    }
+
+    private boolean isNotPermanent(AppConfiguration.SessionConfiguration sessionConfiguration, Application session) {
+        return sessionConfiguration.getPermanentSessions().stream()
+                .noneMatch(conf -> conf.getId().equals(session.getId()));
     }
 
     private <T> List<T> selfOrEmpty(List<T> list) {
