@@ -4,22 +4,22 @@ Lighter can be configured by using environment variables. Currently, Lighter sup
 
 ## Global properties
 
-| Property                               | Description                                                                               | Default                         |
-|----------------------------------------|-------------------------------------------------------------------------------------------|---------------------------------|
-| LIGHTER_MAX_RUNNING_JOBS               | Max running Batch jobs in parallel                                                        | 5                               |
-| LIGHTER_MAX_STARTING_JOBS              | Max starting Batch jobs in parallel                                                       | 5                               |
-| LIGHTER_SPARK_HISTORY_SERVER_URL       | Spark history server URL used on frontend                                                 | http://localhost/spark-history/ |
-| LIGHTER_EXTERNAL_LOGS_URL_TEMPLATE     | Template for link to external logs                                                        |                                 |
-| LIGHTER_PY_GATEWAY_PORT                | Port for live Spark session communication                                                 | 25333                           |
-| LIGHTER_URL                            | URL which can be used to access Lighter form Spark Job                                    | http://lighter.spark:8080       |
-| LIGHTER_SESSION_TIMEOUT_MINUTES        | Session lifetime in minutes (from last statement creation). Use negative value to disable | 90                              |
-| LIGHTER_SESSION_TIMEOUT_ACTIVE         | Should lighter kill sessions with waiting statements                                      | false                           |
-| LIGHTER_STORAGE_JDBC_URL               | JDBC url for lighter storage                                                              | jdbc:h2:mem:lighter             |
-| LIGHTER_STORAGE_JDBC_USERNAME          | JDBC username                                                                             | sa                              |
-| LIGHTER_STORAGE_JDBC_PASSWORD          | JDBC password                                                                             |                                 |
-| LIGHTER_STORAGE_JDBC_DRIVER_CLASS_NAME | JDBC driver class name                                                                    | org.h2.Driver                   |
-| LIGHTER_BATCH_DEFAULT_CONF             | Default `conf` props for batch applications (JSON)<sup>*</sup>                            |                                 |
-| LIGHTER_SESSION_DEFAULT_CONF           | Default `conf` props for session applications (JSON)                                      |                                 |
+| Property                               | Description                                                                                                        | Default                         |
+|----------------------------------------|--------------------------------------------------------------------------------------------------------------------|---------------------------------|
+| LIGHTER_MAX_RUNNING_JOBS               | Max running Batch jobs in parallel                                                                                 | 5                               |
+| LIGHTER_MAX_STARTING_JOBS              | Max starting Batch jobs in parallel                                                                                | 5                               |
+| LIGHTER_SPARK_HISTORY_SERVER_URL       | Spark history server URL used on frontend                                                                          | http://localhost/spark-history/ |
+| LIGHTER_EXTERNAL_LOGS_URL_TEMPLATE     | Template for link to external logs                                                                                 |                                 |
+| LIGHTER_PY_GATEWAY_PORT                | Port for live Spark session communication                                                                          | 25333                           |
+| LIGHTER_URL                            | URL which can be used to access Lighter form Spark Job                                                             | http://lighter.spark:8080       |
+| LIGHTER_SESSION_TIMEOUT_MINUTES        | Session lifetime in minutes (from last statement creation). Use negative value to disable                          | 90                              |
+| LIGHTER_SESSION_TIMEOUT_ACTIVE         | Should Lighter kill sessions with waiting statements (obsolete when `LIGHTER_SESSION_TIMEOUT_MINUTES` is negative) | false                           |
+| LIGHTER_STORAGE_JDBC_URL               | JDBC url for lighter storage                                                                                       | jdbc:h2:mem:lighter             |
+| LIGHTER_STORAGE_JDBC_USERNAME          | JDBC username                                                                                                      | sa                              |
+| LIGHTER_STORAGE_JDBC_PASSWORD          | JDBC password                                                                                                      |                                 |
+| LIGHTER_STORAGE_JDBC_DRIVER_CLASS_NAME | JDBC driver class name                                                                                             | org.h2.Driver                   |
+| LIGHTER_BATCH_DEFAULT_CONF             | Default `conf` props for batch applications (JSON)<sup>*</sup>                                                     |                                 |
+| LIGHTER_SESSION_DEFAULT_CONF           | Default `conf` props for session applications (JSON)                                                               |                                 |
 
 <sup>*</sup> default confs will be merged with confs provided in submit request, if property is defined in submit request, default will be ignored.
 Example of `LIGHTER_BATCH_DEFAULT_CONF`: `{"spark.kubernetes.driverEnv.TEST1":"test1"}`.
