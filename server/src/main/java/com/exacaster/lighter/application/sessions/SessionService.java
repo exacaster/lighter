@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
 public class SessionService {
@@ -121,5 +122,13 @@ public class SessionService {
         return statementStorage.findLatest(id)
                 .map(Statement::getCreatedAt)
                 .orElseGet(() -> fetchOne(id).map(Application::getCreatedAt).orElse(null));
+    }
+
+    public List<Statement> getStatements(String id, Integer from, Integer size) {
+        return statementStorage.find(id).stream()
+                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
+                .skip(from)
+                .limit(size)
+                .collect(Collectors.toList());
     }
 }
