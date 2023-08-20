@@ -1,8 +1,9 @@
 import React, {ReactNode} from 'react';
-import {Box, Divider, Flex, Stack, Image, Link} from '@chakra-ui/react';
+import {Box, Divider, Flex, Stack, Image, Link, Spacer, IconButton, useColorMode} from '@chakra-ui/react';
 import ButtonLink from './ButtonLink';
 import {generatePath, useLocation} from 'react-router';
 import {RoutePath} from '../configuration/consts';
+import {MoonIcon, SunIcon} from '@chakra-ui/icons';
 
 interface Props {
   children?: ReactNode;
@@ -11,6 +12,7 @@ interface Props {
 
 const Layout: React.FC<Props> = ({children}) => {
   const match = useLocation();
+  const {colorMode, toggleColorMode} = useColorMode();
 
   return (
     <Flex p="10" direction="column" alignItems="stretch" minH="100vh">
@@ -23,6 +25,14 @@ const Layout: React.FC<Props> = ({children}) => {
           <ButtonLink to={generatePath(RoutePath.SESSIONS)} isActive={match.pathname.startsWith(RoutePath.SESSIONS)}>
             Sessions
           </ButtonLink>
+          <Spacer />
+          <IconButton
+            size="sm"
+            onClick={toggleColorMode}
+            icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+            aria-label="Toggle Color Mode"
+            title="Toggle Color Mode"
+          />
         </Stack>
       </header>
       <Box flex="1" pt="10" pb="10">
