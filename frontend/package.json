@@ -23,7 +23,7 @@
     "typescript": "^5.1.6"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.1.0",
+    "@testing-library/jest-dom": "^6.1.1",
     "@testing-library/react": "^14.0.0",
     "@types/jest": "^29.5.4",
     "@types/node": "^20.5.3",
