@@ -35,7 +35,7 @@ class SessionHandlerTest extends Specification {
     def "kills timeouted sessions"() {
         given:
         def oldSession = newSession()
-        service.lastUsed(oldSession.id) >> LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1)
+        service.lastUsed(oldSession.id) >> LocalDateTime.now() - conf.sessionConfiguration.timeoutInterval.plusMinutes(1)
 
         def newSession = app()
         service.lastUsed(newSession.id) >> newSession.createdAt
@@ -62,7 +62,7 @@ class SessionHandlerTest extends Specification {
     def "preserves active timeouted sessions"() {
         given:
         def oldSession = newSession()
-        service.lastUsed(oldSession.id) >> LocalDateTime.now().minusMinutes(conf.sessionConfiguration.timeoutMinutes + 1)
+        service.lastUsed(oldSession.id) >> LocalDateTime.now() - conf.sessionConfiguration.timeoutInterval.plusMinutes(1)
         service.isActive(oldSession) >> true
 
         1 * service.fetchRunning() >> [

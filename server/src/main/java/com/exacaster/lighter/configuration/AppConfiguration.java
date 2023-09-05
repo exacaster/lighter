@@ -14,6 +14,8 @@ import io.micronaut.context.annotation.Primary;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.MapFormat;
+
+import java.time.Duration;
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
@@ -140,21 +142,27 @@ public class AppConfiguration {
     @ConfigurationProperties("session")
     public static class SessionConfiguration {
 
-        private final Integer timeoutMinutes;
+        private final Duration timeoutInterval;
         private final Boolean timeoutActive;
         private final List<PermanentSession> permanentSessions;
+        private final Duration scheduleInterval;
+        private final Duration trackRunningInterval;
 
         @ConfigurationInject
-        public SessionConfiguration(@Nullable Integer timeoutMinutes,
+        public SessionConfiguration(@Nullable Duration timeoutInterval,
                 Boolean timeoutActive,
-                List<PermanentSession> permanentSessions) {
-            this.timeoutMinutes = timeoutMinutes;
+                List<PermanentSession> permanentSessions,
+                Duration scheduleInterval,
+                Duration trackRunningInterval) {
+            this.timeoutInterval = timeoutInterval;
             this.timeoutActive = timeoutActive;
             this.permanentSessions = permanentSessions;
+            this.scheduleInterval = scheduleInterval;
+            this.trackRunningInterval = trackRunningInterval;
         }
 
-        public Integer getTimeoutMinutes() {
-            return timeoutMinutes;
+        public Duration getTimeoutInterval() {
+            return timeoutInterval;
         }
 
         public boolean shouldTimeoutActive() {
@@ -165,11 +173,21 @@ public class AppConfiguration {
             return permanentSessions;
         }
 
+        public Duration getScheduleInterval() {
+            return scheduleInterval;
+        }
+
+        public Duration getTrackRunningInterval() {
+            return trackRunningInterval;
+        }
+
         @Override
         public String toString() {
             return new StringJoiner(", ", SessionConfiguration.class.getSimpleName() + "[", "]")
-                    .add("timeoutMinutes=" + timeoutMinutes)
+                    .add("timeoutMinutes=" + timeoutInterval)
                     .add("permanentSessions=" + permanentSessions)
+                    .add("scheduleIntervalSeconds=" + scheduleInterval)
+                    .add("trackRunningInterval=" + trackRunningInterval)
                     .toString();
         }
     }
