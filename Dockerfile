@@ -48,11 +48,7 @@ COPY k8s/ ./k8s/
 ARG spark_uid=10000
 ARG spark_gid=10001
 RUN groupadd -g ${spark_gid} spark && useradd spark -u ${spark_uid} -g ${spark_gid} -m -s /bin/bash
-RUN mkdir -p /home/db /tmp/spark-events /tmp/staging /tmp/s3a ${SPARK_HOME}/workdir && \
-    chmod -R go+rwX /tmp && \
-    chmod -R go+rX /opt /home && \
-    chmod g+wX ${SPARK_HOME}/workdir && \
-    chown -R spark:spark ${SPARK_HOME} /home/db && \
+RUN chown -R spark:spark ${SPARK_HOME} && \
     chmod -R go+rX ${SPARK_HOME}
 RUN apt-get update && apt-get upgrade -y && \
     apt-get autoremove --purge -y curl wget && \
@@ -63,7 +59,5 @@ EXPOSE 8080
 EXPOSE 25333
 
 ENTRYPOINT ["java", "-jar", "/home/app/application.jar"]
-
 # Specify the User that the actual main process will run as
 USER ${spark_uid}
-SHELL ["/bin/bash", "-c"]
