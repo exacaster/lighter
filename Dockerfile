@@ -23,7 +23,7 @@ RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPAR
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
 
-FROM eclipse-temurin:11-jdk-jammy
+FROM eclipse-temurin:11-jre-jammy
 
 ARG SPARK_VERSION=3.4.1
 ARG HADOOP_VERSION=3
