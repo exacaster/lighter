@@ -1,4 +1,4 @@
-FROM openjdk:11-jre-slim-stretch as server
+FROM eclipse-temurin:11-jdk-jammy as server
 
 ARG SPARK_VERSION=3.4.1
 ARG HADOOP_VERSION=3
@@ -9,7 +9,7 @@ COPY server/ ./server/
 WORKDIR /home/app/server/
 RUN ./gradlew build -x test -PSPARK_VERSION=${SPARK_VERSION}
 
-FROM node:lts-alpine3.14 as frontend
+FROM node:lts-alpine3.18 as frontend
 
 ARG SPARK_VERSION=3.4.1
 ARG HADOOP_VERSION=3
@@ -23,7 +23,7 @@ RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPAR
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build
 
-FROM openjdk:11-jre-slim-bullseye
+FROM eclipse-temurin:11-jre-jammy
 
 ARG SPARK_VERSION=3.4.1
 ARG HADOOP_VERSION=3
@@ -45,7 +45,19 @@ COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION
 
 COPY k8s/ ./k8s/
 
+ARG spark_uid=10000
+ARG spark_gid=10001
+RUN groupadd -g ${spark_gid} spark && useradd spark -u ${spark_uid} -g ${spark_gid} -m -s /bin/bash
+RUN chown -R spark:spark ${SPARK_HOME} && \
+    chmod -R go+rX ${SPARK_HOME}
+RUN apt-get update && apt-get upgrade -y && \
+    apt-get autoremove --purge -y curl wget && \
+    apt-get install -y --no-install-recommends --allow-downgrades -y atop procps && \
+    apt-get clean && rm -rf /var/lib/apt/lists /var/cache/apt/*
+
 EXPOSE 8080
 EXPOSE 25333
 
 ENTRYPOINT ["java", "-jar", "/home/app/application.jar"]
+# Specify the User that the actual main process will run as
+USER ${spark_uid}
