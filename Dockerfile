@@ -1,6 +1,6 @@
 FROM eclipse-temurin:11-jdk-jammy as server
 
-ARG SPARK_VERSION=3.4.1
+ARG SPARK_VERSION=3.5.0
 ARG HADOOP_VERSION=3
 
 WORKDIR /home/app/
@@ -11,7 +11,7 @@ RUN ./gradlew build -x test -PSPARK_VERSION=${SPARK_VERSION}
 
 FROM node:lts-alpine3.18 as frontend
 
-ARG SPARK_VERSION=3.4.1
+ARG SPARK_VERSION=3.5.0
 ARG HADOOP_VERSION=3
 
 ENV REACT_APP_API_BASE_URL='/lighter'
@@ -25,7 +25,7 @@ RUN yarn install && yarn build
 
 FROM eclipse-temurin:11-jre-jammy
 
-ARG SPARK_VERSION=3.4.1
+ARG SPARK_VERSION=3.5.0
 ARG HADOOP_VERSION=3
 
 ENV FRONTEND_PATH=/home/app/frontend/

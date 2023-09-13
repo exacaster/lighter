@@ -2,7 +2,7 @@ plugins {
     id "java"
     id "groovy"
     id "io.micronaut.application" version "3.7.10"
-    id "com.github.ben-manes.versions" version "0.47.0"
+    id "com.github.ben-manes.versions" version "0.48.0"
 }
 
 group "org.exacaster.lighter"
@@ -17,14 +17,14 @@ java {
 }
 
 micronaut {
-    version = "3.9.4"
+    version = "3.10.1"
     runtime "netty"
 }
 mainClassName = "com.exacaster.lighter.Application"
 
-def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.4.1'
+def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.5.0'
 def hadoopVersion = '3.3.3'
-def k8sClientVersion = '6.7.2'
+def k8sClientVersion = '6.8.1'
 def shedlockVersion = '4.44.0'
 
 dependencies {
@@ -56,7 +56,7 @@ dependencies {
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.postgresql:postgresql"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.9.3"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"
     testImplementation "io.micronaut:micronaut-http-client"
