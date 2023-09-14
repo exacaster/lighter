@@ -18,7 +18,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-moment": "^1.1.1",
-    "react-router-dom": "^6.15.0",
+    "react-router-dom": "^6.16.0",
     "sass": "^1.67.0",
     "typescript": "^5.2.2"
   },
