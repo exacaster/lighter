@@ -17,7 +17,7 @@ class AppConfigurationTest extends Specification {
     def "binds properties form yaml"() {
         expect:
         appConfiguration.maxRunningJobs == 5
-        appConfiguration.sessionConfiguration.timeoutMinutes == 90
+        appConfiguration.sessionConfiguration.timeoutInterval.toMinutes() == 90
         appConfiguration.sessionConfiguration.permanentSessions.size() == 1
         appConfiguration.sessionConfiguration.permanentSessions.get(0).id == "permanentId1"
         appConfiguration.sessionConfiguration.permanentSessions.get(0).submitParams.conf == [

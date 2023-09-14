@@ -6,9 +6,11 @@ lighter:
     py-gateway-port: 25333
     url: http://lighter.spark:8080
     session:
-        timeout-minutes: 90
+        timeout-interval: 90m
         timeout-active: false
         permanent-sessions: []
+        schedule-interval: 1m
+        track-running-interval: 2m
     kubernetes:
         enabled: false
         master: k8s://kubernetes.default.svc.cluster.local:443

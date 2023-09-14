@@ -74,7 +74,7 @@ public class SessionHandler {
     }
 
     @SchedulerLock(name = "processScheduledSessions")
-    @Scheduled(fixedRate = "1m")
+    @Scheduled(fixedRate = "${lighter.session.schedule-interval}")
     public void processScheduledSessions() throws InterruptedException {
         assertLocked();
         var waitables = sessionService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 10).stream()
@@ -93,7 +93,7 @@ public class SessionHandler {
     }
 
     @SchedulerLock(name = "trackRunningSessions", lockAtMostFor = "1m")
-    @Scheduled(fixedRate = "2m")
+    @Scheduled(fixedRate = "${lighter.session.track-running-interval}")
     public void trackRunning() {
         assertLocked();
         var running = sessionService.fetchRunning();
@@ -110,14 +110,14 @@ public class SessionHandler {
     public void handleTimeout() {
         assertLocked();
         var sessionConfiguration = appConfiguration.getSessionConfiguration();
-        var timeout = sessionConfiguration.getTimeoutMinutes();
-        if (timeout != null && timeout > 0) {
+        var timeoutInterval = sessionConfiguration.getTimeoutInterval();
+        if (timeoutInterval != null && !timeoutInterval.isZero()) {
             sessionService.fetchRunning()
                     .stream()
                     .filter(s -> isNotPermanent(sessionConfiguration, s))
                     .filter(s -> sessionConfiguration.shouldTimeoutActive() || !sessionService.isActive(s))
-                    .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minusMinutes(timeout)))
-                    .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeout, s))
+                    .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minus(timeoutInterval)))
+                    .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeoutInterval, s))
                     .forEach(sessionService::killOne);
         }
 
