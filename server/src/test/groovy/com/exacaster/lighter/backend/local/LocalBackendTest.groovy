@@ -24,6 +24,12 @@ class LocalBackendTest extends Specification {
 
         then:
         appHandle != null
+        appHandle.getEnvVariables() == [
+            FOO: "bar",
+            PY_GATEWAY_HOST: "localhost",
+            PY_GATEWAY_PORT: "5432",
+            LIGHTER_SESSION_ID: "1"
+        ]
 
         when:
         def info = backend.getInfo(app)

@@ -10,16 +10,23 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
 import java.time.Duration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
 
 import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLIENT;
+import static com.exacaster.lighter.backend.Constants.LIGHTER_CONF_PREFIX;
+import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
 import static org.apache.spark.launcher.SparkLauncher.CHILD_PROCESS_LOGGER_NAME;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
 
 public class LocalBackend implements Backend {
+
+    private final static String LOCAL_ENV_CONF_PREFIX = LIGHTER_CONF_PREFIX + "local.env.";
 
     private final AppConfiguration conf;
 
@@ -58,10 +65,12 @@ public class LocalBackend implements Backend {
     }
 
     @Override
-    public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
+    public SparkApp prepareSparkApplication(Application application,
+            Map<String, String> configDefaults,
             Consumer<Throwable> errorHandler) {
         var localApp = new LocalApp(application, errorHandler);
         activeApps.put(application.getId(), localApp);
+
         return new SparkApp(
                 application,
                 configDefaults,
@@ -70,12 +79,28 @@ public class LocalBackend implements Backend {
                         SPARK_MASTER, "local[*]",
                         CHILD_PROCESS_LOGGER_NAME, localApp.getLoggerName()
                 ),
-                Map.of("LIGHTER_SESSION_ID", application.getId(),
-                        "PY_GATEWAY_PORT", conf.getPyGatewayPort().toString(),
-                        "PY_GATEWAY_HOST", "localhost"
-                ),
+                buildEnvironment(application),
                 localApp
         );
+    }
+
+    private Map<String, String> buildEnvironment(Application application) {
+        var env = new HashMap<String, String>();
+        application.getSubmitParams()
+                .getConf()
+                .entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().startsWith(LOCAL_ENV_CONF_PREFIX))
+                .forEach(entry -> {
+                    var key = entry.getKey().replaceFirst(LOCAL_ENV_CONF_PREFIX, "");
+                    env.put(key, entry.getValue());
+                });
+        env.putAll(Map.of(
+                LIGHTER_SESSION_ID_ENV_NAME, application.getId(),
+                PY_GATEWAY_PORT_ENV_NAME, conf.getPyGatewayPort().toString(),
+                PY_GATEWAY_HOST_ENV_NAME, "localhost"
+        ));
+        return env;
     }
 
     Optional<LocalApp> handleForApp(Application application) {

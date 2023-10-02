@@ -1,6 +1,9 @@
 package com.exacaster.lighter.backend.kubernetes;
 
 import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLUSTER;
+import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
 import static java.util.Optional.ofNullable;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -66,9 +69,9 @@ public class KubernetesBackend implements Backend {
                 SPARK_MASTER, properties.getMaster(),
                 "spark.kubernetes.driver.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
-                "spark.kubernetes.driverEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
-                "spark.kubernetes.driverEnv.PY_GATEWAY_HOST", host,
-                "spark.kubernetes.driverEnv.LIGHTER_SESSION_ID", application.getId()
+                "spark.kubernetes.driverEnv." + PY_GATEWAY_PORT_ENV_NAME, String.valueOf(conf.getPyGatewayPort()),
+                "spark.kubernetes.driverEnv." + PY_GATEWAY_HOST_ENV_NAME, host,
+                "spark.kubernetes.driverEnv." + LIGHTER_SESSION_ID_ENV_NAME, application.getId()
         ));
         props.putAll(STATIC_SUBMIT_PROPS);
         return props;
