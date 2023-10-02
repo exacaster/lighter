@@ -1,39 +1,44 @@
 package com.exacaster.lighter.backend;
 
-import static org.apache.spark.launcher.SparkLauncher.DRIVER_MEMORY;
-import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_CORES;
-import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_MEMORY;
-
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.concurrency.EmptyWaitable;
 import com.exacaster.lighter.concurrency.Waitable;
+import org.apache.spark.launcher.SparkLauncher;
+
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
-import org.apache.spark.launcher.SparkLauncher;
+
+import static org.apache.spark.launcher.SparkLauncher.DRIVER_MEMORY;
+import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_CORES;
+import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_MEMORY;
 
 public class SparkApp {
 
     private final Map<String, String> configDefaults;
     private final Map<String, String> backendConfiguration;
+    private final Map<String, String> envVariables;
     private final Application application;
     private final SparkListener listener;
 
     public SparkApp(Application application,
             Map<String, String> configDefaults,
             Map<String, String> backendConfiguration,
-            SparkListener listener) {
-        this.application = application;
-        this.configDefaults = configDefaults;
-        this.backendConfiguration = backendConfiguration;
-        this.listener = listener;
+            Consumer<Throwable> errorHandler) {
+        this(application, configDefaults, backendConfiguration, Collections.emptyMap(), new ClusterSparkListener(errorHandler));
     }
 
     public SparkApp(Application application,
-            Map<String, String> configDefaults,
-            Map<String, String> backendConfiguration,
-            Consumer<Throwable> errorHandler) {
-        this(application, configDefaults, backendConfiguration, new ClusterSparkListener(errorHandler));
+                    Map<String, String> configDefaults,
+                    Map<String, String> backendConfiguration,
+                    Map<String, String> envVariables,
+                    SparkListener listener) {
+        this.application = application;
+        this.configDefaults = configDefaults;
+        this.backendConfiguration = backendConfiguration;
+        this.envVariables = envVariables;
+        this.listener = listener;
     }
 
     public Waitable launch() {
@@ -50,7 +55,7 @@ public class SparkApp {
 
     private SparkLauncher buildLauncher() {
         var submitParams = application.getSubmitParams();
-        var launcher = new SparkLauncher()
+        var launcher = new SparkLauncher(envVariables)
                 .setAppName(submitParams.getName())
                 .setAppResource(submitParams.getFile());
 

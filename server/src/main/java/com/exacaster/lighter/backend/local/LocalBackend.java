@@ -1,10 +1,5 @@
 package com.exacaster.lighter.backend.local;
 
-import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLIENT;
-import static org.apache.spark.launcher.SparkLauncher.CHILD_PROCESS_LOGGER_NAME;
-import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
-import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
-
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.backend.Backend;
@@ -13,10 +8,16 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+
 import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+
+import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLIENT;
+import static org.apache.spark.launcher.SparkLauncher.CHILD_PROCESS_LOGGER_NAME;
+import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
+import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
 
 public class LocalBackend implements Backend {
 
@@ -68,6 +69,10 @@ public class LocalBackend implements Backend {
                         DEPLOY_MODE, DEPLOY_MODE_CLIENT,
                         SPARK_MASTER, "local[*]",
                         CHILD_PROCESS_LOGGER_NAME, localApp.getLoggerName()
+                ),
+                Map.of("LIGHTER_SESSION_ID", application.getId(),
+                        "PY_GATEWAY_PORT", conf.getPyGatewayPort().toString(),
+                        "PY_GATEWAY_HOST", "localhost"
                 ),
                 localApp
         );
