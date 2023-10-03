@@ -21,8 +21,8 @@ class AppConfigurationTest extends Specification {
         appConfiguration.sessionConfiguration.permanentSessions.size() == 1
         appConfiguration.sessionConfiguration.permanentSessions.get(0).id == "permanentId1"
         appConfiguration.sessionConfiguration.permanentSessions.get(0).submitParams.conf == [
-                "spark.kubernetes.namespace": "spark",
-                "spark.kubernetes.driver.secrets.spark-secret": "/etc/secret"
+            "spark.kubernetes.namespace": "spark",
+            "spark.kubernetes.driver.secrets.spark-secret": "/etc/secret"
         ]
         appConfiguration.batchDefaultConf != null
         appConfiguration.batchDefaultConf.get("spark.driver.cores") == "1"

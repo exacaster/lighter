@@ -20,7 +20,8 @@ class Factories {
                 "",
                 "",
                 0,
-                null, null, 1, null, null, null, null, null, null, null
+                null, null, 1, null, null, null, null, null, null,
+                ["lighter.local.env.FOO": "bar"]
         )
     }
 
@@ -31,7 +32,7 @@ class Factories {
                 .setAppInfo("info")
                 .setCreatedAt(LocalDateTime.MAX)
                 .setId("1")
-                .setSubmitParams(null)
+                .setSubmitParams(submitParams())
                 .build()
     }
 

@@ -19,5 +19,8 @@ curl -X 'POST' \
 }'
 ```
 
+To set custom environment variables when running lighter in local mode, add `conf` value
+with `lighter.local.env.` prefix (ex: `lighter.local.env.FOO`) on your submitted json.
+
 Lighter UI can be accessed on: [http://localhost:8080/lighter](http://localhost:8080/lighter).\
 You can also explore Lighter API by visiting Swagger UI on [http://localhost:8080/swagger-ui/](http://localhost:8080/swagger-ui/).

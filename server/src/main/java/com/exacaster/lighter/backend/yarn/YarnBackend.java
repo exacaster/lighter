@@ -1,7 +1,10 @@
 package com.exacaster.lighter.backend.yarn;
 
 import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLUSTER;
+import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.MASTER_YARN;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -119,9 +122,9 @@ public class YarnBackend implements Backend {
                 SPARK_MASTER, MASTER_YARN,
                 "spark.yarn.tags", "lighter," + application.getId(),
                 "spark.yarn.submit.waitAppCompletion", "false",
-                "spark.yarn.appMasterEnv.PY_GATEWAY_PORT", String.valueOf(conf.getPyGatewayPort()),
-                "spark.yarn.appMasterEnv.PY_GATEWAY_HOST", host,
-                "spark.yarn.appMasterEnv.LIGHTER_SESSION_ID", application.getId()
+                "spark.yarn.appMasterEnv." + PY_GATEWAY_PORT_ENV_NAME, String.valueOf(conf.getPyGatewayPort()),
+                "spark.yarn.appMasterEnv." + PY_GATEWAY_HOST_ENV_NAME, host,
+                "spark.yarn.appMasterEnv." + LIGHTER_SESSION_ID_ENV_NAME, application.getId()
         ));
         if (!props.containsKey("spark.kerberos.keytab") && yarnProperties.getKerberos() != null) {
             props.put("spark.kerberos.keytab", yarnProperties.getKerberos().getKeytab());

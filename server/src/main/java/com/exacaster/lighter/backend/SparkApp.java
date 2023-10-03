@@ -10,6 +10,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.function.Consumer;
 
+import static com.exacaster.lighter.backend.Constants.LIGHTER_CONF_PREFIX;
 import static org.apache.spark.launcher.SparkLauncher.DRIVER_MEMORY;
 import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_CORES;
 import static org.apache.spark.launcher.SparkLauncher.EXECUTOR_MEMORY;
@@ -53,6 +54,18 @@ public class SparkApp {
         return EmptyWaitable.INSTANCE;
     }
 
+    public Map<String, String> getConfigDefaults() {
+        return configDefaults;
+    }
+
+    public Map<String, String> getBackendConfiguration() {
+        return backendConfiguration;
+    }
+
+    public Map<String, String> getEnvVariables() {
+        return envVariables;
+    }
+
     private SparkLauncher buildLauncher() {
         var submitParams = application.getSubmitParams();
         var launcher = new SparkLauncher(envVariables)
@@ -77,7 +90,11 @@ public class SparkApp {
         submitParams.getPyFiles().forEach(launcher::addPyFile);
 
         configDefaults.forEach(launcher::setConf);
-        submitParams.getConf().forEach(launcher::setConf);
+        submitParams.getConf().forEach((key, val) -> {
+            if (!key.startsWith(LIGHTER_CONF_PREFIX)) {
+                launcher.setConf(key, val);
+            }
+        });
         backendConfiguration.forEach(launcher::setConf);
 
         return launcher;
