@@ -35,3 +35,21 @@ export type Configuration = {
   sparkHistoryServerUrl?: string;
   externalLogsUrlTemplate?: string;
 };
+
+export type SessionStatementCode = {
+  code: string;
+};
+
+export type SessionStatement = SessionStatementCode & {
+  id: string;
+  state: 'available' | 'error' | 'waiting' | 'canceled';
+  output?: {
+    status: 'ok' | 'error';
+    traceback?: string;
+    data: Record<string, unknown>;
+  };
+};
+
+export type SessionStatementPage = {
+  statements: SessionStatement[];
+};
