@@ -2227,10 +2227,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.47.0.tgz#5478fdf443ff8158f9de171c704ae45308696c7d"
   integrity sha512-P6omY1zv5MItm93kLM8s2vr1HICJH8v0dvddDhysbIuZ+vcjOHg5Zbkf1mTkcmi2JA9oBG2anOkRnW8WJTS8Og==
 
-"@fontsource/open-sans@^5.0.14":
-  version "5.0.14"
-  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-5.0.14.tgz#257252e1a7c953176d42bf314b3aba79c5a4f9c1"
-  integrity sha512-r9dEDCrZsBfjd2WREzffY1j7Y5gbyfOU1ybChTXjKdOCRAtTVpxO1ZJ5UyVkotXGSIWNt2hedlfyshWSQ6p5kQ==
+"@fontsource/open-sans@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-5.0.15.tgz#9afe2fab06e151772832b5bee30fb9318ddbf9c0"
+  integrity sha512-gnvxTADG72CWWN57//x5leVJqQthgkhHao3/dK6wkn5wO7uTLYpiViLfUJYeV274juC73EvGQnc/3Y+9IEST2A==
 
 "@humanwhocodes/config-array@^0.11.10":
   version "0.11.10"
