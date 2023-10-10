@@ -1,5 +1,5 @@
 import {AxiosInstance} from 'axios';
-import {Application, ApplicationLog, BatchPage, Configuration} from './types';
+import {Application, ApplicationLog, BatchPage, Configuration, SessionStatement, SessionStatementCode, SessionStatementPage} from './types';
 
 export class Api {
   client: AxiosInstance;
@@ -50,5 +50,17 @@ export class Api {
 
   fetchConfiguration(): Promise<Configuration> {
     return this.get('/api/configuration');
+  }
+
+  fetchSessionStatements(sessionId: string, size: number, from: number): Promise<SessionStatementPage> {
+    return this.get(`/api/sessions/${sessionId}/statements?size=${size}&from=${from}`);
+  }
+
+  postSessionStatement(sessionId: string, statement: SessionStatementCode): Promise<SessionStatement> {
+    return this.client.post(`/api/sessions/${sessionId}/statements`, statement);
+  }
+
+  cancelSessionStatement(sessionId: string, statementId: string): Promise<void> {
+    return this.client.post(`/api/sessions/${sessionId}/statements/${statementId}/cancel`);
   }
 }

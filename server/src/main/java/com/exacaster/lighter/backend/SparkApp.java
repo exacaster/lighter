@@ -47,7 +47,7 @@ public class SparkApp {
             var launcher = buildLauncher();
             launcher.startApplication(listener);
             return listener;
-        } catch (IOException | IllegalArgumentException e) {
+        } catch (IOException | IllegalArgumentException | IllegalStateException e) {
             this.listener.onError(e);
         }
 
