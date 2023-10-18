@@ -1,24 +1,25 @@
 package com.exacaster.lighter.application.sessions;
 
-import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
-import static java.util.Optional.ofNullable;
-
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
+import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.exacaster.lighter.storage.StatementStorage;
 import jakarta.inject.Singleton;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
+import static java.util.Optional.ofNullable;
 
 @Singleton
 public class SessionService {
@@ -29,8 +30,8 @@ public class SessionService {
     private final StatementHandler statementHandler;
 
     public SessionService(ApplicationStorage applicationStorage,
-            StatementStorage statementStorage, Backend backend,
-            StatementHandler statementHandler) {
+                          StatementStorage statementStorage, Backend backend,
+                          StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
@@ -106,8 +107,14 @@ public class SessionService {
         applicationStorage.saveApplication(ApplicationBuilder.builder(app).setState(ApplicationState.KILLED).build());
     }
 
-    public Statement createStatement(String id, Statement statement) {
-        return statementHandler.processStatement(id, statement);
+    public StatementCreationResult createStatement(String id, Statement statement) {
+        return this.fetchOne(id, true).map(application -> {
+            if (!application.getState().isComplete()) {
+                return new StatementCreationResult.StatementCreated(statementHandler.processStatement(application.getId(), statement));
+            } else {
+                return new StatementCreationResult.SessionInInvalidState(application.getState());
+            }
+        }).orElse(new StatementCreationResult.NoSessionExists());
     }
 
     public Statement getStatement(String id, String statementId) {

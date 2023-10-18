@@ -2,14 +2,15 @@ package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationList;
+import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.SessionService;
 import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.StatementList;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.rest.magic.SessionList;
 import com.exacaster.lighter.rest.magic.SparkMagicCompatibility;
-import com.exacaster.lighter.application.SubmitParams;
 import io.micronaut.core.annotation.Nullable;
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -21,11 +22,12 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
+
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import javax.validation.Valid;
 
 @Validated
 @Controller("/lighter/api/sessions")
@@ -91,9 +93,9 @@ public class SessionController {
     }
 
     @Post("/{id}/statements")
-    @Status(HttpStatus.CREATED)
-    public Statement postStatements(@PathVariable String id, @Valid @Body Statement statement) {
-        return sessionService.createStatement(id, statement);
+    public HttpResponse postStatements(@PathVariable String id, @Valid @Body Statement statement) {
+        MicronautStatementCreationResultToResponseMapper resultToResponseMapper = new MicronautStatementCreationResultToResponseMapper();
+        return sessionService.createStatement(id, statement).map(resultToResponseMapper);
     }
 
     @Get("/{id}/statements")
