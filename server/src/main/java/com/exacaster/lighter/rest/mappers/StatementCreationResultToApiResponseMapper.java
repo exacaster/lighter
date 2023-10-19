@@ -1,4 +1,4 @@
-package com.exacaster.lighter.rest;
+package com.exacaster.lighter.rest.mappers;
 
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.sessions.Statement;

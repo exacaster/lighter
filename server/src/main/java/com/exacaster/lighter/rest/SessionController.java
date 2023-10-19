@@ -9,6 +9,7 @@ import com.exacaster.lighter.application.sessions.StatementList;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.rest.magic.SessionList;
 import com.exacaster.lighter.rest.magic.SparkMagicCompatibility;
+import com.exacaster.lighter.rest.mappers.StatementCreationResultToApiResponseMapper;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
