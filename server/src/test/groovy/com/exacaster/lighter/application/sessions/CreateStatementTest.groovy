@@ -9,6 +9,7 @@ import com.exacaster.lighter.storage.StatementStorage
 import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
+import spock.lang.Unroll
 
 import static com.exacaster.lighter.test.Factories.*
 
@@ -31,43 +32,37 @@ class CreateStatementTest extends Specification {
         result instanceof StatementCreationResult.NoSessionExists
     }
 
-    def "on killed session returns SessionInInvalidState"() {
+    @Unroll
+    def "on completed session returns SessionInInvalidState"() {
         given:
         def params = newStatement()
 
-        and: "session is stored with status killed"
-        def session = newSession(ApplicationState.KILLED)
+        and: "session is stored with status"
+        def session = newSession(savedState)
         storage.saveApplication(session)
 
-        and: "session 'live' status is killed"
-        backend.getInfo(session) >>  Optional.of( new ApplicationInfo(session.state, session.id))
+        and: "session 'live' status is"
+        backend.getInfo(session) >>  Optional.of( new ApplicationInfo(liveState, session.id))
 
         when: "creating statement"
         def result = service.createStatement(session.id, params)
 
         then: "returns session in invalid state"
         result instanceof StatementCreationResult.SessionInInvalidState
-        ((StatementCreationResult.SessionInInvalidState)result).getInvalidState() == session.state
+        ((StatementCreationResult.SessionInInvalidState)result).getInvalidState() == liveState
+
+        where:
+        savedState | liveState
+        ApplicationState.NOT_STARTED| ApplicationState.DEAD
+        ApplicationState.STARTING | ApplicationState.ERROR
+        ApplicationState.IDLE | ApplicationState.KILLED
+        ApplicationState.IDLE | ApplicationState.ERROR
+        ApplicationState.NOT_STARTED | ApplicationState.DEAD
+        ApplicationState.NOT_STARTED | ApplicationState.SUCCESS
+        ApplicationState.KILLED | ApplicationState.KILLED
+        ApplicationState.ERROR | ApplicationState.ERROR
     }
 
-    def "on completed session returns SessionInInvalidState"() {
-        given:
-        def statementToCreate = newStatement()
-
-        and: "session is stored with non completed state "
-        def session = newSession(ApplicationState.STARTING)
-        storage.saveApplication(session)
-
-        and: "session 'live' status is completed "
-        backend.getInfo(session) >>  Optional.of( new ApplicationInfo(ApplicationState.ERROR, session.id))
-
-        when: "creating statement"
-        def result = service.createStatement(session.id, statementToCreate)
-
-        then: "returns session in invalid state"
-        result instanceof StatementCreationResult.SessionInInvalidState
-        ((StatementCreationResult.SessionInInvalidState)result).getInvalidState() == ApplicationState.ERROR
-    }
 
     def "on non-completed session returns StatementCreated"() {
         given:
