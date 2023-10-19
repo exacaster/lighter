@@ -50,6 +50,25 @@ class CreateStatementTest extends Specification {
         ((StatementCreationResult.SessionInInvalidState)result).getInvalidState() == session.state
     }
 
+    def "on completed session returns SessionInInvalidState"() {
+        given:
+        def statementToCreate = newStatement()
+
+        and: "session is stored with non completed state "
+        def session = newSession(ApplicationState.STARTING)
+        storage.saveApplication(session)
+
+        and: "session 'live' status is completed "
+        backend.getInfo(session) >>  Optional.of( new ApplicationInfo(ApplicationState.ERROR, session.id))
+
+        when: "creating statement"
+        def result = service.createStatement(session.id, statementToCreate)
+
+        then: "returns session in invalid state"
+        result instanceof StatementCreationResult.SessionInInvalidState
+        ((StatementCreationResult.SessionInInvalidState)result).getInvalidState() == ApplicationState.ERROR
+    }
+
     def "on non-completed session returns StatementCreated"() {
         given:
         def statementToCreate = newStatement()

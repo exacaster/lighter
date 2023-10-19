@@ -75,7 +75,7 @@ public class SessionService {
     public Optional<Application> fetchOne(String id, boolean liveStatus) {
         return applicationStorage.findApplication(id)
                 .map(app -> {
-                    if (app.getState().isComplete() && liveStatus) {
+                    if (!app.getState().isComplete() && liveStatus) {
                         return backend.getInfo(app)
                                 .map(info -> {
                                     var hasWaiting = statementHandler.hasWaitingStatement(app);
