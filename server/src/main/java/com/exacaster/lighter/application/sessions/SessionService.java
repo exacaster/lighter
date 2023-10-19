@@ -30,8 +30,8 @@ public class SessionService {
     private final StatementHandler statementHandler;
 
     public SessionService(ApplicationStorage applicationStorage,
-                          StatementStorage statementStorage, Backend backend,
-                          StatementHandler statementHandler) {
+            StatementStorage statementStorage, Backend backend,
+            StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
