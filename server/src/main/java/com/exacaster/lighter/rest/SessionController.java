@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationList;
 import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.SessionService;
 import com.exacaster.lighter.application.sessions.Statement;
+import com.exacaster.lighter.application.sessions.StatementCreationResultMapper;
 import com.exacaster.lighter.application.sessions.StatementList;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.rest.magic.SessionList;
@@ -41,11 +42,13 @@ public class SessionController {
     private final SessionService sessionService;
     private final LogService logService;
     private final SparkMagicCompatibility magicCompatibility;
+    private final StatementCreationResultMapper<HttpResponse> statementCreationResultMapper;
 
     public SessionController(SessionService sessionService, LogService logService, SparkMagicCompatibility magicCompatibility) {
         this.sessionService = sessionService;
         this.logService = logService;
         this.magicCompatibility = magicCompatibility;
+        this.statementCreationResultMapper = new StatementCreationResultToApiResponseMapper();
     }
 
     @Get
@@ -104,8 +107,7 @@ public class SessionController {
             @ApiResponse(responseCode = "404", description = "Session not found")
     })
     public HttpResponse postStatements(@PathVariable String id, @Valid @Body Statement statement) {
-        StatementCreationResultToApiResponseMapper resultToResponseMapper = new StatementCreationResultToApiResponseMapper();
-        return sessionService.createStatement(id, statement).map(resultToResponseMapper);
+        return sessionService.createStatement(id, statement).map(statementCreationResultMapper);
     }
 
     @Get("/{id}/statements")
