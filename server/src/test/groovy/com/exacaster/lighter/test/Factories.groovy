@@ -39,7 +39,7 @@ class Factories {
     static newSession(state = ApplicationState.NOT_STARTED) {
         ApplicationBuilder.builder().setAppId("application_123_0124")
                 .setType(ApplicationType.SESSION)
-                .setState(ApplicationState.NOT_STARTED)
+                .setState(state)
                 .setAppInfo("info")
                 .setCreatedAt(LocalDateTime.MAX)
                 .setId("2")
@@ -70,5 +70,9 @@ class Factories {
                 ["spark.kubernetes.driverEnv.TEST": "test"],
                 ["spark.kubernetes.driverEnv.TEST": "test"]
         )
+    }
+
+    static newStatement() {
+        new Statement(null, "code", null, null, LocalDateTime.now())
     }
 }
