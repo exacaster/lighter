@@ -22,6 +22,10 @@ import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -93,6 +97,11 @@ public class SessionController {
     }
 
     @Post("/{id}/statements")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Statement created", content = { @Content(mediaType ="application/json", schema = @Schema(implementation = Statement.class)) }),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Session not found")
+    })
     public HttpResponse postStatements(@PathVariable String id, @Valid @Body Statement statement) {
         MicronautStatementCreationResultToResponseMapper resultToResponseMapper = new MicronautStatementCreationResultToResponseMapper();
         return sessionService.createStatement(id, statement).map(resultToResponseMapper);
