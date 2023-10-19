@@ -37,11 +37,11 @@ class CreateStatementTest extends Specification {
         given:
         def params = newStatement()
 
-        and: "session is stored with status"
+        and: "session is stored"
         def session = newSession(savedState)
         storage.saveApplication(session)
 
-        and: "session 'live' status is"
+        and: "session 'live' status"
         backend.getInfo(session) >>  Optional.of( new ApplicationInfo(liveState, session.id))
 
         when: "creating statement"
