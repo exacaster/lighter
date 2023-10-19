@@ -34,8 +34,12 @@ class CreateStatementTest extends Specification {
     def "on killed session returns SessionInInvalidState"() {
         given:
         def params = newStatement()
+
+        and: "session is stored with status killed"
         def session = newSession(ApplicationState.KILLED)
         storage.saveApplication(session)
+
+        and: "session 'live' status is killed"
         backend.getInfo(session) >>  Optional.of( new ApplicationInfo(session.state, session.id))
 
         when: "creating statement"
@@ -49,8 +53,12 @@ class CreateStatementTest extends Specification {
     def "on non-completed session returns StatementCreated"() {
         given:
         def statementToCreate = newStatement()
+
+        and: "session is stored with non completed state "
         def session = newSession(ApplicationState.STARTING)
         storage.saveApplication(session)
+
+        and: "session 'live' status is not completed "
         backend.getInfo(session) >>  Optional.of( new ApplicationInfo(session.state, session.id))
         def statementCreated = statement()
         statementHandler.processStatement(session.id, statementToCreate) >> statementCreated
