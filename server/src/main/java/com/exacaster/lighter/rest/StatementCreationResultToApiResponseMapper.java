@@ -5,7 +5,7 @@ import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.StatementCreationResultMapper;
 import io.micronaut.http.HttpResponse;
 
-public class MicronautStatementCreationResultToResponseMapper implements StatementCreationResultMapper<HttpResponse> {
+public class StatementCreationResultToApiResponseMapper implements StatementCreationResultMapper<HttpResponse> {
     @Override
     public HttpResponse mapStatementCreated(Statement sessionCreated) {
         return HttpResponse.created(sessionCreated);

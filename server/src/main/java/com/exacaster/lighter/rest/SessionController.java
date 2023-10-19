@@ -103,7 +103,7 @@ public class SessionController {
             @ApiResponse(responseCode = "404", description = "Session not found")
     })
     public HttpResponse postStatements(@PathVariable String id, @Valid @Body Statement statement) {
-        MicronautStatementCreationResultToResponseMapper resultToResponseMapper = new MicronautStatementCreationResultToResponseMapper();
+        StatementCreationResultToApiResponseMapper resultToResponseMapper = new StatementCreationResultToApiResponseMapper();
         return sessionService.createStatement(id, statement).map(resultToResponseMapper);
     }
 
