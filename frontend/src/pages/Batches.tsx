@@ -16,7 +16,7 @@ const Batches: React.FC = () => {
   const {from, status} = useQueryString();
   const fromInt = Number(from) || 0;
   const {data, isLoading} = useBatches(pageSize, fromInt, status as string);
-  const {mutate: doDelete, isLoading: isDeleting} = useBatchDelete();
+  const {mutate: doDelete, isPending: isDeleting} = useBatchDelete();
 
   if (isLoading || isDeleting) {
     return <Spinner />;

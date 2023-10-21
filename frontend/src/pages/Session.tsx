@@ -14,7 +14,7 @@ const Session: React.FC = () => {
   const {data: logs} = useSessionLog(id!);
   const {data: session} = useSession(id!);
 
-  const {mutateAsync: doDelete, isLoading: isDeleting} = useSessionDelete();
+  const {mutateAsync: doDelete, isPending: isDeleting} = useSessionDelete();
   const navigate = useNavigate();
 
   const onDelete = () => {

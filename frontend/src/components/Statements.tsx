@@ -1,6 +1,6 @@
 import {Application} from '../client/types';
 import {useStatements} from '../hooks/session';
-import {Spinner, useColorMode, VStack} from '@chakra-ui/react';
+import {Card, CardBody, Spinner, useColorMode, VStack} from '@chakra-ui/react';
 import {a11yLight, a11yDark} from 'react-code-blocks';
 import Statement from './statement/Statement';
 import React from 'react';
@@ -18,15 +18,15 @@ const Statements: React.FC<StatementsProps> = ({session}) => {
   if (isLoading) {
     return <Spinner />;
   }
-  if (!page?.statements.length) {
-    return <div>Session has no statements</div>;
-  }
 
   return (
     <VStack align="stretch" spacing={2}>
-      {page.statements.toReversed().map((statement) => (
-        <Statement key={statement.id} sessionId={session.id} statement={statement} theme={theme} />
-      ))}
+      {!page?.statements.length && (
+        <Card>
+          <CardBody>Session has no statements</CardBody>
+        </Card>
+      )}
+      {page?.statements.toReversed().map((statement) => <Statement key={statement.id} sessionId={session.id} statement={statement} theme={theme} />)}
       <StatementForm session={session} />
     </VStack>
   );

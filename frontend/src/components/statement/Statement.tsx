@@ -7,7 +7,7 @@ import {CodeBlock} from 'react-code-blocks';
 import StatementOutput from './StatementOutput';
 
 const Statement: React.FC<{sessionId: string; statement: SessionStatement; theme: any}> = ({sessionId, statement, theme}) => {
-  const {mutate: cancel, isLoading: isCanceling} = useSessionStatementCancel(sessionId, statement.id);
+  const {mutate: cancel, isPending: isCanceling} = useSessionStatementCancel(sessionId, statement.id);
 
   const statusIcon = useMemo(() => {
     switch (statement.state) {
