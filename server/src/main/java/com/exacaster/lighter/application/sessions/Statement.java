@@ -3,6 +3,8 @@ package com.exacaster.lighter.application.sessions;
 import com.exacaster.lighter.application.sessions.processors.Output;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
+
+import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
@@ -26,6 +28,7 @@ public class Statement {
         return id;
     }
 
+    @NotNull
     public String getCode() {
         return code;
     }

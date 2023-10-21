@@ -2,6 +2,7 @@ package com.exacaster.lighter.application.sessions
 
 import com.exacaster.lighter.application.ApplicationInfo
 import com.exacaster.lighter.application.ApplicationState
+import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.storage.ApplicationStorage
@@ -29,7 +30,7 @@ class CreateStatementTest extends Specification {
         def result = service.createStatement("sessionId", params)
 
         then: "returns no session found"
-        result instanceof StatementCreationResult.NoSessionExists
+        result.isEmpty()
     }
 
     @Unroll
@@ -45,11 +46,11 @@ class CreateStatementTest extends Specification {
         backend.getInfo(session) >>  Optional.of( new ApplicationInfo(liveState, session.id))
 
         when: "creating statement"
-        def result = service.createStatement(session.id, params)
+        service.createStatement(session.id, params)
 
         then: "returns session in invalid state"
-        result instanceof StatementCreationResult.SessionInInvalidState
-        ((StatementCreationResult.SessionInInvalidState)result).getInvalidState() == liveState
+        def exception = thrown InvalidSessionStateException
+        exception.sessionState == liveState
 
         where:
         savedState | liveState
@@ -81,8 +82,7 @@ class CreateStatementTest extends Specification {
         def result = service.createStatement(session.id, statementToCreate)
 
         then: "returns statement created"
-        result instanceof StatementCreationResult.StatementCreated
-        ((StatementCreationResult.StatementCreated)result).getStatement() == statementCreated
+        result.isPresent()
     }
 
 }

@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.SubmitParams;
+import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.storage.ApplicationStorage;
@@ -107,14 +108,14 @@ public class SessionService {
         applicationStorage.saveApplication(ApplicationBuilder.builder(app).setState(ApplicationState.KILLED).build());
     }
 
-    public StatementCreationResult createStatement(String id, Statement statement) {
+    public Optional<Statement> createStatement(String id, Statement statement) {
         return this.fetchOne(id, true).map(application -> {
             if (!application.getState().isComplete()) {
-                return new StatementCreationResult.StatementCreated(statementHandler.processStatement(application.getId(), statement));
+                return statementHandler.processStatement(application.getId(), statement);
             } else {
-                return new StatementCreationResult.SessionInInvalidState(application.getState());
+                throw new InvalidSessionStateException(application.getState());
             }
-        }).orElse(new StatementCreationResult.NoSessionExists());
+        });
     }
 
     public Statement getStatement(String id, String statementId) {

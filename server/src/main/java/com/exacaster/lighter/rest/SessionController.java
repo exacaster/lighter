@@ -5,14 +5,12 @@ import com.exacaster.lighter.application.ApplicationList;
 import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.SessionService;
 import com.exacaster.lighter.application.sessions.Statement;
-import com.exacaster.lighter.application.sessions.StatementCreationResultMapper;
 import com.exacaster.lighter.application.sessions.StatementList;
 import com.exacaster.lighter.log.LogService;
+import com.exacaster.lighter.rest.exceptions.ErrorResponse;
 import com.exacaster.lighter.rest.magic.SessionList;
 import com.exacaster.lighter.rest.magic.SparkMagicCompatibility;
-import com.exacaster.lighter.rest.mappers.StatementCreationResultToApiResponseMapper;
 import io.micronaut.core.annotation.Nullable;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -28,6 +26,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
 
 import javax.validation.Valid;
 import java.util.HashMap;
@@ -36,19 +36,18 @@ import java.util.Map;
 import java.util.Optional;
 
 @Validated
+@Tags(@Tag(name = "Sessions"))
 @Controller("/lighter/api/sessions")
 public class SessionController {
 
     private final SessionService sessionService;
     private final LogService logService;
     private final SparkMagicCompatibility magicCompatibility;
-    private final StatementCreationResultMapper<HttpResponse> statementCreationResultMapper;
 
     public SessionController(SessionService sessionService, LogService logService, SparkMagicCompatibility magicCompatibility) {
         this.sessionService = sessionService;
         this.logService = logService;
         this.magicCompatibility = magicCompatibility;
-        this.statementCreationResultMapper = new StatementCreationResultToApiResponseMapper();
     }
 
     @Get
@@ -63,7 +62,7 @@ public class SessionController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    public Application create(@Body SubmitParams session) {
+    public Application create(@Valid @Body SubmitParams session) {
         return sessionService.createSession(session);
     }
 
@@ -103,11 +102,11 @@ public class SessionController {
     @Post("/{id}/statements")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Statement created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Statement.class))}),
-            @ApiResponse(responseCode = "400", description = "Session in invalid state", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = StatementCreationResultToApiResponseMapper.InvalidSessionStateResponse.class))}),
-            @ApiResponse(responseCode = "404", description = "Session not found")
+            @ApiResponse(responseCode = "400", description = "Session in invalid state", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
+            @ApiResponse(responseCode = "404", description = "Session not found", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))})
     })
-    public HttpResponse postStatements(@PathVariable String id, @Valid @Body Statement statement) {
-        return sessionService.createStatement(id, statement).map(statementCreationResultMapper);
+    public Optional<Statement> postStatements(@PathVariable String id, @Valid @Body Statement statement) {
+        return sessionService.createStatement(id, statement);
     }
 
     @Get("/{id}/statements")
