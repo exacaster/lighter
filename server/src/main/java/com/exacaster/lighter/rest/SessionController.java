@@ -53,7 +53,7 @@ public class SessionController {
 
     @Get
     public Object get(@QueryValue(defaultValue = "0") Integer from,
-            @QueryValue(defaultValue = "100") Integer size, @Nullable @Header("X-Compatibility-Mode") String mode) {
+                      @QueryValue(defaultValue = "100") Integer size, @Nullable @Header("X-Compatibility-Mode") String mode) {
         var sessions = sessionService.fetch(from, size);
         return magicCompatibility.transformOrElse(mode,
                 () -> new SessionList(from, sessions.size(), sessions),
@@ -102,8 +102,8 @@ public class SessionController {
 
     @Post("/{id}/statements")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "Statement created", content = { @Content(mediaType ="application/json", schema = @Schema(implementation = Statement.class)) }),
-            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "201", description = "Statement created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Statement.class))}),
+            @ApiResponse(responseCode = "400", description = "Session in invalid state", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = StatementCreationResultToApiResponseMapper.InvalidSessionStateResponse.class))}),
             @ApiResponse(responseCode = "404", description = "Session not found")
     })
     public HttpResponse postStatements(@PathVariable String id, @Valid @Body Statement statement) {
