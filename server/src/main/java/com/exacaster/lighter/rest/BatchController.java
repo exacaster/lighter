@@ -17,9 +17,13 @@ import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.validation.Validated;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.tags.Tags;
+
 import java.util.Optional;
 import javax.validation.Valid;
 
+@Tags(@Tag(name = "Batches"))
 @Validated
 @Controller("/lighter/api/batches")
 public class BatchController {
