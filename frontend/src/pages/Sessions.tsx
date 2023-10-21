@@ -14,7 +14,7 @@ import {useSessionDelete, useSessions} from '../hooks/session';
 const Sessions: React.FC = () => {
   const from = Number(useQueryString().from) || 0;
   const {data, isLoading} = useSessions(pageSize, from);
-  const {mutate: doDelete, isLoading: isDeleting} = useSessionDelete();
+  const {mutate: doDelete, isPending: isDeleting} = useSessionDelete();
 
   if (isLoading || isDeleting) {
     return <Spinner />;

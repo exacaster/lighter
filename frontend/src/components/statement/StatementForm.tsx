@@ -7,10 +7,8 @@ interface StatementFormProps {
   session: Application;
 }
 
-const deadStates = ['SHUTTING_DOWN', 'ERROR', 'DEAD', 'KILLED'];
-
 const StatementForm: React.FC<StatementFormProps> = ({session}) => {
-  const {mutateAsync: submit, isLoading: isSubmitting} = useSessionStatementSubmit(session.id);
+  const {mutateAsync: submit, isPending: isSubmitting} = useSessionStatementSubmit(session.id);
   const handleSubmit = (event: React.FormEvent) => {
     // @ts-ignore
     const code = event.target.elements.code.value;
@@ -19,9 +17,7 @@ const StatementForm: React.FC<StatementFormProps> = ({session}) => {
     event.preventDefault();
   };
 
-  const isSessionDead = deadStates.includes(session.state);
-
-  if (isSessionDead) {
+  if (session.state !== 'idle') {
     return (
       <Card align="center">
         <CardBody>Session cannot accept new statements.</CardBody>

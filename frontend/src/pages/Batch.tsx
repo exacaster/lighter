@@ -12,7 +12,7 @@ const Batch: React.FC = () => {
   const {id} = useParams();
   const {data: logs} = useBatchLog(id!);
   const {data: batch} = useBatch(id!);
-  const {mutateAsync: doDelete, isLoading: isDeleting} = useBatchDelete();
+  const {mutateAsync: doDelete, isPending: isDeleting} = useBatchDelete();
   const navigate = useNavigate();
 
   const onDelete = () => {
