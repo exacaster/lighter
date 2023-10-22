@@ -18,6 +18,7 @@ public class YarnProperties {
         this.kerberos = kerberos;
     }
 
+    @Nullable
     @ConfigurationProperties("kerberos")
     public KerberosProperties getKerberos() {
         return kerberos;
@@ -30,6 +31,7 @@ public class YarnProperties {
                 .toString();
     }
 
+    @Requires(property="kerberos.principal")
     @ConfigurationProperties("kerberos")
     public static class KerberosProperties {
 
