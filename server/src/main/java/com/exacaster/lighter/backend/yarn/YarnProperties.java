@@ -31,7 +31,7 @@ public class YarnProperties {
                 .toString();
     }
 
-    @Requires(property="kerberos.principal")
+    @Requires(property="lighter.yarn.kerberos.principal")
     @ConfigurationProperties("kerberos")
     public static class KerberosProperties {
 
