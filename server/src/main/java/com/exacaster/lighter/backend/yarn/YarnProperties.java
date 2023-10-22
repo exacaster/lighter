@@ -4,7 +4,7 @@ import io.micronaut.context.annotation.ConfigurationInject;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @ConfigurationProperties("lighter.yarn")

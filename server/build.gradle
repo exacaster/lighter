@@ -1,8 +1,8 @@
 plugins {
     id "java"
     id "groovy"
-    id "io.micronaut.application" version "3.7.10"
-    id "com.github.ben-manes.versions" version "0.48.0"
+    id "io.micronaut.application" version "4.1.1"
+    id "com.github.ben-manes.versions" version "0.49.0"
 }
 
 group "org.exacaster.lighter"
@@ -13,11 +13,11 @@ repositories {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_11
+    sourceCompatibility = JavaVersion.VERSION_17
 }
 
 micronaut {
-    version = "3.10.1"
+    version = "4.1.5"
     runtime "netty"
 }
 mainClassName = "com.exacaster.lighter.Application"
@@ -25,22 +25,27 @@ mainClassName = "com.exacaster.lighter.Application"
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.5.0'
 def hadoopVersion = '3.3.3'
 def k8sClientVersion = '6.9.0'
-def shedlockVersion = '4.46.0'
+def shedlockVersion = '5.9.1'
+
 
 dependencies {
-    annotationProcessor "io.micronaut:micronaut-validation"
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
+    annotationProcessor "io.micronaut.validation:micronaut-validation-processor"
+    annotationProcessor "io.micronaut.data:micronaut-data-processor"
 
-    implementation "io.micronaut:micronaut-validation"
+    implementation "io.micronaut.validation:micronaut-validation"
+
     implementation "io.micronaut.flyway:micronaut-flyway"
     implementation "io.swagger.core.v3:swagger-annotations"
 
     implementation "io.micronaut.sql:micronaut-jdbc-hikari"
     implementation "io.micronaut.sql:micronaut-jdbi"
-    implementation "io.micronaut.data:micronaut-data-processor"
-    implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut.data:micronaut-data-jdbc"
 
-    implementation "org.apache.spark:spark-launcher_2.12:${sparkVersion}"
+    implementation "io.micronaut:micronaut-http-client"
+    implementation "io.micronaut:micronaut-jackson-databind"
+
+    implementation "org.apache.spark:spark-launcher_2.13:${sparkVersion}"
     implementation "io.fabric8:kubernetes-client:${k8sClientVersion}"
     implementation("org.apache.hadoop:hadoop-yarn-client:${hadoopVersion}") {
         exclude(group: "ch.qos.reload4j", module: "reload4j")
@@ -52,17 +57,21 @@ dependencies {
     }
     implementation 'net.sf.py4j:py4j:0.10.9.7'
 
-    implementation "net.javacrumbs.shedlock:shedlock-micronaut:${shedlockVersion}"
-    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-micronaut:${shedlockVersion}"
+    implementation "net.javacrumbs.shedlock:shedlock-micronaut4:${shedlockVersion}"
+    implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:${shedlockVersion}"
 
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-core"
     runtimeOnly "io.micronaut.micrometer:micronaut-micrometer-registry-prometheus"
     runtimeOnly "io.micronaut:micronaut-management"
 
+    runtimeOnly "org.yaml:snakeyaml"
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.postgresql:postgresql"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.0"
+    testRuntimeOnly "net.bytebuddy:byte-buddy:1.14.9"
+    testRuntimeOnly "org.objenesis:objenesis:3.3"
+
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"
     testImplementation "io.micronaut:micronaut-http-client"
