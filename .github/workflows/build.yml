@@ -9,6 +9,6 @@ on:
 
 jobs:
   build-frontend:
-    uses: {owner}/{repo}/.github/workflows/build-frontend.yml@{ref}
+    uses: exacaster/lighter/.github/workflows/build-frontend.yml@${{ github.ref_name }}
   build-java:
-    uses: {owner}/{repo}/.github/workflows/build-java.yml@{ref}
+    uses: exacaster/lighter/.github/workflows/build-java.yml@${{ github.ref_name }}
