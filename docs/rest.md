@@ -23,7 +23,7 @@ Request Exapmple:
   "numExecutors": 4,
   "executorCores": 2,
   "executorMemory": "2G",
-  "dirverCores": 2,
+  "driverCores": 2,
   "driverMemory": "1G",
   "args": ["arg1", "arg2"],
   "pyFiles": ["https://something/python_package.zip"],
