@@ -114,7 +114,7 @@ public class SessionHandler {
                 id -> new PermanentSessionParam(id, configurationPermanentSessions.get(id).getSubmitParams())
         );
 
-        //TODO he we will add checking if session in db is not marked as deleted
+        //TODO here we will add checking if session in db is not marked as deleted
         final var intersection = Sets.intersection(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream()
                 .map(id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams()));
 
