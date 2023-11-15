@@ -113,7 +113,7 @@ public class SessionService {
         return this.fetchOne(id).filter(application -> applicationType == application.getType());
     }
 
-    public void deleteOne(Application app) {
+    protected void deleteOne(Application app) {
         backend.kill(app);
         applicationStorage.deleteApplication(app.getId());
     }
