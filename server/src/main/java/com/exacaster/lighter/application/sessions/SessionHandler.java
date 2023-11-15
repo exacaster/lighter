@@ -110,7 +110,7 @@ public class SessionHandler {
         final var configurationPermanentSessions = appConfiguration.getSessionConfiguration().getPermanentSessions().stream().collect(
                 Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
 
-        final var newFromYaml = Sets.difference(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream().map(
+        final var fromYamlOnly = Sets.difference(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream().map(
                 id -> new PermanentSessionParam(id, configurationPermanentSessions.get(id).getSubmitParams())
         );
 
@@ -122,7 +122,7 @@ public class SessionHandler {
                 id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams())
         );
 
-        return Stream.concat(fromStorageOnly, Stream.concat(newFromYaml, intersection)).collect(Collectors.toList());
+        return Stream.concat(fromStorageOnly, Stream.concat(fromYamlOnly, intersection)).collect(Collectors.toList());
 
     }
 
