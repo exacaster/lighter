@@ -60,9 +60,6 @@ public class SessionHandler {
     public void keepPermanentSessions() throws InterruptedException {
         assertLocked();
         LOG.info("Start provisioning permanent sessions.");
-
-        getAllPermanentSessions();
-
         for (var sessionConf : appConfiguration.getSessionConfiguration().getPermanentSessions()) {
             var session = sessionService.fetchOne(sessionConf.getId());
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
