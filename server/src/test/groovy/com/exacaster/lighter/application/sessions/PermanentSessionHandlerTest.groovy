@@ -113,6 +113,37 @@ class PermanentSessionHandlerTest extends Specification {
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
 
+    def "on same permanent session in yaml and storage"() {
+        given:
+        def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
+        def unhealthySessionFromStorage = ApplicationBuilder.builder()
+                .setSubmitParams(configPermanentSession.submitParams)
+                .setState(ApplicationState.DEAD)
+                .setId(configPermanentSession.id)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .build()
+
+        def storageSubmitParams = configPermanentSession.submitParams.withNameAndFile("some name", "some file")
+
+        def expectedSession = ApplicationBuilder.builder(unhealthySessionFromStorage)
+                .setState(ApplicationState.STARTING)
+                .setSubmitParams(storageSubmitParams)
+                .build()
+
+        1 * service.fetchAllPermanentSessions() >> Map.of(unhealthySessionFromStorage.id, unhealthySessionFromStorage)
+        1 * service.fetchOne(unhealthySessionFromStorage.id) >> Optional.of(unhealthySessionFromStorage)
+        backend.getInfo(unhealthySessionFromStorage) >> Optional.of(new ApplicationInfo(unhealthySessionFromStorage.state, unhealthySessionFromStorage.id))
+
+        when:
+        handler.keepPermanentSessions2()
+
+        then: "creates a new permanent session with submit params from storage"
+        1 * service.createPermanentSession(unhealthySessionFromStorage.id, unhealthySessionFromStorage.submitParams) >> expectedSession
+        1 * service.deleteOne(expectedSession)
+        1 * tracker.processApplicationStarting(expectedSession)
+        1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
+    }
+
 
     def setup() {
         LockAssert.TestHelper.makeAllAssertsPass(true)
