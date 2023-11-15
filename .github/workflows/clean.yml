@@ -25,7 +25,6 @@ jobs:
             LOWER_BRANCH=${{ github.event.pull_request.head.ref }}
             SLUG_BRANCH=$(echo "$LOWER_BRANCH" | sed -e 's/[^a-zA-Z0-9]/-/g' -e 's/--/-/g')
             echo "BASE_REF=$SLUG_BRANCH" >> $GITHUB_ENV
-          fi
       - name: Delete tag on PR close or merge
         if: github.event_name == 'pull_request' && github.event.action == 'closed'
         env:
