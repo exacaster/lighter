@@ -159,4 +159,11 @@ public class SessionService {
         return applicationStorage.findApplicationsByType(ApplicationType.PERMANENT_SESSION, SortOrder.ASC, 0, Integer.MAX_VALUE).stream()
                 .collect(Collectors.toMap(application -> application.getId(), Function.identity()));
     }
+
+    public void deletePermanentSession(String id) {
+        this.fetchOne(id).ifPresent(app -> {
+            backend.kill(app);
+            //TODO what to do to DB ?
+        });
+    }
 }

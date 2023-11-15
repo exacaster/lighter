@@ -185,6 +185,7 @@ public class SessionHandler {
         if (timeoutInterval != null && !timeoutInterval.isZero()) {
             sessionService.fetchRunning()
                     .stream()
+                    //TODO here we can delete is as we would only care about PERMANENT_SESSION
                     .filter(s -> isNotPermanent(sessionConfiguration, s))
                     .filter(s -> sessionConfiguration.shouldTimeoutActive() || !sessionService.isActive(s))
                     .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minus(timeoutInterval)))
