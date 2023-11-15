@@ -1,7 +1,5 @@
 package com.exacaster.lighter.storage.jdbc;
 
-import static org.slf4j.LoggerFactory.getLogger;
-
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
@@ -13,17 +11,20 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
+import org.jdbi.v3.core.Jdbi;
+import org.jdbi.v3.core.mapper.RowMapper;
+import org.jdbi.v3.core.statement.StatementContext;
+import org.slf4j.Logger;
+
+import javax.sql.DataSource;
+import javax.transaction.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import javax.sql.DataSource;
-import javax.transaction.Transactional;
-import org.jdbi.v3.core.Jdbi;
-import org.jdbi.v3.core.mapper.RowMapper;
-import org.jdbi.v3.core.statement.StatementContext;
-import org.slf4j.Logger;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 @Requires(beans = DataSource.class)
@@ -123,6 +124,19 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                         + order.name() + " LIMIT :limit OFFSET :offset")
                 .bind("type", type.name())
                 .bindList("states", states.stream().map(ApplicationState::name).collect(Collectors.toList()))
+                .bind("limit", size)
+                .bind("offset", from)
+                .map(this)
+                .list()
+        );
+    }
+
+    @Override
+    public List<Application> findApplicationsByType(ApplicationType applicationType, SortOrder order,Integer from, Integer size) {
+        return jdbi.withHandle(handle -> handle
+                .createQuery("SELECT * FROM application WHERE type=:type ORDER BY created_at "
+                        + order.name() + " LIMIT :limit OFFSET :offset")
+                .bind("type", applicationType.name())
                 .bind("limit", size)
                 .bind("offset", from)
                 .map(this)

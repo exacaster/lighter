@@ -1,9 +1,5 @@
 package com.exacaster.lighter.application.sessions;
 
-import static java.util.Optional.ofNullable;
-import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
-import static org.slf4j.LoggerFactory.getLogger;
-
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
@@ -15,12 +11,17 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
+import net.javacrumbs.shedlock.micronaut.SchedulerLock;
+import org.slf4j.Logger;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
-import net.javacrumbs.shedlock.micronaut.SchedulerLock;
-import org.slf4j.Logger;
+
+import static java.util.Optional.ofNullable;
+import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
+import static org.slf4j.LoggerFactory.getLogger;
 
 @Singleton
 public class SessionHandler {
@@ -55,14 +56,17 @@ public class SessionHandler {
     public void keepPermanentSessions() throws InterruptedException {
         assertLocked();
         LOG.info("Start provisioning permanent sessions.");
+
+        getAllPermanentSessions();
+
         for (var sessionConf : appConfiguration.getSessionConfiguration().getPermanentSessions()) {
             var session = sessionService.fetchOne(sessionConf.getId());
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
                 LOG.info("Permanent session {} needs to be (re)started.", sessionConf.getId());
-                var sessionToLaunch = sessionService.createSession(
-                        sessionConf.getSubmitParams(),
-                        sessionConf.getId()
+                var sessionToLaunch = sessionService.createPermanentSession(
+                        sessionConf.getId(),
+                        sessionConf.getSubmitParams()
                 );
 
                 sessionService.deleteOne(sessionToLaunch);
@@ -71,6 +75,16 @@ public class SessionHandler {
             }
         }
         LOG.info("End provisioning permanent sessions.");
+    }
+
+    private void getAllPermanentSessions() {
+        sessionService.fetchNotDeletedPermanentSessions( SortOrder.ASC, 10).stream()
+                .map(application -> new AppConfiguration.PermanentSession(application.getId(), application.getSubmitParams()));
+
+        appConfiguration.getSessionConfiguration().getPermanentSessions();
+
+
+
     }
 
     @SchedulerLock(name = "processScheduledSessions")

@@ -49,6 +49,15 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
+    List<Application> findApplicationsByType(ApplicationType applicationType, SortOrder order, Integer offset, Integer limit) {
+        return findMany({ type == it.getType() }, Application.class)
+                .sorted((app1, app2) -> order == SortOrder.DESC ? app1.createdAt <=> app2.createdAt : app2.createdAt <=> app1.createdAt)
+                .skip(offset)
+                .limit(limit)
+                .collect(Collectors.toList())
+    }
+
+    @Override
     Optional<Log> findApplicationLog(String internalApplicationId) {
         return findEntity(internalApplicationId, Log.class)
     }

@@ -31,23 +31,28 @@ public class SessionService {
     private final StatementHandler statementHandler;
 
     public SessionService(ApplicationStorage applicationStorage,
-            StatementStorage statementStorage, Backend backend,
-            StatementHandler statementHandler) {
+                          StatementStorage statementStorage, Backend backend,
+                          StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
         this.statementHandler = statementHandler;
     }
 
+    //TODO tu bierzemy pod uwagę sesje i perm sesje
     public List<Application> fetch(Integer from, Integer size) {
         return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
     }
 
     public Application createSession(SubmitParams params) {
-        return createSession(params, UUID.randomUUID().toString());
+        return createSession(params, UUID.randomUUID().toString(), ApplicationType.SESSION);
     }
 
-    public Application createSession(SubmitParams params, String sessionId) {
+    public Application createPermanentSession(String sessionId, SubmitParams params) {
+        return createSession(params, sessionId, ApplicationType.PERMANENT_SESSION);
+    }
+
+    public Application createSession(SubmitParams params, String sessionId, ApplicationType applicationType) {
         var name = ofNullable(params.getName())
                 .orElseGet(() -> "session_" + UUID.randomUUID());
         var submitParams = params
@@ -55,7 +60,7 @@ public class SessionService {
         var now = LocalDateTime.now();
         var entity = ApplicationBuilder.builder()
                 .setId(sessionId)
-                .setType(ApplicationType.SESSION)
+                .setType(applicationType)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
                 .setCreatedAt(now)
@@ -70,6 +75,10 @@ public class SessionService {
     }
 
     public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer limit) {
+        return applicationStorage.findApplicationsByStates(ApplicationType.SESSION, List.of(state), order, 0, limit);
+    }
+
+    public List<Application> fetch(ApplicationState state, SortOrder order, Integer limit) {
         return applicationStorage.findApplicationsByStates(ApplicationType.SESSION, List.of(state), order, 0, limit);
     }
 
@@ -142,5 +151,9 @@ public class SessionService {
 
     public boolean isActive(Application application) {
         return statementHandler.hasWaitingStatement(application);
+    }
+
+    public List<Application> fetchNotDeletedPermanentSessions(SortOrder order, int limit) {
+        return applicationStorage.findApplicationsByType(ApplicationType.PERMANENT_SESSION, order, 0, limit);
     }
 }

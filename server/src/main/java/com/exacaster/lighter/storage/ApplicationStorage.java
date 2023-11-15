@@ -18,4 +18,7 @@ public interface ApplicationStorage {
 
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order,
             Integer from, Integer size);
+
+    List<Application> findApplicationsByType(ApplicationType applicationType, SortOrder order, Integer from,
+            Integer size);
 }
