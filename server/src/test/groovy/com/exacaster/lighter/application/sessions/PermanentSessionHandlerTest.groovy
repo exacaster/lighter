@@ -2,6 +2,7 @@ package com.exacaster.lighter.application.sessions
 
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
+import com.exacaster.lighter.application.ApplicationInfo
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.application.ApplicationType
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
@@ -32,39 +33,59 @@ class PermanentSessionHandlerTest extends Specification {
     @Subject
     SessionHandler handler = Spy(new SessionHandler(service, backend, statementHandler, tracker, conf))
 
-    def "keeps permanent session"() {
+    def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
+
+    def "creates a brand new perm session from yaml"() {
         given:
         def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
-        def permanentSession = ApplicationBuilder.builder(app())
+        def expectedSession = ApplicationBuilder.builder(app())
+                .setSubmitParams(configPermanentSession.submitParams)
+                .setState(ApplicationState.STARTING)
+                .setId(configPermanentSession.id)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .build()
+        1 * service.fetchAllPermanentSessions() >> Collections.emptyMap()
+        1 * service.fetchOne(configPermanentSession.id) >> Optional.empty()
+        backend.getInfo(*_) >> Optional.empty()
+
+        when:
+        handler.keepPermanentSessions2()
+
+        then: "creates a new permanent session"
+        1 * service.createPermanentSession(configPermanentSession.id, configPermanentSession.submitParams) >> expectedSession
+        1 * service.deleteOne(expectedSession)
+        1 * tracker.processApplicationStarting(expectedSession)
+        1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
+    }
+
+
+    def "recreates a new session when unhealthy"() {
+        given:
+        def unhealthySession = ApplicationBuilder.builder(app())
+                .setSubmitParams(configPermanentSession.submitParams)
+                .setState(ApplicationState.ERROR)
+                .setId(configPermanentSession.id)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .build()
+        1 * service.fetchAllPermanentSessions() >> Map.of(unhealthySession.id, unhealthySession)
+        1 * service.fetchOne(unhealthySession.id) >> Optional.of(unhealthySession)
+        backend.getInfo(unhealthySession) >> Optional.of(new ApplicationInfo(unhealthySession.state, unhealthySession.id))
+
+        def expectedSession = ApplicationBuilder.builder(app())
                 .setSubmitParams(configPermanentSession.submitParams)
                 .setState(ApplicationState.STARTING)
                 .setId(configPermanentSession.id)
                 .setType(ApplicationType.PERMANENT_SESSION)
                 .build()
 
-        when: "new perm session from config"
-        1 * service.fetchAllPermanentSessions() >> Collections.emptyMap()
-        1 * service.fetchOne(configPermanentSession.id) >> Optional.empty()
+        when:
         handler.keepPermanentSessions2()
 
         then: "creates a new permanent session"
-        1 * service.createPermanentSession(configPermanentSession.id, configPermanentSession.submitParams) >> permanentSession
-        1 * service.deleteOne(permanentSession)
-        1 * tracker.processApplicationStarting(permanentSession)
-        1 * handler.launch(permanentSession, _) >> EmptyWaitable.INSTANCE
-
-
-//        when: "exists unhealthy permanent session"
-//        permanentSession = ApplicationBuilder.builder(permanentSession)
-//                .setState(ApplicationState.ERROR)
-//                .build()
-//        1 * service.fetchOne(configPermanentSession.id) >> Optional.of(permanentSession)
-//        handler.keepPermanentSessions()
-//
-//        then: "restart permanent session"
-//        1 * service.deleteOne({ it -> it.getId() == configPermanentSession.getId() })
-//        1 * service.createSession(configPermanentSession.submitParams, configPermanentSession.id) >> permanentSession
-//        1 * handler.launch(permanentSession, _) >> EmptyWaitable.INSTANCE
+        1 * service.createPermanentSession(unhealthySession.id, unhealthySession.submitParams) >> expectedSession
+        1 * service.deleteOne(expectedSession)
+        1 * tracker.processApplicationStarting(expectedSession)
+        1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
 
     def app() {

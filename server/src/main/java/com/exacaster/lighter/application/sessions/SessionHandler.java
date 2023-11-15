@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static java.util.Optional.ofNullable;
 import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
@@ -38,10 +39,10 @@ public class SessionHandler {
     private final AppConfiguration appConfiguration;
 
     public SessionHandler(SessionService sessionService,
-            Backend backend,
-            StatementHandler statementStatusChecker,
-            ApplicationStatusHandler statusTracker,
-            AppConfiguration appConfiguration) {
+                          Backend backend,
+                          StatementHandler statementStatusChecker,
+                          ApplicationStatusHandler statusTracker,
+                          AppConfiguration appConfiguration) {
         this.sessionService = sessionService;
         this.backend = backend;
         this.statementStatusChecker = statementStatusChecker;
@@ -112,15 +113,18 @@ public class SessionHandler {
         final var configurationPermanentSessions = appConfiguration.getSessionConfiguration().getPermanentSessions().stream().collect(
                 Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
 
-        final var difference = Sets.difference(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream().map(
+        final var newFromYaml = Sets.difference(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream().map(
                 id -> new PermanentSessionParam(id, configurationPermanentSessions.get(id).getSubmitParams())
-        ).collect(Collectors.toList());
+        );
 
-        return difference;
+        final var intersection = Sets.intersection(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream()
+                .map(id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams()));
+
+        return Stream.concat(newFromYaml, intersection).collect(Collectors.toList());
 
     }
 
-    private static class PermanentSessionParam{
+    private static class PermanentSessionParam {
         private final String sessionId;
         private final SubmitParams submitParams;
 
