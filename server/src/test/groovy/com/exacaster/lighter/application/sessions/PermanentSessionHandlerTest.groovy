@@ -1,10 +1,6 @@
 package com.exacaster.lighter.application.sessions
 
-import com.exacaster.lighter.application.ApplicationBuilder
-import com.exacaster.lighter.application.ApplicationState
-import com.exacaster.lighter.application.ApplicationInfo
-import com.exacaster.lighter.application.ApplicationStatusHandler
-import com.exacaster.lighter.application.ApplicationType
+import com.exacaster.lighter.application.*
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.concurrency.EmptyWaitable
@@ -13,10 +9,7 @@ import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
 
-import java.time.LocalDateTime
-
 import static com.exacaster.lighter.test.Factories.appConfiguration
-import static com.exacaster.lighter.test.Factories.newSession
 
 class PermanentSessionHandlerTest extends Specification {
 
@@ -38,7 +31,7 @@ class PermanentSessionHandlerTest extends Specification {
     def "creates a brand new perm session from yaml"() {
         given:
         def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
-        def expectedSession = ApplicationBuilder.builder(app())
+        def expectedSession = ApplicationBuilder.builder()
                 .setSubmitParams(configPermanentSession.submitParams)
                 .setState(ApplicationState.STARTING)
                 .setId(configPermanentSession.id)
@@ -61,7 +54,7 @@ class PermanentSessionHandlerTest extends Specification {
 
     def "recreates a new session when unhealthy"() {
         given:
-        def unhealthySession = ApplicationBuilder.builder(app())
+        def unhealthySession = ApplicationBuilder.builder()
                 .setSubmitParams(configPermanentSession.submitParams)
                 .setState(ApplicationState.ERROR)
                 .setId(configPermanentSession.id)
@@ -88,13 +81,13 @@ class PermanentSessionHandlerTest extends Specification {
     def "recreates unhealthy perm session from storage"() {
         given:
         def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
-        def healthySessionFromYaml = ApplicationBuilder.builder(app())
+        def healthySessionFromYaml = ApplicationBuilder.builder()
                 .setSubmitParams(configPermanentSession.submitParams)
                 .setState(ApplicationState.STARTING)
                 .setId(configPermanentSession.id)
                 .setType(ApplicationType.PERMANENT_SESSION)
                 .build()
-        def unhealthySessionFromStorage = ApplicationBuilder.builder(app())
+        def unhealthySessionFromStorage = ApplicationBuilder.builder()
                 .setSubmitParams(configPermanentSession.submitParams)
                 .setState(ApplicationState.DEAD)
                 .setId("storageSessionId")
@@ -120,13 +113,6 @@ class PermanentSessionHandlerTest extends Specification {
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
 
-
-    def app() {
-        ApplicationBuilder.builder(newSession())
-                .setId("1")
-                .setContactedAt(LocalDateTime.now())
-                .build()
-    }
 
     def setup() {
         LockAssert.TestHelper.makeAllAssertsPass(true)
