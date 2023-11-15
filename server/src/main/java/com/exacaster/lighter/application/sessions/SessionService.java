@@ -15,8 +15,10 @@ import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
@@ -153,7 +155,8 @@ public class SessionService {
         return statementHandler.hasWaitingStatement(application);
     }
 
-    public List<Application> fetchNotDeletedPermanentSessions(SortOrder order, int limit) {
-        return applicationStorage.findApplicationsByType(ApplicationType.PERMANENT_SESSION, order, 0, limit);
+    public Map<String,Application> fetchAllPermanentSessions() {
+        return applicationStorage.findApplicationsByType(ApplicationType.PERMANENT_SESSION, SortOrder.ASC, 0, Integer.MAX_VALUE).stream()
+                .collect(Collectors.toMap(application -> application.getId(), Function.identity()));
     }
 }

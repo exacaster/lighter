@@ -4,6 +4,7 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationInfo;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationStatusHandler;
+import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
@@ -12,11 +13,13 @@ import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 import net.javacrumbs.shedlock.micronaut.SchedulerLock;
+import org.apache.hadoop.thirdparty.com.google.common.collect.Sets;
 import org.slf4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static java.util.Optional.ofNullable;
@@ -77,14 +80,62 @@ public class SessionHandler {
         LOG.info("End provisioning permanent sessions.");
     }
 
-    private void getAllPermanentSessions() {
-        sessionService.fetchNotDeletedPermanentSessions( SortOrder.ASC, 10).stream()
-                .map(application -> new AppConfiguration.PermanentSession(application.getId(), application.getSubmitParams()));
+    @SchedulerLock(name = "keepPermanentSession", lockAtLeastFor = "1m")
+    @Scheduled(fixedRate = "1m")
+    public void keepPermanentSessions2() throws InterruptedException {
+        assertLocked();
+        LOG.info("Start provisioning permanent sessions.");
 
-        appConfiguration.getSessionConfiguration().getPermanentSessions();
+        final var allPermanentSessions = getAllPermanentSessions();
 
+        for (var perm : allPermanentSessions) {
+            var session = sessionService.fetchOne(perm.getSessionId());
+            if (session.map(Application::getState).filter(this::running).isEmpty() ||
+                    session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
+                LOG.info("Permanent session {} needs to be (re)started.", perm.getSessionId());
+                var sessionToLaunch = sessionService.createPermanentSession(
+                        perm.getSessionId(),
+                        perm.getSubmitParams()
+                );
 
+                sessionService.deleteOne(sessionToLaunch);
+                launchSession(sessionToLaunch).waitCompletion();
+                LOG.info("Permanent session {} (re)started.", perm.getSessionId());
+            }
+        }
+        LOG.info("End provisioning permanent sessions.");
+    }
 
+    private List<PermanentSessionParam> getAllPermanentSessions() {
+        final var dbPermanentSessions = sessionService.fetchAllPermanentSessions();
+
+        final var configurationPermanentSessions = appConfiguration.getSessionConfiguration().getPermanentSessions().stream().collect(
+                Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
+
+        final var difference = Sets.difference(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream().map(
+                id -> new PermanentSessionParam(id, configurationPermanentSessions.get(id).getSubmitParams())
+        ).collect(Collectors.toList());
+
+        return difference;
+
+    }
+
+    private static class PermanentSessionParam{
+        private final String sessionId;
+        private final SubmitParams submitParams;
+
+        public PermanentSessionParam(String sessionId, SubmitParams submitParams) {
+            this.sessionId = sessionId;
+            this.submitParams = submitParams;
+        }
+
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public SubmitParams getSubmitParams() {
+            return submitParams;
+        }
     }
 
     @SchedulerLock(name = "processScheduledSessions")
