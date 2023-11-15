@@ -106,7 +106,7 @@ public class SessionService {
     }
 
     public void deleteOne(String id) {
-        this.fetchOne(id).ifPresent(this::deleteOne);
+        this.fetchOne(id).filter( application -> ApplicationType.SESSION == application.getType()).ifPresent(this::deleteOne);
     }
 
     public void deleteOne(Application app) {
