@@ -71,11 +71,8 @@ class PermanentSessionHandlerTest extends Specification {
         1 * service.fetchOne(unhealthySession.id) >> Optional.of(unhealthySession)
         backend.getInfo(unhealthySession) >> Optional.of(new ApplicationInfo(unhealthySession.state, unhealthySession.id))
 
-        def expectedSession = ApplicationBuilder.builder(app())
-                .setSubmitParams(configPermanentSession.submitParams)
+        def expectedSession = ApplicationBuilder.builder(unhealthySession)
                 .setState(ApplicationState.STARTING)
-                .setId(configPermanentSession.id)
-                .setType(ApplicationType.PERMANENT_SESSION)
                 .build()
 
         when:
@@ -104,11 +101,8 @@ class PermanentSessionHandlerTest extends Specification {
                 .setType(ApplicationType.PERMANENT_SESSION)
                 .build()
 
-        def expectedSession = ApplicationBuilder.builder(app())
-                .setSubmitParams(unhealthySessionFromStorage.submitParams)
+        def expectedSession = ApplicationBuilder.builder(unhealthySessionFromStorage)
                 .setState(ApplicationState.STARTING)
-                .setId(unhealthySessionFromStorage.id)
-                .setType(ApplicationType.PERMANENT_SESSION)
                 .build()
 
         1 * service.fetchAllPermanentSessions() >> Map.of(healthySessionFromYaml.id, healthySessionFromYaml, unhealthySessionFromStorage.id, unhealthySessionFromStorage)
