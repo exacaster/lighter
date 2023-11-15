@@ -58,7 +58,7 @@ public class SessionService {
         return createSession(params, sessionId, ApplicationType.SESSION);
     }
 
-    public Application createSession(SubmitParams params, String sessionId, ApplicationType applicationType) {
+    private Application createSession(SubmitParams params, String sessionId, ApplicationType applicationType) {
         var name = ofNullable(params.getName())
                 .orElseGet(() -> "session_" + UUID.randomUUID());
         var submitParams = params
