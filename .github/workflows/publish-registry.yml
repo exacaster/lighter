@@ -44,13 +44,3 @@ jobs:
             SPARK_VERSION=${{ matrix.spark_version }}
             HADOOP_VERSION=${{ matrix.hadoop_version }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.BASE_REF }}-spark${{ matrix.spark_version }}
-      - name: Delete tag on PR close or merge
-        if: github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true
-        env:
-          TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IMAGE_NAME: ${{ github.repository }}
-          BASE_REF: ${{ env.BASE_REF }}
-        run: |
-          TAG_TO_DELETE=${IMAGE_NAME}:${BASE_REF}-spark${{ matrix.spark_version }}
-          TOKEN=$(echo "${TOKEN}" | awk '{print substr($0, 12)}')
-          curl -X DELETE -H "Authorization: token ${TOKEN}" -H "Accept: application/vnd.github.v3+json" "https://ghcr.io/v2/${IMAGE_NAME}/manifests/${TAG_TO_DELETE}"
