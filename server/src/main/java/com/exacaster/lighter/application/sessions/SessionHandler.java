@@ -120,7 +120,11 @@ public class SessionHandler {
         final var intersection = Sets.intersection(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream()
                 .map(id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams()));
 
-        return Stream.concat(newFromYaml, intersection).collect(Collectors.toList());
+        final var fromStorageOnly = Sets.difference(dbPermanentSessions.keySet(), configurationPermanentSessions.keySet()).stream().map(
+                id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams())
+        );
+
+        return Stream.concat(fromStorageOnly, Stream.concat(newFromYaml, intersection)).collect(Collectors.toList());
 
     }
 

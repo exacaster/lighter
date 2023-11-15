@@ -88,6 +88,45 @@ class PermanentSessionHandlerTest extends Specification {
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
 
+    def "recreates unhealthy perm session from storage"() {
+        given:
+        def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
+        def healthySessionFromYaml = ApplicationBuilder.builder(app())
+                .setSubmitParams(configPermanentSession.submitParams)
+                .setState(ApplicationState.STARTING)
+                .setId(configPermanentSession.id)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .build()
+        def unhealthySessionFromStorage = ApplicationBuilder.builder(app())
+                .setSubmitParams(configPermanentSession.submitParams)
+                .setState(ApplicationState.DEAD)
+                .setId("storageSessionId")
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .build()
+
+        def expectedSession = ApplicationBuilder.builder(app())
+                .setSubmitParams(unhealthySessionFromStorage.submitParams)
+                .setState(ApplicationState.STARTING)
+                .setId(unhealthySessionFromStorage.id)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .build()
+
+        1 * service.fetchAllPermanentSessions() >> Map.of(healthySessionFromYaml.id, healthySessionFromYaml, unhealthySessionFromStorage.id, unhealthySessionFromStorage)
+        1 * service.fetchOne(configPermanentSession.id) >> Optional.of(healthySessionFromYaml)
+        1 * service.fetchOne(unhealthySessionFromStorage.id) >> Optional.of(unhealthySessionFromStorage)
+        backend.getInfo(healthySessionFromYaml) >> Optional.of(new ApplicationInfo(healthySessionFromYaml.state, healthySessionFromYaml.id))
+
+        when:
+        handler.keepPermanentSessions2()
+
+        then: "creates a new permanent session"
+        1 * service.createPermanentSession(unhealthySessionFromStorage.id, unhealthySessionFromStorage.submitParams) >> expectedSession
+        1 * service.deleteOne(expectedSession)
+        1 * tracker.processApplicationStarting(expectedSession)
+        1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
+    }
+
+
     def app() {
         ApplicationBuilder.builder(newSession())
                 .setId("1")
