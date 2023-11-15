@@ -144,8 +144,8 @@ def main():
     log.info("Starting session loop")
     try:
         while True:
-            setup_output()
             for command in controller.read():
+                setup_output()
                 log.debug(f"Processing command {command}")
                 result = handler.exec(command)
                 controller.write(command["id"], result)
