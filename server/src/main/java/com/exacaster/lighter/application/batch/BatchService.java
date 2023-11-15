@@ -4,15 +4,16 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
-import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.application.SubmitParams;
+import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
+import jakarta.inject.Singleton;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import jakarta.inject.Singleton;
 
 @Singleton
 public class BatchService {
@@ -58,7 +59,7 @@ public class BatchService {
     }
 
     public void deleteOne(String id) {
-        this.fetchOne(id).ifPresent(app -> {
+        this.fetchOne(id).filter(application -> ApplicationType.BATCH == application.getType()).ifPresent(app -> {
             backend.kill(app);
             applicationStorage.deleteApplication(id);
         });
