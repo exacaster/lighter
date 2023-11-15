@@ -30,14 +30,13 @@ public class PermanentSessionController {
     @Put("/{id}")
     @Status(HttpStatus.CREATED)
     public Application create(@PathVariable String id, @Valid @Body SubmitParams params) {
-
         return sessionService.createPermanentSession(id, params);
     }
 
 
     @Delete("/{id}")
     public void delete(@PathVariable String id) {
-        sessionService.deleteOne(id);
+        //TODO to implement
     }
 
 
