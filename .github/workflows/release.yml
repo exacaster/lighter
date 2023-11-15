@@ -6,9 +6,9 @@ on:
 
 jobs:
   build-frontend:
-    uses: exacaster/lighter/.github/workflows/build-frontend.yml@master
+    uses: ./.github/workflows/build-frontend.yml
   build-java:
-    uses: exacaster/lighter/.github/workflows/build-java.yml@master
+    uses: ./.github/workflows/build-java.yml
   publish-registry:
-    uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
+    uses: ./.github/workflows/publish-registry.yml
     needs: [ build-frontend, build-java ]
