@@ -106,7 +106,11 @@ public class SessionService {
     }
 
     public void deleteOne(String id) {
-        this.fetchOne(id).filter( application -> ApplicationType.SESSION == application.getType()).ifPresent(this::deleteOne);
+        fetchByType(id, ApplicationType.SESSION).ifPresent(this::deleteOne);
+    }
+
+    private Optional<Application> fetchByType(String id, ApplicationType applicationType) {
+        return this.fetchOne(id).filter(application -> applicationType == application.getType());
     }
 
     public void deleteOne(Application app) {
@@ -161,7 +165,7 @@ public class SessionService {
     }
 
     public void deletePermanentSession(String id) {
-        this.fetchOne(id).ifPresent(app -> {
+        this.fetchByType(id, ApplicationType.PERMANENT_SESSION).ifPresent(app -> {
             backend.kill(app);
             //TODO what to do to DB ?
         });
