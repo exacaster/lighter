@@ -91,6 +91,7 @@ class CommandHandler:
     def _error_response(self, error):
         exc_type, exc_value, exc_tb = sys.exc_info()
         return {
+            "content": {"text/plain": str(sys.stdout.getvalue()).rstrip()},
             "error": type(error).__name__,
             "message": str(error),
             "traceback": traceback.format_exception(exc_type, exc_value, exc_tb),
@@ -144,8 +145,8 @@ def main():
     log.info("Starting session loop")
     try:
         while True:
-            setup_output()
             for command in controller.read():
+                setup_output()
                 log.debug(f"Processing command {command}")
                 result = handler.exec(command)
                 controller.write(command["id"], result)
