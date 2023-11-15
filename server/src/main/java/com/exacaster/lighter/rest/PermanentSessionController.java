@@ -36,7 +36,7 @@ public class PermanentSessionController {
 
     @Delete("/{id}")
     public void delete(@PathVariable String id) {
-        //TODO to implement
+        sessionService.deletePermanentSession(id);
     }
 
 
