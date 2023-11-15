@@ -84,7 +84,7 @@ public class SessionHandler {
         assertLocked();
         LOG.info("Start provisioning permanent sessions.");
 
-        final var allPermanentSessions = getAllPermanentSessions();
+        final var allPermanentSessions = getPermanentSessionToCheck();
 
         for (var perm : allPermanentSessions) {
             var session = sessionService.fetchOne(perm.getSessionId());
@@ -104,7 +104,7 @@ public class SessionHandler {
         LOG.info("End provisioning permanent sessions.");
     }
 
-    private List<PermanentSessionParam> getAllPermanentSessions() {
+    private List<PermanentSessionParam> getPermanentSessionToCheck() {
         final var dbPermanentSessions = sessionService.fetchAllPermanentSessions();
 
         final var configurationPermanentSessions = appConfiguration.getSessionConfiguration().getPermanentSessions().stream().collect(
