@@ -39,10 +39,10 @@ public class SessionHandler {
     private final AppConfiguration appConfiguration;
 
     public SessionHandler(SessionService sessionService,
-                          Backend backend,
-                          StatementHandler statementStatusChecker,
-                          ApplicationStatusHandler statusTracker,
-                          AppConfiguration appConfiguration) {
+            Backend backend,
+            StatementHandler statementStatusChecker,
+            ApplicationStatusHandler statusTracker,
+            AppConfiguration appConfiguration) {
         this.sessionService = sessionService;
         this.backend = backend;
         this.statementStatusChecker = statementStatusChecker;
@@ -65,9 +65,9 @@ public class SessionHandler {
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
                 LOG.info("Permanent session {} needs to be (re)started.", sessionConf.getId());
-                var sessionToLaunch = sessionService.createPermanentSession(
-                        sessionConf.getId(),
-                        sessionConf.getSubmitParams()
+                var sessionToLaunch = sessionService.createSession(
+                        sessionConf.getSubmitParams(),
+                        sessionConf.getId()
                 );
 
                 sessionService.deleteOne(sessionToLaunch);

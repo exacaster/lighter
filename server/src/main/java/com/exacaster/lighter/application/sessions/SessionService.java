@@ -33,8 +33,8 @@ public class SessionService {
     private final StatementHandler statementHandler;
 
     public SessionService(ApplicationStorage applicationStorage,
-                          StatementStorage statementStorage, Backend backend,
-                          StatementHandler statementHandler) {
+            StatementStorage statementStorage, Backend backend,
+            StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
@@ -52,6 +52,10 @@ public class SessionService {
 
     public Application createPermanentSession(String sessionId, SubmitParams params) {
         return createSession(params, sessionId, ApplicationType.PERMANENT_SESSION);
+    }
+
+    public Application createSession(SubmitParams params, String sessionId) {
+        return createSession(params, sessionId, ApplicationType.SESSION);
     }
 
     public Application createSession(SubmitParams params, String sessionId, ApplicationType applicationType) {
@@ -77,10 +81,6 @@ public class SessionService {
     }
 
     public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer limit) {
-        return applicationStorage.findApplicationsByStates(ApplicationType.SESSION, List.of(state), order, 0, limit);
-    }
-
-    public List<Application> fetch(ApplicationState state, SortOrder order, Integer limit) {
         return applicationStorage.findApplicationsByStates(ApplicationType.SESSION, List.of(state), order, 0, limit);
     }
 

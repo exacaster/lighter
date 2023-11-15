@@ -1,94 +1,67 @@
 lighter:
-  max-running-jobs: 5
-  max-starting-jobs: 5
-  spark-history-server-url: http://localhost/spark-history/
-  frontend-path: file:${FRONTEND_PATH:../frontend/build}
-  py-gateway-port: 25333
-  url: http://localhost:8080
-  session:
-    timeout-interval: 90m
-    timeout-active: false
-    permanent-sessions: [ ]
-    schedule-interval: 1m
-    track-running-interval: 2m
-    permanentSessions:
-      - id: "permanentId1"
-        submit-params:
-          conf:
-            "spark.hadoop.fs.s3a.access.key": "minioadmin"
-            "spark.hadoop.fs.s3a.secret.key": "minioadmin"
-            "spark.hadoop.fs.s3a.endpoint": "http://localhost:19000"
-            "spark.hadoop.fs.s3a.path.style.access": "true"
-            "spark.sql.catalog.cleyrop": "org.apache.iceberg.spark.SparkCatalog"
-            "spark.sql.catalog.cleyrop.uri": "http://localhost:19120/api/v1"
-            "spark.sql.catalog.cleyrop.ref": "main"
-            "spark.sql.catalog.cleyrop.cache-enabled": "false"
-            "spark.sql.catalog.cleyrop.catalog-impl": "org.apache.iceberg.nessie.NessieCatalog"
-            "spark.sql.catalog.cleyrop.io-impl": "org.apache.iceberg.aws.s3.S3FileIO"
-            "spark.sql.catalog.cleyrop.warehouse": "s3://dataflow-dataset"
-            "spark.sql.catalog.cleyrop.s3.endpoint": "http://localhost:19000"
-            "spark.sql.defaultCatalog": "cleyrop"
-            "spark.sql.execution.arrow.pyspark.enabled": "true"
-            "spark.locality.wait": "0"
-            "spark.eventLog.enabled": "false"
-            "spark.history.fs.cleaner.enabled": "true"
-            "spark.dynamicAllocation.enabled": "false"
-            "spark.dynamicAllocation.initialExecutors": "1"
-            "spark.dynamicAllocation.executorIdleTimeout": "300s"
-            "spark.dynamicAllocation.maxExecutors": "2"
-            "spark.dynamicAllocation.minExecutors": "1"
-
-  kubernetes:
-    enabled: false
-    master: k8s://kubernetes.default.svc.cluster.local:443
-    namespace: spark
-    service-account: spark
-    max-log-size: 500
-  storage:
-    jdbc:
-      enabled: true
-      url: jdbc:h2:mem:lighter;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
-      username: sa
-      password: ""
-      driverClassName: org.h2.Driver
+    max-running-jobs: 5
+    max-starting-jobs: 5
+    spark-history-server-url: http://localhost/spark-history/
+    frontend-path: file:${FRONTEND_PATH:../frontend/build}
+    py-gateway-port: 25333
+    url: http://lighter.spark:8080
+    session:
+        timeout-interval: 90m
+        timeout-active: false
+        permanent-sessions: []
+        schedule-interval: 1m
+        track-running-interval: 2m
+    kubernetes:
+        enabled: false
+        master: k8s://kubernetes.default.svc.cluster.local:443
+        namespace: spark
+        service-account: spark
+        max-log-size: 500
+    storage:
+        jdbc:
+            enabled: true
+            url: jdbc:h2:mem:lighter;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
+            username: sa
+            password: ""
+            driverClassName: org.h2.Driver
 
 # Micronaut specific configs
 jackson:
-  serializationInclusion: ALWAYS
-  serialization:
-    writeDatesAsTimestamps: false
+    serializationInclusion: ALWAYS
+    serialization:
+        writeDatesAsTimestamps: false
 
 
 shedlock:
-  defaults:
-    lock-at-most-for: 10m
+    defaults:
+        lock-at-most-for: 10m
 
 flyway:
-  datasources:
-    default:
-      enabled: true
+    datasources:
+        default:
+            enabled: true
 
 micronaut:
-  server:
-    thread-selection: AUTO
-    cors:
-      enabled: true
-  application:
-    name: lighter
-  router:
-    static-resources:
-      swagger:
-        paths: classpath:META-INF/swagger
-        mapping: /swagger/**
-      swagger-ui:
-        enabled: true
-        paths: classpath:META-INF/swagger/views/swagger-ui
-        mapping: /swagger-ui/**
+    server:
+        thread-selection: AUTO
+        cors:
+            enabled: true
+    application:
+        name: lighter
+    router:
+        static-resources:
+            swagger:
+                paths: classpath:META-INF/swagger
+                mapping: /swagger/**
+            swagger-ui:
+                enabled: true
+                paths: classpath:META-INF/swagger/views/swagger-ui
+                mapping: /swagger-ui/**
 
-  metrics:
-    enabled: true
-    export:
-      prometheus:
+    metrics:
         enabled: true
-        step: PT1M
-        descriptions: true
+        export:
+            prometheus:
+                enabled: true
+                step: PT1M
+                descriptions: true
