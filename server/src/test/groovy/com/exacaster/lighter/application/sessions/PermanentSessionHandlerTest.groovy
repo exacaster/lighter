@@ -46,7 +46,7 @@ class PermanentSessionHandlerTest extends Specification {
 
         then: "creates a new permanent session"
         1 * service.createPermanentSession(configPermanentSession.id, configPermanentSession.submitParams) >> expectedSession
-        1 * service.deleteOne(expectedSession)
+        1 * service.deletePermanentSession(expectedSession)
         1 * tracker.processApplicationStarting(expectedSession)
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
@@ -73,7 +73,7 @@ class PermanentSessionHandlerTest extends Specification {
 
         then: "creates a new permanent session"
         1 * service.createPermanentSession(unhealthySession.id, unhealthySession.submitParams) >> expectedSession
-        1 * service.deleteOne(expectedSession)
+        1 * service.deletePermanentSession(expectedSession)
         1 * tracker.processApplicationStarting(expectedSession)
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
@@ -108,7 +108,7 @@ class PermanentSessionHandlerTest extends Specification {
 
         then: "creates a new permanent session"
         1 * service.createPermanentSession(unhealthySessionFromStorage.id, unhealthySessionFromStorage.submitParams) >> expectedSession
-        1 * service.deleteOne(expectedSession)
+        1 * service.deletePermanentSession(expectedSession)
         1 * tracker.processApplicationStarting(expectedSession)
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
@@ -139,7 +139,7 @@ class PermanentSessionHandlerTest extends Specification {
 
         then: "creates a new permanent session with submit params from storage"
         1 * service.createPermanentSession(unhealthySessionFromStorage.id, unhealthySessionFromStorage.submitParams) >> expectedSession
-        1 * service.deleteOne(expectedSession)
+        1 * service.deletePermanentSession(expectedSession)
         1 * tracker.processApplicationStarting(expectedSession)
         1 * handler.launch(expectedSession, _) >> EmptyWaitable.INSTANCE
     }
@@ -161,7 +161,7 @@ class PermanentSessionHandlerTest extends Specification {
         handler.keepPermanentSessions2()
 
         then: "do nothing"
-        0 * service.deleteOne(deletedSessionInStorage.id)
+        0 * service.deletePermanentSession(deletedSessionInStorage.id)
         0 * service.createSession(*_)
     }
 

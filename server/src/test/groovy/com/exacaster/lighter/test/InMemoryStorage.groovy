@@ -59,6 +59,12 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
+    void hardDeleteApplication(String internalApplicationId) {
+        deleteOne(internalApplicationId, Application.class)
+        deleteOne(internalApplicationId, Log.class)
+    }
+
+    @Override
     Optional<Log> findApplicationLog(String internalApplicationId) {
         return findEntity(internalApplicationId, Log.class)
     }

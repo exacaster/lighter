@@ -144,6 +144,13 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .list());
     }
 
+    @Override
+    @Transactional
+    public void hardDeleteApplication(String internalApplicationId) {
+        jdbi.withHandle(handle -> handle.createCall("DELETE FROM application WHERE id=:id")
+                .bind("id", internalApplicationId).invoke());
+    }
+
 
     private class PermanentSessionMapper implements RowMapper<PermanentSession>{
 

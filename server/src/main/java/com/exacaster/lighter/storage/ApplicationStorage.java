@@ -22,4 +22,6 @@ public interface ApplicationStorage {
             Integer from, Integer size);
 
     List<PermanentSession> findAllPermanentSessions();
+
+    void hardDeleteApplication(String internalApplicationId);
 }

@@ -170,4 +170,9 @@ public class SessionService {
             //TODO what to do to DB ?
         });
     }
+
+    protected void deletePermanentSession(Application permanentSession) {
+        backend.kill(permanentSession);
+        applicationStorage.hardDeleteApplication(permanentSession.getId());
+    }
 }

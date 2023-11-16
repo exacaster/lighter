@@ -96,7 +96,7 @@ public class SessionHandler {
                         perm.getSubmitParams()
                 );
 
-                sessionService.deleteOne(sessionToLaunch);
+                sessionService.deletePermanentSession(sessionToLaunch);
                 launchSession(sessionToLaunch).waitCompletion();
                 LOG.info("Permanent session {} (re)started.", perm.getSessionId());
             }
