@@ -59,7 +59,7 @@ public class BatchService {
     }
 
     public void deleteOne(String id) {
-        this.fetchOne(id).filter(application -> ApplicationType.BATCH == application.getType()).ifPresent(app -> {
+        this.fetchOne(id).ifPresent(app -> {
             backend.kill(app);
             applicationStorage.deleteApplication(id);
         });
