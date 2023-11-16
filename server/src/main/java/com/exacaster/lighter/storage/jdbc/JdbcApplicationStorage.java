@@ -138,13 +138,10 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Transactional
     public List<PermanentSession> findAllPermanentSessions() {
         return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application ORDER BY created_at "
-                        + SortOrder.ASC + " LIMIT :limit OFFSET :offset")
-                .bind("limit", 0)
-                .bind("offset", Integer.MAX_VALUE)
+                .createQuery("SELECT * FROM application  WHERE type=:type")
+                .bind("type", ApplicationType.PERMANENT_SESSION.name())
                 .map(permanentSessionMapper)
-                .list()
-        );
+                .list());
     }
 
 

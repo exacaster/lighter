@@ -79,4 +79,16 @@ class JdbcApplicationStorageTest extends Specification {
         storage.findApplications(ApplicationType.PERMANENT_SESSION, 0, 10).size() == 0
         storage.findApplicationsByStates(ApplicationType.PERMANENT_SESSION, [savedPermanentSession.state], SortOrder.DESC, 0, 10).size() == 0
     }
+
+
+    def "findAllPermanentSessions returns safe deleted"() {
+        given:
+        def savedPermanentSession = storage.saveApplication(newPermanentSession())
+
+        when: "deleting"
+        storage.deleteApplication(savedPermanentSession.id)
+
+        then: "fetching apps ignores soft deleted ones"
+        storage.findAllPermanentSessions().size() == 1
+    }
 }
