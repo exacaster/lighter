@@ -56,7 +56,7 @@ public class SessionHandler {
     }
 
     @SchedulerLock(name = "keepPermanentSession", lockAtLeastFor = "1m")
-    @Scheduled(fixedRate = "1m")
+    @Scheduled(fixedRate = "1m", initialDelay = "2s")
     public void keepPermanentSessions() throws InterruptedException {
         assertLocked();
         LOG.info("Start provisioning permanent sessions.");
@@ -79,7 +79,7 @@ public class SessionHandler {
     }
 
     @SchedulerLock(name = "keepPermanentSession", lockAtLeastFor = "1m")
-    @Scheduled(fixedRate = "1m")
+    @Scheduled(fixedRate = "1m", initialDelay = "2s")
     public void keepPermanentSessions2() throws InterruptedException {
         assertLocked();
         LOG.info("Start provisioning permanent sessions.");
