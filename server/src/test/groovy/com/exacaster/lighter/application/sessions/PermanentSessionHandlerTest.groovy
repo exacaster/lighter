@@ -60,7 +60,7 @@ class PermanentSessionHandlerTest extends Specification {
                 .setId(configPermanentSession.id)
                 .setType(ApplicationType.PERMANENT_SESSION)
                 .build()
-        1 * service.fetchAllPermanentSessions() >> Map.of(unhealthySession.id, unhealthySession)
+        1 * service.fetchAllPermanentSessions() >> permanentSessionMap(unhealthySession)
         1 * service.fetchOne(unhealthySession.id) >> Optional.of(unhealthySession)
         backend.getInfo(unhealthySession) >> Optional.of(new ApplicationInfo(unhealthySession.state, unhealthySession.id))
 
@@ -98,7 +98,7 @@ class PermanentSessionHandlerTest extends Specification {
                 .setState(ApplicationState.STARTING)
                 .build()
 
-        1 * service.fetchAllPermanentSessions() >> Map.of(healthySessionFromYaml.id, healthySessionFromYaml, unhealthySessionFromStorage.id, unhealthySessionFromStorage)
+        1 * service.fetchAllPermanentSessions() >> permanentSessionMap(healthySessionFromYaml) + permanentSessionMap(unhealthySessionFromStorage)
         1 * service.fetchOne(configPermanentSession.id) >> Optional.of(healthySessionFromYaml)
         1 * service.fetchOne(unhealthySessionFromStorage.id) >> Optional.of(unhealthySessionFromStorage)
         backend.getInfo(healthySessionFromYaml) >> Optional.of(new ApplicationInfo(healthySessionFromYaml.state, healthySessionFromYaml.id))
@@ -130,7 +130,7 @@ class PermanentSessionHandlerTest extends Specification {
                 .setSubmitParams(storageSubmitParams)
                 .build()
 
-        1 * service.fetchAllPermanentSessions() >> Map.of(unhealthySessionFromStorage.id, unhealthySessionFromStorage)
+        1 * service.fetchAllPermanentSessions() >> permanentSessionMap(unhealthySessionFromStorage)
         1 * service.fetchOne(unhealthySessionFromStorage.id) >> Optional.of(unhealthySessionFromStorage)
         backend.getInfo(unhealthySessionFromStorage) >> Optional.of(new ApplicationInfo(unhealthySessionFromStorage.state, unhealthySessionFromStorage.id))
 
@@ -145,7 +145,31 @@ class PermanentSessionHandlerTest extends Specification {
     }
 
 
+    def "on existing permanent session in storage but deleted in storage"() {
+        given:
+        def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
+
+        def deletedSessionInStorage = ApplicationBuilder.builder()
+                .setId(configPermanentSession.id)
+                .setState(ApplicationState.KILLED)
+                .setSubmitParams(configPermanentSession.submitParams)
+                .build()
+
+        1 * service.fetchAllPermanentSessions() >> permanentSessionMap(deletedSessionInStorage, true)
+
+        when:
+        handler.keepPermanentSessions2()
+
+        then: "do nothing"
+        0 * service.deleteOne(deletedSessionInStorage.id)
+        0 * service.createSession(*_)
+    }
+
     def setup() {
         LockAssert.TestHelper.makeAllAssertsPass(true)
+    }
+
+    def permanentSessionMap(Application application, boolean deleted = false) {
+        return Map.of(application.id, new PermanentSession(application, deleted))
     }
 }

@@ -159,9 +159,9 @@ public class SessionService {
         return statementHandler.hasWaitingStatement(application);
     }
 
-    public Map<String,Application> fetchAllPermanentSessions() {
-        return applicationStorage.findApplicationsByType(ApplicationType.PERMANENT_SESSION, SortOrder.ASC, 0, Integer.MAX_VALUE).stream()
-                .collect(Collectors.toMap(application -> application.getId(), Function.identity()));
+    public Map<String, PermanentSession> fetchAllPermanentSessions() {
+        return applicationStorage.findAllPermanentSessions().stream()
+                .collect(Collectors.toMap(permanentSession -> permanentSession.getApplication().getId(), Function.identity()));
     }
 
     public void deletePermanentSession(String id) {

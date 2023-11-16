@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.SubmitParams;
+import com.exacaster.lighter.application.sessions.PermanentSession;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,10 +34,12 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     private final Jdbi jdbi;
     private final ObjectMapper objectMapper;
+    private final PermanentSessionMapper permanentSessionMapper;
 
     public JdbcApplicationStorage(Jdbi jdbi, ObjectMapper objectMapper) {
         this.jdbi = jdbi;
         this.objectMapper = objectMapper;
+        this.permanentSessionMapper = new PermanentSessionMapper();
     }
 
     @Override
@@ -44,7 +47,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     public Optional<Application> findApplication(
             String internalApplicationId) {
         return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application WHERE id=:id LIMIT 1")
+                .createQuery("SELECT * FROM application WHERE id=:id and deleted = false LIMIT 1")
                 .bind("id", internalApplicationId)
                 .map(this)
                 .stream().findFirst()
@@ -57,7 +60,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
             Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
                 .createQuery(
-                        "SELECT * FROM application WHERE type=:type ORDER BY created_at DESC LIMIT :limit OFFSET :from")
+                        "SELECT * FROM application WHERE type=:type and deleted = false ORDER BY created_at DESC LIMIT :limit OFFSET :from")
                 .bind("type", type.name())
                 .bind("from", from)
                 .bind("limit", size)
@@ -69,7 +72,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Override
     @Transactional
     public void deleteApplication(String internalApplicationId) {
-        jdbi.withHandle(handle -> handle.createCall("DELETE FROM application WHERE id=:id")
+        jdbi.withHandle(handle -> handle.createCall("UPDATE application set deleted = true WHERE id=:id")
                 .bind("id", internalApplicationId).invoke());
     }
 
@@ -120,7 +123,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     public List<Application> findApplicationsByStates(ApplicationType type,
             List<ApplicationState> states, SortOrder order, Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) ORDER BY created_at "
+                .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) and deleted = false ORDER BY created_at "
                         + order.name() + " LIMIT :limit OFFSET :offset")
                 .bind("type", type.name())
                 .bindList("states", states.stream().map(ApplicationState::name).collect(Collectors.toList()))
@@ -132,16 +135,27 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     }
 
     @Override
-    public List<Application> findApplicationsByType(ApplicationType applicationType, SortOrder order,Integer from, Integer size) {
+    @Transactional
+    public List<PermanentSession> findAllPermanentSessions() {
         return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application WHERE type=:type ORDER BY created_at "
-                        + order.name() + " LIMIT :limit OFFSET :offset")
-                .bind("type", applicationType.name())
-                .bind("limit", size)
-                .bind("offset", from)
-                .map(this)
+                .createQuery("SELECT * FROM application ORDER BY created_at "
+                        + SortOrder.ASC + " LIMIT :limit OFFSET :offset")
+                .bind("limit", 0)
+                .bind("offset", Integer.MAX_VALUE)
+                .map(permanentSessionMapper)
                 .list()
         );
+    }
+
+
+    private class PermanentSessionMapper implements RowMapper<PermanentSession>{
+
+        @Override
+        public PermanentSession map(ResultSet rs, StatementContext ctx) throws SQLException {
+            final var application = JdbcApplicationStorage.this.map(rs, ctx);
+            final var deleted = rs.getBoolean("deleted");
+            return new PermanentSession(application, deleted);
+        }
     }
 
     @Override

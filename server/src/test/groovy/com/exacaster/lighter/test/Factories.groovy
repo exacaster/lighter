@@ -41,9 +41,20 @@ class Factories {
                 .setType(ApplicationType.SESSION)
                 .setState(state)
                 .setAppInfo("info")
-                .setCreatedAt(LocalDateTime.MAX)
+                .setCreatedAt(LocalDateTime.now())
                 .setId("2")
                 .setSubmitParams(null)
+                .build()
+    }
+
+    static newPermanentSession(appId = "application_1") {
+        ApplicationBuilder.builder().setAppId(appId)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .setState(ApplicationState.NOT_STARTED)
+                .setAppInfo("info")
+                .setCreatedAt(LocalDateTime.now())
+                .setId("-1")
+                .setSubmitParams(submitParams())
                 .build()
     }
 

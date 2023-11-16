@@ -10,6 +10,8 @@ import javax.transaction.Transactional
 import spock.lang.Specification
 
 import static com.exacaster.lighter.test.Factories.newApplication
+import static com.exacaster.lighter.test.Factories.newPermanentSession
+import static com.exacaster.lighter.test.Factories.newSession
 
 @MicronautTest
 @Transactional
@@ -61,5 +63,20 @@ class JdbcApplicationStorageTest extends Specification {
 
         then: "returns empty"
         apps.isEmpty()
+    }
+
+    def "handles soft deletes"() {
+        given:
+        def savedPermanentSession = storage.saveApplication(newPermanentSession())
+        def savedRegularSession = storage.saveApplication(newSession())
+
+        when: "deleting"
+        storage.deleteApplication(savedPermanentSession.id)
+
+        then: "fetching apps ignores soft deleted ones"
+        storage.findApplication(savedPermanentSession.id) == Optional.empty()
+        storage.findApplication(savedRegularSession.id) != Optional.empty()
+        storage.findApplications(ApplicationType.PERMANENT_SESSION, 0, 10).size() == 0
+        storage.findApplicationsByStates(ApplicationType.PERMANENT_SESSION, [savedPermanentSession.state], SortOrder.DESC, 0, 10).size() == 0
     }
 }

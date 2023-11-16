@@ -114,12 +114,12 @@ public class SessionHandler {
                 id -> new PermanentSessionParam(id, configurationPermanentSessions.get(id).getSubmitParams())
         );
 
-        //TODO here we will add checking if session in db is not marked as deleted
         final var intersection = Sets.intersection(configurationPermanentSessions.keySet(), dbPermanentSessions.keySet()).stream()
-                .map(id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams()));
+                .filter(id -> dbPermanentSessions.get(id).isNotDeleted())
+                .map(id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParameters()));
 
         final var fromStorageOnly = Sets.difference(dbPermanentSessions.keySet(), configurationPermanentSessions.keySet()).stream().map(
-                id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParams())
+                id -> new PermanentSessionParam(id, dbPermanentSessions.get(id).getSubmitParameters())
         );
 
         return Stream.concat(fromStorageOnly, Stream.concat(fromYamlOnly, intersection)).collect(Collectors.toList());
