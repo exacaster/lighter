@@ -19,6 +19,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
@@ -64,6 +65,13 @@ public class SessionController {
     @Status(HttpStatus.CREATED)
     public Application create(@Valid @Body SubmitParams session) {
         return sessionService.createSession(session);
+    }
+
+
+    @Put("/{id}")
+    @Status(HttpStatus.CREATED)
+    public Application create2(@PathVariable String id, @Valid @Body SubmitParams session) {
+        return sessionService.createSession(id, session);
     }
 
     @Get("/{id}")

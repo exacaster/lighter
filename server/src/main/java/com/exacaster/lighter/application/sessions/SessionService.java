@@ -33,8 +33,8 @@ public class SessionService {
     private final StatementHandler statementHandler;
 
     public SessionService(ApplicationStorage applicationStorage,
-            StatementStorage statementStorage, Backend backend,
-            StatementHandler statementHandler) {
+                          StatementStorage statementStorage, Backend backend,
+                          StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
@@ -46,15 +46,22 @@ public class SessionService {
         return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
     }
 
-    public Application createSession(SubmitParams params) {
-        return createSession(params, UUID.randomUUID().toString(), ApplicationType.SESSION);
+    public Application createSession(SubmitParams session) {
+        return createSession(UUID.randomUUID().toString(), session);
+    }
+
+    public Application createSession(String sessionId, SubmitParams params) {
+        if (params.isPermanentSession()) {
+            return createPermanentSession(sessionId, params);
+        }
+        return createRegularSession(sessionId, params);
     }
 
     public Application createPermanentSession(String sessionId, SubmitParams params) {
         return createSession(params, sessionId, ApplicationType.PERMANENT_SESSION);
     }
 
-    public Application createSession(SubmitParams params, String sessionId) {
+    private Application createRegularSession(String sessionId, SubmitParams params) {
         return createSession(params, sessionId, ApplicationType.SESSION);
     }
 
@@ -175,4 +182,6 @@ public class SessionService {
         backend.kill(permanentSession);
         applicationStorage.hardDeleteApplication(permanentSession.getId());
     }
+
+
 }

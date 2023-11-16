@@ -1,15 +1,16 @@
 package com.exacaster.lighter.application;
 
-import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
-import static io.micronaut.core.naming.conventions.StringConvention.RAW;
-import static java.util.Optional.ofNullable;
-
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.MapFormat;
+
 import java.util.List;
 import java.util.Map;
 import java.util.StringJoiner;
+
+import static io.micronaut.core.convert.format.MapFormat.MapTransformation.FLAT;
+import static io.micronaut.core.naming.conventions.StringConvention.RAW;
+import static java.util.Optional.ofNullable;
 
 @Introspected
 public class SubmitParams {
@@ -147,5 +148,9 @@ public class SubmitParams {
                 .add("archives=" + archives)
                 .add("conf=" + conf)
                 .toString();
+    }
+
+    public boolean isPermanentSession() {
+        return false;
     }
 }

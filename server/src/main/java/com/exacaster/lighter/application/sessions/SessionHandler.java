@@ -65,9 +65,9 @@ public class SessionHandler {
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
                 LOG.info("Permanent session {} needs to be (re)started.", sessionConf.getId());
-                var sessionToLaunch = sessionService.createSession(
-                        sessionConf.getSubmitParams(),
-                        sessionConf.getId()
+                var sessionToLaunch = sessionService.createPermanentSession(
+                        sessionConf.getId(),
+                        sessionConf.getSubmitParams()
                 );
 
                 sessionService.deleteOne(sessionToLaunch);

@@ -128,7 +128,7 @@ class SessionHandlerTest extends Specification {
 
         then: "restart permanent session"
         1 * service.deleteOne({ it -> it.getId() == session.getId() })
-        1 * service.createSession(session.submitParams, session.id) >> permanentSession
+        1 * service.createPermanentSession(session.id, session.submitParams) >> permanentSession
         1 * handler.launch(permanentSession, _) >> EmptyWaitable.INSTANCE
     }
 
