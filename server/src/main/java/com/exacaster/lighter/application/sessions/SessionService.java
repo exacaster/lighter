@@ -168,7 +168,7 @@ public class SessionService {
     }
 
     public Map<String, Application> fetchAllPermanentSessions() {
-        return applicationStorage.findAllPermanentSessions().stream()
+        return applicationStorage.findAllApplications(ApplicationType.PERMANENT_SESSION).stream()
                 .collect(Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
     }
 

@@ -54,7 +54,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Override
     @Transactional
     public List<Application> findApplications(ApplicationType type,
-            Integer from, Integer size) {
+                                              Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
                 .createQuery(
                         "SELECT * FROM application WHERE type=:type and deleted = false ORDER BY created_at DESC LIMIT :limit OFFSET :from")
@@ -119,7 +119,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Override
     @Transactional
     public List<Application> findApplicationsByStates(ApplicationType type,
-            List<ApplicationState> states, SortOrder order, Integer from, Integer size) {
+                                                      List<ApplicationState> states, SortOrder order, Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
                 .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) and deleted = false ORDER BY created_at "
                         + order.name() + " LIMIT :limit OFFSET :offset")
@@ -134,10 +134,10 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     @Override
     @Transactional
-    public List<Application> findAllPermanentSessions() {
+    public List<Application> findAllApplications(ApplicationType type) {
         return jdbi.withHandle(handle -> handle
                 .createQuery("SELECT * FROM application  WHERE type=:type")
-                .bind("type", ApplicationType.PERMANENT_SESSION.name())
+                .bind("type", type.name())
                 .map(this)
                 .list());
     }

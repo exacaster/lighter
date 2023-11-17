@@ -20,7 +20,7 @@ public interface ApplicationStorage {
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order,
             Integer from, Integer size);
 
-    List<Application> findAllPermanentSessions();
+    List<Application> findAllApplications(ApplicationType type);
 
     void hardDeleteApplication(String internalApplicationId);
 }

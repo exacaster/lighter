@@ -50,8 +50,8 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
-    List<Application> findAllPermanentSessions() {
-        return findMany({ ApplicationType.PERMANENT_SESSION == it.getType() }, Application.class)
+    List<Application> findAllApplications(ApplicationType type) {
+        return findMany({ type == it.getType() }, Application.class)
                 .sorted((app1, app2) ->  app2.createdAt <=> app1.createdAt)
                 .skip(0)
                 .limit(Integer.MAX_VALUE)
