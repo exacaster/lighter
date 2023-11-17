@@ -62,15 +62,15 @@ public class SessionController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    public Application create(@Valid @Body SessionParameters sessionParameters) {
-        return sessionService.createSession(sessionParameters);
+    public Application create(@Valid @Body SessionParams sessionParams) {
+        return sessionService.createSession(sessionParams);
     }
 
 
     @Put("/{id}")
     @Status(HttpStatus.CREATED)
-    public Application create2(@PathVariable String id, @Valid @Body SessionParameters session) {
-        return sessionService.createSession(id, session);
+    public Application insertNewSession(@PathVariable String id, @Valid @Body SessionParams sessionParams) {
+        return sessionService.createSession(id, sessionParams);
     }
 
     @Get("/{id}")

@@ -8,14 +8,14 @@ import com.exacaster.lighter.application.sessions.processors.Output
 import com.exacaster.lighter.backend.kubernetes.KubernetesProperties
 import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.application.SubmitParams
-import com.exacaster.lighter.rest.SessionParameters
+import com.exacaster.lighter.rest.SessionParams
 
 import java.time.Duration
 import java.time.LocalDateTime
 
 class Factories {
     static sessionParams(submitParams = submitParams()) {
-        return new SessionParameters(
+        return new SessionParams(
                 false,
                 submitParams.name,
                 submitParams.file,
