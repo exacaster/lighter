@@ -153,9 +153,10 @@ class PermanentSessionHandlerTest extends Specification {
                 .setId(configPermanentSession.id)
                 .setState(ApplicationState.KILLED)
                 .setSubmitParams(configPermanentSession.submitParams)
+                .setDeleted(true)
                 .build()
 
-        1 * service.fetchAllPermanentSessions() >> permanentSessionMap(deletedSessionInStorage, true)
+        1 * service.fetchAllPermanentSessions() >> permanentSessionMap(deletedSessionInStorage)
 
         when:
         handler.keepPermanentSessions2()
@@ -169,7 +170,7 @@ class PermanentSessionHandlerTest extends Specification {
         LockAssert.TestHelper.makeAllAssertsPass(true)
     }
 
-    def permanentSessionMap(Application application, boolean deleted = false) {
-        return Map.of(application.id, new PermanentSession(application, deleted))
+    def permanentSessionMap(Application application) {
+        return Map.of(application.id, application)
     }
 }

@@ -5,7 +5,6 @@ import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.SubmitParams;
-import com.exacaster.lighter.application.sessions.PermanentSession;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,12 +33,10 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     private final Jdbi jdbi;
     private final ObjectMapper objectMapper;
-    private final PermanentSessionMapper permanentSessionMapper;
 
     public JdbcApplicationStorage(Jdbi jdbi, ObjectMapper objectMapper) {
         this.jdbi = jdbi;
         this.objectMapper = objectMapper;
-        this.permanentSessionMapper = new PermanentSessionMapper();
     }
 
     @Override
@@ -101,8 +98,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                         }
                         handle
                                 .createCall(
-                                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at) "
-                                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at)")
+                                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at, deleted) "
+                                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at, :deleted)")
                                 .bind("id", application.getId())
                                 .bind("type", application.getType().name())
                                 .bind("state", application.getState().name())
@@ -111,6 +108,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                                 .bind("submit_params", conf)
                                 .bind("created_at", application.getCreatedAt())
                                 .bind("contacted_at", application.getContactedAt())
+                                .bind("deleted", false)
                                 .invoke();
                     }
                     return application;
@@ -136,11 +134,11 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     @Override
     @Transactional
-    public List<PermanentSession> findAllPermanentSessions() {
+    public List<Application> findAllPermanentSessions() {
         return jdbi.withHandle(handle -> handle
                 .createQuery("SELECT * FROM application  WHERE type=:type")
                 .bind("type", ApplicationType.PERMANENT_SESSION.name())
-                .map(permanentSessionMapper)
+                .map(this)
                 .list());
     }
 
@@ -151,16 +149,6 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .bind("id", internalApplicationId).invoke());
     }
 
-
-    private class PermanentSessionMapper implements RowMapper<PermanentSession>{
-
-        @Override
-        public PermanentSession map(ResultSet rs, StatementContext ctx) throws SQLException {
-            final var application = JdbcApplicationStorage.this.map(rs, ctx);
-            final var deleted = rs.getBoolean("deleted");
-            return new PermanentSession(application, deleted);
-        }
-    }
 
     @Override
     public Application map(ResultSet rs, StatementContext ctx) throws SQLException {
@@ -182,6 +170,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .setSubmitParams(params)
                 .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
                 .setContactedAt(contactedAt)
+                .setDeleted(rs.getBoolean("deleted"))
                 .build();
     }
 }

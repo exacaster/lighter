@@ -3,7 +3,7 @@ package com.exacaster.lighter.test
 import com.exacaster.lighter.application.Application
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
-import com.exacaster.lighter.application.sessions.PermanentSession
+
 import com.exacaster.lighter.log.Log
 import com.exacaster.lighter.storage.ApplicationStorage
 import com.exacaster.lighter.storage.Entity
@@ -50,7 +50,7 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
-    List<PermanentSession> findAllPermanentSessions() {
+    List<Application> findAllPermanentSessions() {
         return findMany({ ApplicationType.PERMANENT_SESSION == it.getType() }, Application.class)
                 .sorted((app1, app2) ->  app2.createdAt <=> app1.createdAt)
                 .skip(0)

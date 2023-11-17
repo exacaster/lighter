@@ -167,9 +167,9 @@ public class SessionService {
         return statementHandler.hasWaitingStatement(application);
     }
 
-    public Map<String, PermanentSession> fetchAllPermanentSessions() {
+    public Map<String, Application> fetchAllPermanentSessions() {
         return applicationStorage.findAllPermanentSessions().stream()
-                .collect(Collectors.toMap(permanentSession -> permanentSession.getApplication().getId(), Function.identity()));
+                .collect(Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
     }
 
     public void deletePermanentSession(String id) {
