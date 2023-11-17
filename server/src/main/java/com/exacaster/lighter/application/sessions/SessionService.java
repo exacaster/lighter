@@ -8,6 +8,7 @@ import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.rest.SessionParameters;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.exacaster.lighter.storage.StatementStorage;
@@ -46,15 +47,15 @@ public class SessionService {
         return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
     }
 
-    public Application createSession(SubmitParams session) {
-        return createSession(UUID.randomUUID().toString(), session);
+    public Application createSession(SessionParameters sessionParameters) {
+        return createSession(UUID.randomUUID().toString(), sessionParameters);
     }
 
-    public Application createSession(String sessionId, SubmitParams params) {
-        if (params.isPermanentSession()) {
-            return createPermanentSession(sessionId, params);
+    public Application createSession(String sessionId, SessionParameters sessionParameters) {
+        if(Boolean.TRUE.equals(sessionParameters.getPermanent())){
+            return createPermanentSession(sessionId, sessionParameters);
         }
-        return createRegularSession(sessionId, params);
+        return createRegularSession(sessionId, sessionParameters);
     }
 
     public Application createPermanentSession(String sessionId, SubmitParams params) {

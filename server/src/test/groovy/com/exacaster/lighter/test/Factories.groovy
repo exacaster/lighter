@@ -8,11 +8,26 @@ import com.exacaster.lighter.application.sessions.processors.Output
 import com.exacaster.lighter.backend.kubernetes.KubernetesProperties
 import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.application.SubmitParams
+import com.exacaster.lighter.rest.SessionParameters
 
 import java.time.Duration
 import java.time.LocalDateTime
 
 class Factories {
+    static sessionParams(submitParams = submitParams()) {
+        return new SessionParameters(
+                false,
+                submitParams.name,
+                submitParams.file,
+                submitParams.master,
+                submitParams.mainClass,
+                submitParams.numExecutors,
+                submitParams.executorCores, submitParams.executorMemory, submitParams.driverCores, submitParams.driverMemory,
+                submitParams.args, submitParams.pyFiles, submitParams.files, submitParams.jars, submitParams.archives,
+                submitParams.conf
+        )
+    }
+
     static submitParams() {
         new SubmitParams(
                 "application1",
@@ -20,7 +35,7 @@ class Factories {
                 "",
                 "",
                 0,
-                null, null, 1, null, false, null, null, null, null, null,
+                null, null, 1, null, null, null, null, null, null,
                 ["lighter.local.env.FOO": "bar"]
         )
     }

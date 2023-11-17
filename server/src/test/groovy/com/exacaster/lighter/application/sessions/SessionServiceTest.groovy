@@ -10,7 +10,7 @@ import com.exacaster.lighter.test.InMemoryStorage
 import spock.lang.Specification
 import spock.lang.Subject
 
-import static com.exacaster.lighter.test.Factories.submitParams
+import static com.exacaster.lighter.test.Factories.sessionParams
 
 class SessionServiceTest extends Specification {
     ApplicationStorage storage = new InMemoryStorage()
@@ -23,10 +23,10 @@ class SessionServiceTest extends Specification {
 
     def "manage sessions"() {
         given:
-        def params = submitParams()
+        def sessionParameters = sessionParams()
 
         when: "creating session"
-        def created = service.createSession(params)
+        def created = service.createSession(sessionParameters)
 
         then: "returns created session"
         created.id !== null

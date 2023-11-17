@@ -2,7 +2,6 @@ package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationList;
-import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.SessionService;
 import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.StatementList;
@@ -63,14 +62,14 @@ public class SessionController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    public Application create(@Valid @Body SubmitParams session) {
-        return sessionService.createSession(session);
+    public Application create(@Valid @Body SessionParameters sessionParameters) {
+        return sessionService.createSession(sessionParameters);
     }
 
 
     @Put("/{id}")
     @Status(HttpStatus.CREATED)
-    public Application create2(@PathVariable String id, @Valid @Body SubmitParams session) {
+    public Application create2(@PathVariable String id, @Valid @Body SessionParameters session) {
         return sessionService.createSession(id, session);
     }
 
