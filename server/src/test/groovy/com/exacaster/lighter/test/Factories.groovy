@@ -20,7 +20,7 @@ class Factories {
                 "",
                 "",
                 0,
-                null, null, 1, null, null, null, null, null, null,
+                null, null, 1, null, false, null, null, null, null, null,
                 ["lighter.local.env.FOO": "bar"]
         )
     }

@@ -24,6 +24,7 @@ public class SubmitParams {
     private final String executorMemory;
     private final Integer driverCores;
     private final String driverMemory;
+    private final Boolean permanent;
     private final List<String> args;
     private final List<String> pyFiles;
     private final List<String> files;
@@ -40,6 +41,7 @@ public class SubmitParams {
             @Nullable String executorMemory,
             @Nullable Integer driverCores,
             @Nullable String driverMemory,
+            @Nullable Boolean permanent,
             @Nullable List<String> args,
             @Nullable List<String> pyFiles,
             @Nullable List<String> files,
@@ -56,6 +58,7 @@ public class SubmitParams {
         this.executorMemory = executorMemory;
         this.driverCores = driverCores;
         this.driverMemory = driverMemory;
+        this.permanent = permanent;
         this.args = ofNullable(args).orElse(List.of());
         this.pyFiles = ofNullable(pyFiles).orElse(List.of());
         this.files = ofNullable(files).orElse(List.of());
@@ -66,7 +69,7 @@ public class SubmitParams {
 
     public SubmitParams withNameAndFile(String name, String file) {
         return new SubmitParams(name, file, master, mainClass, numExecutors, executorCores, executorMemory, driverCores,
-                driverMemory, args, pyFiles, files, jars, archives, conf);
+                driverMemory, permanent, args, pyFiles, files, jars, archives, conf);
     }
 
     public String getName() {
@@ -141,6 +144,7 @@ public class SubmitParams {
                 .add("executorMemory='" + executorMemory + "'")
                 .add("driverCores=" + driverCores)
                 .add("driverMemory='" + driverMemory + "'")
+                .add("permanent='" + permanent + "'")
                 .add("args=" + args)
                 .add("pyFiles=" + pyFiles)
                 .add("files=" + files)
@@ -151,6 +155,6 @@ public class SubmitParams {
     }
 
     public boolean isPermanentSession() {
-        return false;
+        return Boolean.TRUE.equals(permanent);
     }
 }
