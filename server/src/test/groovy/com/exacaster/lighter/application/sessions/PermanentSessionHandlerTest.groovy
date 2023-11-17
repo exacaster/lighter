@@ -42,7 +42,7 @@ class PermanentSessionHandlerTest extends Specification {
         backend.getInfo(*_) >> Optional.empty()
 
         when:
-        handler.keepPermanentSessions2()
+        handler.keepPermanentSessions()
 
         then: "creates a new permanent session"
         1 * service.createPermanentSession(configPermanentSession.id, configPermanentSession.submitParams) >> expectedSession
@@ -69,7 +69,7 @@ class PermanentSessionHandlerTest extends Specification {
                 .build()
 
         when:
-        handler.keepPermanentSessions2()
+        handler.keepPermanentSessions()
 
         then: "creates a new permanent session"
         1 * service.createPermanentSession(unhealthySession.id, unhealthySession.submitParams) >> expectedSession
@@ -104,7 +104,7 @@ class PermanentSessionHandlerTest extends Specification {
         backend.getInfo(healthySessionFromYaml) >> Optional.of(new ApplicationInfo(healthySessionFromYaml.state, healthySessionFromYaml.id))
 
         when:
-        handler.keepPermanentSessions2()
+        handler.keepPermanentSessions()
 
         then: "creates a new permanent session"
         1 * service.createPermanentSession(unhealthySessionFromStorage.id, unhealthySessionFromStorage.submitParams) >> expectedSession
@@ -135,7 +135,7 @@ class PermanentSessionHandlerTest extends Specification {
         backend.getInfo(unhealthySessionFromStorage) >> Optional.of(new ApplicationInfo(unhealthySessionFromStorage.state, unhealthySessionFromStorage.id))
 
         when:
-        handler.keepPermanentSessions2()
+        handler.keepPermanentSessions()
 
         then: "creates a new permanent session with submit params from storage"
         1 * service.createPermanentSession(unhealthySessionFromStorage.id, unhealthySessionFromStorage.submitParams) >> expectedSession
@@ -159,7 +159,7 @@ class PermanentSessionHandlerTest extends Specification {
         1 * service.fetchAllPermanentSessions() >> permanentSessionMap(deletedSessionInStorage)
 
         when:
-        handler.keepPermanentSessions2()
+        handler.keepPermanentSessions()
 
         then: "do nothing"
         0 * service.deletePermanentSession(deletedSessionInStorage.id)

@@ -1,12 +1,10 @@
 package com.exacaster.lighter.application.sessions
 
 import com.exacaster.lighter.application.ApplicationBuilder
-import com.exacaster.lighter.application.ApplicationInfo
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
-import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
@@ -99,37 +97,6 @@ class SessionHandlerTest extends Specification {
         1 * tracker.processApplicationRunning(session2)
         0 * tracker.processApplicationRunning(session)
         0 * tracker.processApplicationRunning(permanentSession)
-    }
-
-    def "keeps permanent session"() {
-        given:
-        def session = conf.sessionConfiguration.permanentSessions.iterator().next()
-        def permanentSession = ApplicationBuilder.builder(app())
-                .setSubmitParams(session.submitParams)
-                .setState(ApplicationState.STARTING)
-                .setId(session.id)
-                .build()
-        1 * service.fetchOne(session.id) >> Optional.of(permanentSession)
-        1 * backend.getInfo(permanentSession) >> Optional.of(new ApplicationInfo(permanentSession.getState(), session.id))
-
-        when: "exists healthy permanent session"
-        handler.keepPermanentSessions()
-
-        then: "do nothing"
-        0 * service.deleteOne(session.id)
-        0 * service.createSession(*_)
-
-        when: "exists unhealthy permanent session"
-        permanentSession = ApplicationBuilder.builder(permanentSession)
-                .setState(ApplicationState.ERROR)
-                .build()
-        1 * service.fetchOne(session.id) >> Optional.of(permanentSession)
-        handler.keepPermanentSessions()
-
-        then: "restart permanent session"
-        1 * service.deleteOne({ it -> it.getId() == session.getId() })
-        1 * service.createPermanentSession(session.id, session.submitParams) >> permanentSession
-        1 * handler.launch(permanentSession, _) >> EmptyWaitable.INSTANCE
     }
 
     def app() {
