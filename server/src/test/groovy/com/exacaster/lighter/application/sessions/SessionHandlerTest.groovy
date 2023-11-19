@@ -38,14 +38,9 @@ class SessionHandlerTest extends Specification {
         def newSession = app()
         service.lastUsed(newSession.id) >> newSession.createdAt
 
-        def permanentSession = ApplicationBuilder.builder(oldSession)
-                .setId(conf.sessionConfiguration.permanentSessions.iterator().next().id)
-                .build()
-
-        1 * service.fetchRunning() >> [
+        1 * service.fetchRunningSession() >> [
                 oldSession,
                 newSession,
-                permanentSession
         ]
 
         when:
@@ -54,7 +49,6 @@ class SessionHandlerTest extends Specification {
         then:
         1 * service.killOne(oldSession)
         0 * service.killOne(newSession)
-        0 * service.killOne(permanentSession)
     }
 
     def "preserves active timeouted sessions"() {
@@ -63,7 +57,7 @@ class SessionHandlerTest extends Specification {
         service.lastUsed(oldSession.id) >> LocalDateTime.now() - conf.sessionConfiguration.timeoutInterval.plusMinutes(1)
         service.isActive(oldSession) >> true
 
-        1 * service.fetchRunning() >> [
+        1 * service.fetchRunningSession() >> [
                 oldSession,
         ]
 
@@ -82,7 +76,7 @@ class SessionHandlerTest extends Specification {
                 .setState(ApplicationState.STARTING)
                 .setId(conf.sessionConfiguration.permanentSessions.iterator().next().id)
                 .build()
-        service.fetchRunning() >> [session, session2, permanentSession]
+        service.fetchRunningSession() >> [session, session2, permanentSession]
         statementHandler.hasWaitingStatement(session) >> false
         statementHandler.hasWaitingStatement(session2) >> true
         statementHandler.hasWaitingStatement(permanentSession) >> false

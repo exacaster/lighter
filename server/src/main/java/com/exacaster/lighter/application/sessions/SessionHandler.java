@@ -144,7 +144,7 @@ public class SessionHandler {
     @Scheduled(fixedRate = "${lighter.session.track-running-interval}")
     public void trackRunning() {
         assertLocked();
-        var running = sessionService.fetchRunning();
+        var running = sessionService.fetchRunningSession();
 
         var idleAndRunning = running.stream()
                 .collect(Collectors.groupingBy(statementStatusChecker::hasWaitingStatement));
@@ -160,10 +160,8 @@ public class SessionHandler {
         var sessionConfiguration = appConfiguration.getSessionConfiguration();
         var timeoutInterval = sessionConfiguration.getTimeoutInterval();
         if (timeoutInterval != null && !timeoutInterval.isZero()) {
-            sessionService.fetchRunning()
+            sessionService.fetchRunningSession()
                     .stream()
-                    //TODO here we can delete is as we would only care about PERMANENT_SESSION
-                    .filter(s -> isNotPermanent(sessionConfiguration, s))
                     .filter(s -> sessionConfiguration.shouldTimeoutActive() || !sessionService.isActive(s))
                     .filter(s -> sessionService.lastUsed(s.getId()).isBefore(LocalDateTime.now().minus(timeoutInterval)))
                     .peek(s -> LOG.info("Killing because of timeout {}, session: {}", timeoutInterval, s))
