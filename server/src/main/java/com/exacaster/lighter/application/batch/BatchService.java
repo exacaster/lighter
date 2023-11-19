@@ -11,6 +11,7 @@ import com.exacaster.lighter.storage.SortOrder;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -27,7 +28,7 @@ public class BatchService {
     }
 
     public List<Application> fetch(Integer from, Integer size) {
-        return applicationStorage.findApplications(ApplicationType.BATCH, from, size);
+        return applicationStorage.findApplications(EnumSet.of(ApplicationType.BATCH), from, size);
     }
 
     public Application create(SubmitParams batch) {

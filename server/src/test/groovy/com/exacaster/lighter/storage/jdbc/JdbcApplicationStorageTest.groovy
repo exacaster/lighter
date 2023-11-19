@@ -25,7 +25,7 @@ class JdbcApplicationStorageTest extends Specification {
         def app = newApplication()
 
         when: "fetching apps"
-        def apps = storage.findApplications(ApplicationType.BATCH, 0, 10)
+        def apps = storage.findApplications(EnumSet.of(ApplicationType.BATCH), 0, 10)
 
         then: "returns apps"
         apps.isEmpty()
@@ -44,7 +44,7 @@ class JdbcApplicationStorageTest extends Specification {
         saved.state == ApplicationState.ERROR
 
         when: "fetching apps"
-        apps = storage.findApplications(ApplicationType.BATCH, 0, 10)
+        apps = storage.findApplications(EnumSet.of(ApplicationType.BATCH), 0, 10)
 
         then: "returns apps"
         apps.size() == 1
@@ -76,7 +76,8 @@ class JdbcApplicationStorageTest extends Specification {
         then: "fetching apps ignores soft deleted ones"
         storage.findApplication(savedPermanentSession.id) == Optional.empty()
         storage.findApplication(savedRegularSession.id) != Optional.empty()
-        storage.findApplications(ApplicationType.PERMANENT_SESSION, 0, 10).size() == 0
+        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION, ApplicationType.SESSION), 0, 10).size() == 1
+        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION), 0, 10).size() == 0
         storage.findApplicationsByStates(ApplicationType.PERMANENT_SESSION, [savedPermanentSession.state], SortOrder.DESC, 0, 10).size() == 0
     }
 

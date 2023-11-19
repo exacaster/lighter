@@ -20,6 +20,7 @@ import javax.sql.DataSource;
 import javax.transaction.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -53,12 +54,12 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     @Override
     @Transactional
-    public List<Application> findApplications(ApplicationType type,
+    public List<Application> findApplications(EnumSet<ApplicationType> types,
                                               Integer from, Integer size) {
         return jdbi.withHandle(handle -> handle
                 .createQuery(
-                        "SELECT * FROM application WHERE type=:type and deleted = false ORDER BY created_at DESC LIMIT :limit OFFSET :from")
-                .bind("type", type.name())
+                        "SELECT * FROM application WHERE type IN (<types>) and deleted = false ORDER BY created_at DESC LIMIT :limit OFFSET :from")
+                .bindList("types", types.stream().map(ApplicationType::name).collect(Collectors.toList()))
                 .bind("from", from)
                 .bind("limit", size)
                 .map(this)

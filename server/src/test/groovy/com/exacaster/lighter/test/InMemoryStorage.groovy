@@ -25,8 +25,8 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
-    List<Application> findApplications(ApplicationType type, Integer from, Integer size) {
-        return findManyWithOffset({ type == it.getType() }, Application.class, from, size)
+    List<Application> findApplications(EnumSet<ApplicationType> types, Integer from, Integer size) {
+        return findManyWithOffset({ types.contains it.getType() }, Application.class, from, size)
     }
 
     @Override

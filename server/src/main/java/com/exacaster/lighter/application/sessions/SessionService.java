@@ -15,6 +15,7 @@ import com.exacaster.lighter.storage.StatementStorage;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -44,7 +45,7 @@ public class SessionService {
 
     //TODO do we wanna return just Session or PermSession as well?
     public List<Application> fetch(Integer from, Integer size) {
-        return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
+        return applicationStorage.findApplications(EnumSet.of(ApplicationType.SESSION, ApplicationType.PERMANENT_SESSION), from, size);
     }
 
     public Application createSession(SessionParams sessionParams) {
