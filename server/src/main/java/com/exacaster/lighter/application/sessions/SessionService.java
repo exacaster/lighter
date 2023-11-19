@@ -83,7 +83,7 @@ public class SessionService {
         return applicationStorage.saveApplication(entity);
     }
 
-    public List<Application> fetchRunning() {
+    protected List<Application> fetchRunningSession() {
         return applicationStorage
                 .findApplicationsByStates(ApplicationType.SESSION, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
     }
