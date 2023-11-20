@@ -120,11 +120,9 @@ public class SessionService {
     }
 
     public void deleteOne(String id) {
-        fetchByType(id, ApplicationType.SESSION).ifPresent(this::deleteOne);
-    }
-
-    private Optional<Application> fetchByType(String id, ApplicationType applicationType) {
-        return this.fetchOne(id).filter(application -> applicationType == application.getType());
+        this.fetchOne(id)
+                .filter(application -> EnumSet.of(ApplicationType.SESSION, ApplicationType.PERMANENT_SESSION).contains(application.getType()))
+                .ifPresent(this::deleteOne);
     }
 
     protected void deleteOne(Application app) {
