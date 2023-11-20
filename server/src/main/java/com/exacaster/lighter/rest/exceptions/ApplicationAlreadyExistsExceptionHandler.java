@@ -1,6 +1,6 @@
 package com.exacaster.lighter.rest.exceptions;
 
-import com.exacaster.lighter.application.sessions.exceptions.SessionAlreadyExistsException;
+import com.exacaster.lighter.storage.ApplicationAlreadyExistsException;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -17,23 +17,23 @@ import java.util.Map;
 
 @Produces
 @Singleton
-@Requires(classes = SessionAlreadyExistsException.class)
-public class SessionAlreadyExistsExceptionHandler implements ExceptionHandler<SessionAlreadyExistsException, HttpResponse<?>> {
+@Requires(classes = ApplicationAlreadyExistsException.class)
+public class ApplicationAlreadyExistsExceptionHandler implements ExceptionHandler<ApplicationAlreadyExistsException, HttpResponse<?>> {
 
     private final ErrorResponseProcessor<?> responseProcessor;
 
     @Inject
-    public SessionAlreadyExistsExceptionHandler(ErrorResponseProcessor<?> responseProcessor) {
+    public ApplicationAlreadyExistsExceptionHandler(ErrorResponseProcessor<?> responseProcessor) {
         this.responseProcessor = responseProcessor;
     }
 
     @Override
-    public HttpResponse<?> handle(HttpRequest request, SessionAlreadyExistsException exception) {
+    public HttpResponse<?> handle(HttpRequest request, ApplicationAlreadyExistsException exception) {
         final ErrorContext.Builder contextBuilder = ErrorContext.builder(request).cause(exception);
         MutableHttpResponse<?> response = HttpResponse.status(HttpStatus.CONFLICT);
 
         return responseProcessor.processResponse(contextBuilder
-                .error(new DetailedError(exception.getMessage(), Map.of("sessionId", exception.getSessionId())))
+                .error(new DetailedError(exception.getMessage(), Map.of("sessionId", exception.getApplicationId())))
                 .build(), response);
     }
 }

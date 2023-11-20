@@ -3,6 +3,7 @@ package com.exacaster.lighter.storage.jdbc
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
+import com.exacaster.lighter.storage.ApplicationAlreadyExistsException
 import com.exacaster.lighter.storage.SortOrder
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
@@ -91,4 +92,16 @@ class JdbcApplicationStorageTest extends Specification {
 //        then: "fetching apps ignores soft deleted ones"
 //        storage.findAllPermanentSessions().size() == 1
 //    }
+
+
+    def "insert"() {
+        given:
+        def savedSession =  storage.saveApplication(newPermanentSession())
+
+        when: "inserting a session with id that already exists"
+        storage.insertApplication(savedSession)
+
+        then:
+        thrown ApplicationAlreadyExistsException
+    }
 }

@@ -18,7 +18,7 @@ public interface ApplicationStorage {
 
     Application saveApplication(Application application);
 
-    Application insertApplication(Application application);
+    Application insertApplication(Application application) throws ApplicationAlreadyExistsException;
 
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order,
             Integer from, Integer size);

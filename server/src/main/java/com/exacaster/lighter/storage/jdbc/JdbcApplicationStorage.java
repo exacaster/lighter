@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
+import com.exacaster.lighter.storage.ApplicationAlreadyExistsException;
 import com.exacaster.lighter.storage.SortOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,6 +16,7 @@ import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
+import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
@@ -92,10 +94,16 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Override
     @Transactional
     public Application insertApplication(Application application) {
-        return jdbi.withHandle(handle -> {
-            insert(handle, application);
-            return application;
-        });
+        try {
+            return jdbi.withHandle(handle -> {
+                insert(handle, application);
+                return application;
+            });
+        } catch (UnableToExecuteStatementException e) {
+            //can not make it better till https://github.com/jdbi/jdbi/issues/566 is implemented
+            throw new ApplicationAlreadyExistsException(application.getId());
+        }
+
     }
 
     private static int update(Handle handle, Application application) {
