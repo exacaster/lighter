@@ -178,17 +178,9 @@ public class SessionService {
                 .collect(Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
     }
 
-    public void deletePermanentSession(String id) {
-        this.fetchByType(id, ApplicationType.PERMANENT_SESSION).ifPresent(app -> {
-            backend.kill(app);
-            //TODO what to do to DB ?
-        });
-    }
-
     protected void deletePermanentSession(Application permanentSession) {
         backend.kill(permanentSession);
         applicationStorage.hardDeleteApplication(permanentSession.getId());
     }
-
 
 }
