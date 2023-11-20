@@ -18,6 +18,8 @@ public interface ApplicationStorage {
 
     Application saveApplication(Application application);
 
+    Application insertApplication(Application application);
+
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order,
             Integer from, Integer size);
 

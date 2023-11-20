@@ -41,6 +41,11 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
+    Application insertApplication(Application application) {
+        return storeEntity(application)
+    }
+
+    @Override
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order, Integer offset, Integer limit) {
         return findMany({ type == it.getType() && states.contains(it.getState()) }, Application.class)
                 .sorted((app1, app2) -> order == SortOrder.DESC ? app1.createdAt <=> app2.createdAt : app2.createdAt <=> app1.createdAt)

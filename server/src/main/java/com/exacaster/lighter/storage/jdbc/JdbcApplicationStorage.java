@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
+import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;
@@ -78,43 +79,61 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
     @Transactional
     public Application saveApplication(Application application) {
         return jdbi.withHandle(handle -> {
-                    var updated = handle.createUpdate("UPDATE application SET "
-                                    + "app_id=:app_id, "
-                                    + "app_info=:app_info, "
-                                    + "state=:state, "
-                                    + "contacted_at=:contacted_at WHERE id=:id")
-                            .bind("state", application.getState().name())
-                            .bind("app_id", application.getAppId())
-                            .bind("app_info", application.getAppInfo())
-                            .bind("contacted_at", application.getContactedAt())
-                            .bind("id", application.getId())
-                            .execute();
+                    final var updated = update(handle, application);
                     // Not all SQL databases support ON CONFLICT syntax, so doing fallback if nothing updated
                     if (updated == 0) {
-                        String conf = null;
-                        try {
-                            conf = objectMapper.writeValueAsString(application.getSubmitParams());
-                        } catch (JsonProcessingException e) {
-                            LOG.warn("Failed serializing submit params", e);
-                        }
-                        handle
-                                .createCall(
-                                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at, deleted) "
-                                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at, :deleted)")
-                                .bind("id", application.getId())
-                                .bind("type", application.getType().name())
-                                .bind("state", application.getState().name())
-                                .bind("app_id", application.getAppId())
-                                .bind("app_info", application.getAppInfo())
-                                .bind("submit_params", conf)
-                                .bind("created_at", application.getCreatedAt())
-                                .bind("contacted_at", application.getContactedAt())
-                                .bind("deleted", false)
-                                .invoke();
+                        insert(handle, application);
                     }
                     return application;
                 }
         );
+    }
+
+    @Override
+    @Transactional
+    public Application insertApplication(Application application) {
+        return jdbi.withHandle(handle -> {
+            insert(handle, application);
+            return application;
+        });
+    }
+
+    private static int update(Handle handle, Application application) {
+        var updated = handle.createUpdate("UPDATE application SET "
+                        + "app_id=:app_id, "
+                        + "app_info=:app_info, "
+                        + "state=:state, "
+                        + "contacted_at=:contacted_at WHERE id=:id")
+                .bind("state", application.getState().name())
+                .bind("app_id", application.getAppId())
+                .bind("app_info", application.getAppInfo())
+                .bind("contacted_at", application.getContactedAt())
+                .bind("id", application.getId())
+                .execute();
+        return updated;
+    }
+
+    private void insert(Handle handle, Application application) {
+        String conf = null;
+        try {
+            conf = objectMapper.writeValueAsString(application.getSubmitParams());
+        } catch (JsonProcessingException e) {
+            LOG.warn("Failed serializing submit params", e);
+        }
+        handle
+                .createCall(
+                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at, deleted) "
+                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at, :deleted)")
+                .bind("id", application.getId())
+                .bind("type", application.getType().name())
+                .bind("state", application.getState().name())
+                .bind("app_id", application.getAppId())
+                .bind("app_info", application.getAppInfo())
+                .bind("submit_params", conf)
+                .bind("created_at", application.getCreatedAt())
+                .bind("contacted_at", application.getContactedAt())
+                .bind("deleted", false)
+                .invoke();
     }
 
     @Override
