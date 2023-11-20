@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
 import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException;
+import com.exacaster.lighter.application.sessions.exceptions.SessionAlreadyExistsException;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.rest.SessionParams;
@@ -53,7 +54,11 @@ public class SessionService {
     }
 
     public Application createSession(String sessionId, SessionParams sessionParams) {
-        if(Boolean.TRUE.equals(sessionParams.getPermanent())){
+        //TODO do we wanna do it for all session or perm only
+        if (applicationStorage.findApplication(sessionId).isPresent()) {
+            throw new SessionAlreadyExistsException(sessionId);
+        }
+        if (Boolean.TRUE.equals(sessionParams.getPermanent())) {
             return createPermanentSession(sessionId, sessionParams);
         }
         return createRegularSession(sessionId, sessionParams);
