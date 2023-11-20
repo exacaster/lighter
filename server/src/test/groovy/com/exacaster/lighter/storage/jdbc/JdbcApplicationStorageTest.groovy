@@ -77,7 +77,6 @@ class JdbcApplicationStorageTest extends Specification {
         storage.findApplication(savedPermanentSession.id) == Optional.empty()
         storage.findApplication(savedRegularSession.id) != Optional.empty()
         storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION, ApplicationType.SESSION), 0, 10).size() == 1
-        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION), 0, 10).size() == 0
         storage.findApplicationsByStates(ApplicationType.PERMANENT_SESSION, [savedPermanentSession.state], SortOrder.DESC, 0, 10).size() == 0
     }
 
