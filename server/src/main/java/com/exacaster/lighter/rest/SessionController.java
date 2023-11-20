@@ -69,6 +69,10 @@ public class SessionController {
 
     @Put("/{id}")
     @Status(HttpStatus.CREATED)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "session created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Application.class))}),
+            @ApiResponse(responseCode = "409", description = "session with given id already exists", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))})
+    })
     public Application insertNewSession(@PathVariable String id, @Valid @Body SessionParams sessionParams) {
         return sessionService.createSession(id, sessionParams);
     }
