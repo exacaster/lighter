@@ -29,6 +29,7 @@ import static java.util.Optional.ofNullable;
 @Singleton
 public class SessionService {
 
+    public static final EnumSet<ApplicationType> SESSIONS = EnumSet.of(ApplicationType.SESSION, ApplicationType.PERMANENT_SESSION);
     private final ApplicationStorage applicationStorage;
     private final StatementStorage statementStorage;
     private final Backend backend;
@@ -45,7 +46,7 @@ public class SessionService {
 
     //TODO do we wanna return just Session or PermSession as well?
     public List<Application> fetch(Integer from, Integer size) {
-        return applicationStorage.findApplications(EnumSet.of(ApplicationType.SESSION, ApplicationType.PERMANENT_SESSION), from, size);
+        return applicationStorage.findApplications(SESSIONS, from, size);
     }
 
     public Application createSession(SessionParams sessionParams) {
@@ -116,7 +117,7 @@ public class SessionService {
 
     public void deleteOne(String id) {
         this.fetchOne(id)
-                .filter(application -> EnumSet.of(ApplicationType.SESSION, ApplicationType.PERMANENT_SESSION).contains(application.getType()))
+                .filter(application -> SESSIONS.contains(application.getType()))
                 .ifPresent(this::deleteOne);
     }
 
