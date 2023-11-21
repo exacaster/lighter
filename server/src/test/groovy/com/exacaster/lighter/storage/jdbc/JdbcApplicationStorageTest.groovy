@@ -75,7 +75,6 @@ class JdbcApplicationStorageTest extends Specification {
         storage.deleteApplication(savedPermanentSession.id)
 
         then: "fetching apps ignores soft deleted ones"
-//        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION, ApplicationType.SESSION), 0, 10).size() == 1
         storage.findApplicationsByStates(ApplicationType.PERMANENT_SESSION, [savedPermanentSession.state], SortOrder.DESC, 0, 10).size() == 0
         storage.findApplication(savedPermanentSession.id) == Optional.empty()
         storage.findApplication(savedRegularSession.id) != Optional.empty()
@@ -90,7 +89,8 @@ class JdbcApplicationStorageTest extends Specification {
 //        storage.deleteApplication(savedPermanentSession.id)
 //
 //        then: "fetching apps ignores soft deleted ones"
-//        storage.findAllPermanentSessions().size() == 1
+//        storage.findAllApplications(ApplicationType.PERMANENT_SESSION).size() == 1
+//        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION, ApplicationType.SESSION), 0, 10).size() == 0
 //    }
 
 
