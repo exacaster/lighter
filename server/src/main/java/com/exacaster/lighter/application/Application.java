@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.storage.Entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;
 
 import java.time.LocalDateTime;
@@ -68,10 +69,12 @@ public class Application implements Entity {
         return submitParams;
     }
 
+    @JsonIgnore
     public boolean isDeleted() {
         return deleted;
     }
 
+    @JsonIgnore
     public boolean isNotDeleted() {
         return !isDeleted();
     }
