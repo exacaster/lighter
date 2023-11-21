@@ -103,24 +103,6 @@ public class SessionHandler {
 
     }
 
-    private static class PermanentSessionParam {
-        private final String sessionId;
-        private final SubmitParams submitParams;
-
-        public PermanentSessionParam(String sessionId, SubmitParams submitParams) {
-            this.sessionId = sessionId;
-            this.submitParams = submitParams;
-        }
-
-        public String getSessionId() {
-            return sessionId;
-        }
-
-        public SubmitParams getSubmitParams() {
-            return submitParams;
-        }
-    }
-
     @SchedulerLock(name = "processScheduledSessions")
     @Scheduled(fixedRate = "${lighter.session.schedule-interval}")
     public void processScheduledSessions() throws InterruptedException {
@@ -181,5 +163,23 @@ public class SessionHandler {
 
     private boolean running(ApplicationState state) {
         return !state.isComplete();
+    }
+
+    private static class PermanentSessionParam {
+        private final String sessionId;
+        private final SubmitParams submitParams;
+
+        public PermanentSessionParam(String sessionId, SubmitParams submitParams) {
+            this.sessionId = sessionId;
+            this.submitParams = submitParams;
+        }
+
+        public String getSessionId() {
+            return sessionId;
+        }
+
+        public SubmitParams getSubmitParams() {
+            return submitParams;
+        }
     }
 }
