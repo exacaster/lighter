@@ -16,6 +16,16 @@ jobs:
             hadoop_version: 3
     steps:
       - uses: docker/setup-buildx-action@v2
+      - name: Prepare tag suffix
+        id: prep
+        run: |
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}
+          SLUGIFIED_BRANCH_NAME=$(echo $BRANCH_NAME | tr '/' '-' | tr '[:upper:]' '[:lower:]')
+          if [ "$BRANCH_NAME" != "main" ] && [ "$BRANCH_NAME" != "master" ]; then
+            echo "TAG_SUFFIX=-$SLUGIFIED_BRANCH_NAME" >> $GITHUB_ENV
+          else
+            echo "TAG_SUFFIX=" >> $GITHUB_ENV
+          fi
       - uses: docker/login-action@v2
         with:
           registry: ghcr.io
@@ -27,4 +37,4 @@ jobs:
           build-args: |
             SPARK_VERSION=${{ matrix.spark_version }}
             HADOOP_VERSION=${{ matrix.hadoop_version }}
-          tags: ghcr.io/exacaster/lighter:${{ github.event.release.tag_name }}-spark${{ matrix.spark_version }}
+          tags: ghcr.io/exacaster/lighter:${{ github.event.release.tag_name }}-spark${{ matrix.spark_version }}${{ env.TAG_SUFFIX }}
