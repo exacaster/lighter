@@ -44,7 +44,6 @@ public class SessionService {
         this.statementHandler = statementHandler;
     }
 
-    //TODO do we wanna return just Session or PermSession as well?
     public List<Application> fetch(Integer from, Integer size) {
         return applicationStorage.findApplications(SESSIONS, from, size);
     }
