@@ -68,12 +68,12 @@ public class SessionHandler {
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
                     session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
                 LOG.info("Permanent session {} needs to be (re)started.", perm.getSessionId());
+                sessionService.deletePermanentSession(perm.sessionId);
                 var sessionToLaunch = sessionService.createPermanentSession(
                         perm.getSessionId(),
                         perm.getSubmitParams()
                 );
 
-                sessionService.deletePermanentSession(sessionToLaunch);
                 launchSession(sessionToLaunch).waitCompletion();
                 LOG.info("Permanent session {} (re)started.", perm.getSessionId());
             }

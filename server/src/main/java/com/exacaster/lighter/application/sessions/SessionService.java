@@ -171,9 +171,9 @@ public class SessionService {
                 .collect(Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
     }
 
-    protected void deletePermanentSession(Application permanentSession) {
-        backend.kill(permanentSession);
-        applicationStorage.hardDeleteApplication(permanentSession.getId());
+    protected void deletePermanentSession(String id) {
+        applicationStorage.findApplication(id).ifPresent(backend::kill);
+        applicationStorage.hardDeleteApplication(id);
     }
 
 }
