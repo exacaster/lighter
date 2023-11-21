@@ -1,4 +1,4 @@
-name: publish docker image
+name: Build everything & publish images
 on:
   release:
     types:

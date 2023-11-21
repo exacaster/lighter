@@ -1,0 +1,10 @@
+name: Build PR images
+on:
+  issue_comment:
+    types:
+      - created
+
+jobs:
+  publish-registry:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/build')
+    uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
