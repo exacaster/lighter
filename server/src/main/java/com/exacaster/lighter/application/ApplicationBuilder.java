@@ -12,6 +12,7 @@ public class ApplicationBuilder {
     private SubmitParams submitParams;
     private LocalDateTime createdAt;
     private LocalDateTime contactedAt;
+    private boolean deleted;
 
     private ApplicationBuilder() {
 
@@ -75,7 +76,12 @@ public class ApplicationBuilder {
         return this;
     }
 
+    public ApplicationBuilder setDeleted(boolean deleted) {
+        this.deleted = deleted;
+        return this;
+    }
+
     public Application build() {
-        return new Application(id, type, state, appId, appInfo, submitParams, createdAt, contactedAt);
+        return new Application(id, type, state, appId, appInfo, submitParams, createdAt, contactedAt, deleted);
     }
 }

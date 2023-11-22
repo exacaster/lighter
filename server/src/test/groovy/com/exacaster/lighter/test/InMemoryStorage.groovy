@@ -3,6 +3,7 @@ package com.exacaster.lighter.test
 import com.exacaster.lighter.application.Application
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
+
 import com.exacaster.lighter.log.Log
 import com.exacaster.lighter.storage.ApplicationStorage
 import com.exacaster.lighter.storage.Entity
@@ -24,8 +25,8 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
-    List<Application> findApplications(ApplicationType type, Integer from, Integer size) {
-        return findManyWithOffset({ type == it.getType() }, Application.class, from, size)
+    List<Application> findApplications(EnumSet<ApplicationType> types, Integer from, Integer size) {
+        return findManyWithOffset({ types.contains it.getType() }, Application.class, from, size)
     }
 
     @Override
@@ -40,12 +41,32 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
+    Application insertApplication(Application application) {
+        return storeEntity(application)
+    }
+
+    @Override
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order, Integer offset, Integer limit) {
         return findMany({ type == it.getType() && states.contains(it.getState()) }, Application.class)
                 .sorted((app1, app2) -> order == SortOrder.DESC ? app1.createdAt <=> app2.createdAt : app2.createdAt <=> app1.createdAt)
                 .skip(offset)
                 .limit(limit)
                 .collect(Collectors.toList())
+    }
+
+    @Override
+    List<Application> findAllApplications(ApplicationType type) {
+        return findMany({ type == it.getType() }, Application.class)
+                .sorted((app1, app2) ->  app2.createdAt <=> app1.createdAt)
+                .skip(0)
+                .limit(Integer.MAX_VALUE)
+                .collect(Collectors.toList())
+    }
+
+    @Override
+    void hardDeleteApplication(String internalApplicationId) {
+        deleteOne(internalApplicationId, Application.class)
+        deleteOne(internalApplicationId, Log.class)
     }
 
     @Override

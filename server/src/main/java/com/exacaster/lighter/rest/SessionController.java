@@ -2,7 +2,6 @@ package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationList;
-import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.SessionService;
 import com.exacaster.lighter.application.sessions.Statement;
 import com.exacaster.lighter.application.sessions.StatementList;
@@ -19,6 +18,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Put;
 import io.micronaut.http.annotation.QueryValue;
 import io.micronaut.http.annotation.Status;
 import io.micronaut.validation.Validated;
@@ -62,8 +62,19 @@ public class SessionController {
 
     @Post
     @Status(HttpStatus.CREATED)
-    public Application create(@Valid @Body SubmitParams session) {
-        return sessionService.createSession(session);
+    public Application create(@Valid @Body SessionParams sessionParams) {
+        return sessionService.createSession(sessionParams);
+    }
+
+
+    @Put("/{id}")
+    @Status(HttpStatus.CREATED)
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "session created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Application.class))}),
+            @ApiResponse(responseCode = "409", description = "session with given id already exists", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))})
+    })
+    public Application insertNewSession(@PathVariable String id, @Valid @Body SessionParams sessionParams) {
+        return sessionService.createSession(id, sessionParams);
     }
 
     @Get("/{id}")
