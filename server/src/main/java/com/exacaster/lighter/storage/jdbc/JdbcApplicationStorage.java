@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Requires;
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import org.jdbi.v3.core.Handle;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
@@ -20,7 +21,6 @@ import org.jdbi.v3.core.statement.UnableToExecuteStatementException;
 import org.slf4j.Logger;
 
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.EnumSet;
