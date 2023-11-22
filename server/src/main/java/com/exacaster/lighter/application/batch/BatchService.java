@@ -4,15 +4,17 @@ import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.ApplicationType;
-import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.application.SubmitParams;
+import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
+import jakarta.inject.Singleton;
+
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import jakarta.inject.Singleton;
 
 @Singleton
 public class BatchService {
@@ -26,7 +28,7 @@ public class BatchService {
     }
 
     public List<Application> fetch(Integer from, Integer size) {
-        return applicationStorage.findApplications(ApplicationType.BATCH, from, size);
+        return applicationStorage.findApplications(EnumSet.of(ApplicationType.BATCH), from, size);
     }
 
     public Application create(SubmitParams batch) {

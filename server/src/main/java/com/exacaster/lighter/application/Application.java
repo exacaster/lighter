@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application;
 
 import com.exacaster.lighter.storage.Entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;
 
 import java.time.LocalDateTime;
@@ -22,9 +23,11 @@ public class Application implements Entity {
     private final LocalDateTime createdAt;
     private final LocalDateTime contactedAt;
 
+    private final boolean deleted;
+
     public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo,
             SubmitParams submitParams,
-            LocalDateTime createdAt, LocalDateTime contactedAt) {
+            LocalDateTime createdAt, LocalDateTime contactedAt, boolean deleted) {
         this.id = id;
         this.type = type;
         this.state = state;
@@ -34,6 +37,7 @@ public class Application implements Entity {
         this.createdAt = createdAt;
         this.contactedAt = contactedAt;
         this.kind = "pyspark";
+        this.deleted = deleted;
     }
 
     @Override
@@ -56,13 +60,23 @@ public class Application implements Entity {
     public String getAppInfo() {
         return appInfo;
     }
-    
+
     public List<String> getLog() {
         return log;
     }
 
     public SubmitParams getSubmitParams() {
         return submitParams;
+    }
+
+    @JsonIgnore
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    @JsonIgnore
+    public boolean isNotDeleted() {
+        return !isDeleted();
     }
 
     @Override
@@ -89,6 +103,7 @@ public class Application implements Entity {
                 .add("submitParams=" + submitParams)
                 .add("createdAt=" + createdAt)
                 .add("contactedAt=" + contactedAt)
+                .add("deleted=" + deleted)
                 .toString();
     }
 }

@@ -8,15 +8,19 @@ import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException;
 import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.rest.SessionParams;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import com.exacaster.lighter.storage.StatementStorage;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
+import java.util.EnumSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
@@ -25,14 +29,15 @@ import static java.util.Optional.ofNullable;
 @Singleton
 public class SessionService {
 
+    public static final EnumSet<ApplicationType> SESSIONS = EnumSet.of(ApplicationType.SESSION, ApplicationType.PERMANENT_SESSION);
     private final ApplicationStorage applicationStorage;
     private final StatementStorage statementStorage;
     private final Backend backend;
     private final StatementHandler statementHandler;
 
     public SessionService(ApplicationStorage applicationStorage,
-            StatementStorage statementStorage, Backend backend,
-            StatementHandler statementHandler) {
+                          StatementStorage statementStorage, Backend backend,
+                          StatementHandler statementHandler) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
@@ -40,14 +45,29 @@ public class SessionService {
     }
 
     public List<Application> fetch(Integer from, Integer size) {
-        return applicationStorage.findApplications(ApplicationType.SESSION, from, size);
+        return applicationStorage.findApplications(SESSIONS, from, size);
     }
 
-    public Application createSession(SubmitParams params) {
-        return createSession(params, UUID.randomUUID().toString());
+    public Application createSession(SessionParams sessionParams) {
+        return createSession(UUID.randomUUID().toString(), sessionParams);
     }
 
-    public Application createSession(SubmitParams params, String sessionId) {
+    public Application createSession(String sessionId, SessionParams sessionParams) {
+        if (Boolean.TRUE.equals(sessionParams.getPermanent())) {
+            return createPermanentSession(sessionId, sessionParams);
+        }
+        return createRegularSession(sessionId, sessionParams);
+    }
+
+    public Application createPermanentSession(String sessionId, SubmitParams params) {
+        return createSession(params, sessionId, ApplicationType.PERMANENT_SESSION);
+    }
+
+    private Application createRegularSession(String sessionId, SubmitParams params) {
+        return createSession(params, sessionId, ApplicationType.SESSION);
+    }
+
+    private Application createSession(SubmitParams params, String sessionId, ApplicationType applicationType) {
         var name = ofNullable(params.getName())
                 .orElseGet(() -> "session_" + UUID.randomUUID());
         var submitParams = params
@@ -55,16 +75,16 @@ public class SessionService {
         var now = LocalDateTime.now();
         var entity = ApplicationBuilder.builder()
                 .setId(sessionId)
-                .setType(ApplicationType.SESSION)
+                .setType(applicationType)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(submitParams)
                 .setCreatedAt(now)
                 .setContactedAt(now)
                 .build();
-        return applicationStorage.saveApplication(entity);
+        return applicationStorage.insertApplication(entity);
     }
 
-    public List<Application> fetchRunning() {
+    protected List<Application> fetchRunningSession() {
         return applicationStorage
                 .findApplicationsByStates(ApplicationType.SESSION, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
     }
@@ -95,10 +115,12 @@ public class SessionService {
     }
 
     public void deleteOne(String id) {
-        this.fetchOne(id).ifPresent(this::deleteOne);
+        this.fetchOne(id)
+                .filter(application -> SESSIONS.contains(application.getType()))
+                .ifPresent(this::deleteOne);
     }
 
-    public void deleteOne(Application app) {
+    protected void deleteOne(Application app) {
         backend.kill(app);
         applicationStorage.deleteApplication(app.getId());
     }
@@ -143,4 +165,15 @@ public class SessionService {
     public boolean isActive(Application application) {
         return statementHandler.hasWaitingStatement(application);
     }
+
+    public Map<String, Application> fetchAllPermanentSessions() {
+        return applicationStorage.findAllApplications(ApplicationType.PERMANENT_SESSION).stream()
+                .collect(Collectors.toMap(permanentSession -> permanentSession.getId(), Function.identity()));
+    }
+
+    protected void deletePermanentSession(String id) {
+        applicationStorage.findApplication(id).ifPresent(backend::kill);
+        applicationStorage.hardDeleteApplication(id);
+    }
+
 }

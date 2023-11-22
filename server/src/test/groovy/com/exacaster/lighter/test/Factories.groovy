@@ -8,11 +8,26 @@ import com.exacaster.lighter.application.sessions.processors.Output
 import com.exacaster.lighter.backend.kubernetes.KubernetesProperties
 import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.application.SubmitParams
+import com.exacaster.lighter.rest.SessionParams
 
 import java.time.Duration
 import java.time.LocalDateTime
 
 class Factories {
+    static sessionParams(submitParams = submitParams()) {
+        return new SessionParams(
+                false,
+                submitParams.name,
+                submitParams.file,
+                submitParams.master,
+                submitParams.mainClass,
+                submitParams.numExecutors,
+                submitParams.executorCores, submitParams.executorMemory, submitParams.driverCores, submitParams.driverMemory,
+                submitParams.args, submitParams.pyFiles, submitParams.files, submitParams.jars, submitParams.archives,
+                submitParams.conf
+        )
+    }
+
     static submitParams() {
         new SubmitParams(
                 "application1",
@@ -41,9 +56,20 @@ class Factories {
                 .setType(ApplicationType.SESSION)
                 .setState(state)
                 .setAppInfo("info")
-                .setCreatedAt(LocalDateTime.MAX)
+                .setCreatedAt(LocalDateTime.now())
                 .setId("2")
                 .setSubmitParams(null)
+                .build()
+    }
+
+    static newPermanentSession(appId = "application_1") {
+        ApplicationBuilder.builder().setAppId(appId)
+                .setType(ApplicationType.PERMANENT_SESSION)
+                .setState(ApplicationState.NOT_STARTED)
+                .setAppInfo("info")
+                .setCreatedAt(LocalDateTime.now())
+                .setId("-1")
+                .setSubmitParams(submitParams())
                 .build()
     }
 
