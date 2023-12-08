@@ -9,7 +9,7 @@
     "@chakra-ui/system": "^2.5.8",
     "@emotion/react": "^11",
     "@emotion/styled": "^11",
-    "@fontsource/open-sans": "^5.0.17",
+    "@fontsource/open-sans": "^5.0.18",
     "@tanstack/react-query": "^5.12.2",
     "axios": "^1.6.2",
     "framer-motion": "^10.16.14",
