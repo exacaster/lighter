@@ -7,23 +7,5 @@ on:
 jobs:
   publish-registry:
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/build')
-    runs-on: ubuntu-latest
-    steps:
-        - name: Checkout Repository
-          uses: actions/checkout@v2
-          with:
-            ref: ${{ github.event.issue.pull_request.head.sha }}
-        - name: Set up Docker Buildx
-          uses: docker/setup-buildx-action@v1
-        - uses: docker/login-action@v2
-          with:
-            registry: ghcr.io
-            username: ${{ github.actor }}
-            password: ${{ github.token }}
-        - uses: docker/build-push-action@v3
-          with:
-            push: true
-            build-args: |
-              SPARK_VERSION=${{ matrix.spark_version }}
-              HADOOP_VERSION=${{ matrix.hadoop_version }}
-            tags: ghcr.io/exacaster/lighter:${{ github.event.release.tag_name }}-spark${{ matrix.spark_version }}-pr-version
+    uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
+    needs: [ build-frontend, build-java ]
