@@ -33,7 +33,7 @@ jobs:
             HADOOP_VERSION=${{ matrix.hadoop_version }}
           tags: ghcr.io/exacaster/lighter:${{ github.event.release.tag_name }}-spark${{ matrix.spark_version }}-${{ github.ref_name }}
       - name: Comment PR with Docker Image URL
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v3
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
