@@ -40,6 +40,6 @@ jobs:
         with:
           issue-number: ${{ github.event.issue.number }}
           body: |
-            Docker image has been built and pushed.
+            Docker image has been built and pushed...
             Image URL: ghcr.io/exacaster/lighter:${{ github.event.issue.number }}-spark${{ matrix.spark_version }}
           token: ${{ github.token }}
