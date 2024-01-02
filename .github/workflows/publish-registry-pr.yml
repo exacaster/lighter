@@ -5,8 +5,15 @@ on:
       - created
 
 jobs:
+  build-frontend:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/build')
+    uses: exacaster/lighter/.github/workflows/build-frontend.yml@master
+  build-java:
+    if: github.event.issue.pull_request && contains(github.event.comment.body, '/build')
+    uses: exacaster/lighter/.github/workflows/build-java.yml@master
   publish-registry-pr:
     if: github.event.issue.pull_request && contains(github.event.comment.body, '/build')
+    needs: [ build-frontend, build-java ]
     runs-on: ubuntu-latest
     strategy:
       matrix:
