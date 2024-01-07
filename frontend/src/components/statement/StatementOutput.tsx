@@ -2,6 +2,7 @@ import React from 'react';
 import {SessionStatement} from '../../client/types';
 import {CodeBlock} from 'react-code-blocks';
 
+// eslint-disable-next-line
 const StatementOutput: React.FC<{output?: SessionStatement['output']; theme: any}> = ({output, theme}) => {
   if (output?.traceback) {
     return <CodeBlock showLineNumbers={false} theme={theme} text={output.traceback} />;

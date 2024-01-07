@@ -10,9 +10,9 @@ interface StatementFormProps {
 const StatementForm: React.FC<StatementFormProps> = ({session}) => {
   const {mutateAsync: submit, isPending: isSubmitting} = useSessionStatementSubmit(session.id);
   const handleSubmit = (event: React.FormEvent) => {
-    // @ts-ignore
+    // @ts-expect-error - wrong type definition
     const code = event.target.elements.code.value;
-    // @ts-ignore
+    // @ts-expect-error - wrong type definition
     submit({code}).then(() => (event.target.elements.code.value = ''));
     event.preventDefault();
   };

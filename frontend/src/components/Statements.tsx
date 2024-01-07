@@ -26,7 +26,7 @@ const Statements: React.FC<StatementsProps> = ({session}) => {
           <CardBody>Session has no statements</CardBody>
         </Card>
       )}
-      {page?.statements.toReversed().map((statement) => <Statement key={statement.id} sessionId={session.id} statement={statement} theme={theme} />)}
+      {page?.statements.reverse().map((statement) => <Statement key={statement.id} sessionId={session.id} statement={statement} theme={theme} />)}
       <StatementForm session={session} />
     </VStack>
   );

@@ -16,7 +16,7 @@ export function useBatchDelete() {
   const client = useQueryClient();
   return useMutation({
     mutationFn: (id: string) => api.deleteBatch(id),
-    onSuccess: (_) =>
+    onSuccess: () =>
       client.refetchQueries({
         queryKey: ['batches'],
       }),
