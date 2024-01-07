@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "homepage": "/lighter",
   "private": true,
+  "type": "module",
   "dependencies": {
     "@chakra-ui/icons": "^2.1.1",
     "@chakra-ui/react": "^2.8.2",
@@ -24,35 +25,32 @@
     "typescript": "^5.3.3"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^6.2.0",
-    "@testing-library/react": "^14.1.2",
-    "@types/jest": "^29.5.11",
+    "@nabla/vite-plugin-eslint": "^2.0.2",
     "@types/node": "^20.10.6",
     "@types/react": "^18.2.46",
     "@types/react-dom": "^18.2.18",
     "@types/react-router-dom": "^5.1.7",
-    "dotenv": "^16.3.1",
-    "http-proxy-middleware": "^2.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.18.0",
+    "@typescript-eslint/parser": "^6.18.0",
+    "@vitejs/plugin-react": "^4.2.1",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "prettier": "^3.1.1",
     "prop-types": "^15.8.1",
-    "react-scripts": "^5.0.0"
+    "vite": "^5.0.11",
+    "vite-tsconfig-paths": "^4.2.3"
   },
   "resolutions": {
     "@types/react": "^18.0.9"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "lint": "eslint ./src",
-    "format": "prettier --write ./src"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
+    "start": "vite",
+    "build": "tsc && vite build",
+    "format": "prettier --write ./src *.ts",
+    "lint": "eslint --ext .js,.jsx,.ts,.tsx ./src/"
   },
   "browserslist": {
     "production": [

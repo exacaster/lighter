@@ -6,6 +6,7 @@ import {Box, Card, CardBody, Flex, IconButton, Spinner, VStack} from '@chakra-ui
 import {CodeBlock} from 'react-code-blocks';
 import StatementOutput from './StatementOutput';
 
+// eslint-disable-next-line
 const Statement: React.FC<{sessionId: string; statement: SessionStatement; theme: any}> = ({sessionId, statement, theme}) => {
   const {mutate: cancel, isPending: isCanceling} = useSessionStatementCancel(sessionId, statement.id);
 

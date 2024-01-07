@@ -4,6 +4,7 @@ import ButtonLink from './ButtonLink';
 import {generatePath, useLocation} from 'react-router';
 import {RoutePath} from '../configuration/consts';
 import {MoonIcon, SunIcon} from '@chakra-ui/icons';
+import {srcJoin} from '../utils/application';
 
 interface Props {
   children?: ReactNode;
@@ -18,7 +19,7 @@ const Layout: React.FC<Props> = ({children}) => {
     <Flex p="10" direction="column" alignItems="stretch" minH="100vh">
       <header>
         <Stack direction="row" spacing={4} align="center">
-          <Image src={`${process.env.PUBLIC_URL}/images/logo.svg`} width="150px" />
+          <Image src={srcJoin(import.meta.env.BASE_URL, 'logo.svg')} width="150px" />
           <ButtonLink to={generatePath(RoutePath.BATCHES)} isActive={match.pathname === '/' || match.pathname.startsWith(RoutePath.BATCHES)}>
             Batches
           </ButtonLink>

@@ -14,7 +14,7 @@ FROM node:lts-alpine3.18 as frontend
 ARG SPARK_VERSION=3.5.0
 ARG HADOOP_VERSION=3
 
-ENV REACT_APP_API_BASE_URL='/lighter'
+ENV APP_BASE_URL='/lighter'
 
 WORKDIR /home/app/
 COPY frontend/ ./frontend/
@@ -40,7 +40,7 @@ COPY --from=server /home/app/server/build/docker/main/layers/libs /home/app/libs
 COPY --from=server /home/app/server/build/docker/main/layers/resources /home/app/resources
 COPY --from=server /home/app/server/build/docker/main/layers/application.jar /home/app/application.jar
 
-COPY --from=frontend /home/app/frontend/build/ ./frontend/
+COPY --from=frontend /home/app/frontend/dist/ ./frontend/
 COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/ ./spark/
 
 COPY k8s/ ./k8s/
