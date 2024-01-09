@@ -49,6 +49,19 @@ class YarnBackendTest extends Specification {
         info.state == ApplicationState.BUSY
     }
 
+    def "gets app info with DEAD state if IOException thrown"() {
+        given:
+        def app = newApplication(null)
+
+        when:
+        def info = backend.getInfo(app).get()
+
+        then:
+        1 * client.getApplications(*_) >> { throw new IOException() }
+        info.getApplicationId() == null
+        info.getState() == ApplicationState.DEAD
+    }
+
 
     def "fetches logs"() {
         given:
@@ -104,4 +117,5 @@ class YarnBackendTest extends Specification {
         client.getApplications(*_) >> [yarnApp]
         client.getApplicationReport(yarnId) >> yarnApp
     }
+
 }
