@@ -49,8 +49,7 @@ public class YarnBackend implements Backend {
     @Override
     public Optional<ApplicationInfo> getInfo(Application application) {
         return getYarnApplicationId(application)
-                .flatMap(id -> getState(id).map(state -> new ApplicationInfo(state, id)))
-            .or(() -> Optional.of(new ApplicationInfo(ApplicationState.DEAD, null)));
+                .flatMap(id -> getState(id).map(state -> new ApplicationInfo(state, id)));
     }
 
     private Optional<ApplicationState> getState(String id) {
@@ -144,7 +143,7 @@ public class YarnBackend implements Backend {
                                 .max(Comparator.comparing(ApplicationReport::getStartTime))
                                 .map(ApplicationReport::getApplicationId)
                                 .map(ApplicationId::toString);
-                    } catch (YarnException | IOException e) {
+                    } catch (YarnException | IOException | RuntimeException e) {
                         LOG.error("Failed to get app id for app: {}", application, e);
                         return Optional.empty();
                     }

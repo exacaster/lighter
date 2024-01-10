@@ -49,17 +49,16 @@ class YarnBackendTest extends Specification {
         info.state == ApplicationState.BUSY
     }
 
-    def "gets app info with DEAD state if IOException thrown"() {
+    def "gets empty app info if IOException thrown"() {
         given:
         def app = newApplication(null)
 
         when:
-        def info = backend.getInfo(app).get()
+        def info = backend.getInfo(app)
 
         then:
         1 * client.getApplications(*_) >> { throw new IOException() }
-        info.getApplicationId() == null
-        info.getState() == ApplicationState.DEAD
+        info.isEmpty()
     }
 
 
