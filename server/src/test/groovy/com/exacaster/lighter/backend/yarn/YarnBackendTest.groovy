@@ -61,6 +61,17 @@ class YarnBackendTest extends Specification {
         info.isEmpty()
     }
 
+    def "gets empty app info if RuntimeException with IOException thrown"() {
+        given:
+        def app = newApplication(null)
+
+        when:
+        def info = backend.getInfo(app)
+
+        then:
+        1 * client.getApplications(*_) >> { throw new RuntimeException("java.lang.RuntimeException: Exception in thread \"main\" java.io.IOException: Could not get block locations") }
+        info.isEmpty()
+    }
 
     def "fetches logs"() {
         given:

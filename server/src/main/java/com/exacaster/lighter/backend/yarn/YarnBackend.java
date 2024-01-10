@@ -143,9 +143,18 @@ public class YarnBackend implements Backend {
                                 .max(Comparator.comparing(ApplicationReport::getStartTime))
                                 .map(ApplicationReport::getApplicationId)
                                 .map(ApplicationId::toString);
-                    } catch (YarnException | IOException | RuntimeException e) {
+                    } catch (YarnException | IOException e) {
                         LOG.error("Failed to get app id for app: {}", application, e);
                         return Optional.empty();
+                    } catch (RuntimeException e) {
+                        // Yarn client sometimes throws IOException wrapped in RuntimeException
+                        LOG.error("Failed to get app id for app: {}", application, e);
+                        String message = e.getMessage();
+                        if (message != null && message.contains("java.io.IOException")) {
+                            return Optional.empty();
+                        } else {
+                            throw e;
+                        }
                     }
                 });
     }
