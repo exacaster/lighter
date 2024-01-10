@@ -69,7 +69,7 @@ class YarnBackendTest extends Specification {
         def info = backend.getInfo(app)
 
         then:
-        1 * client.getApplications(*_) >> { throw new RuntimeException("java.lang.RuntimeException: Exception in thread \"main\" java.io.IOException: Could not get block locations") }
+        1 * client.getApplications(*_) >> { throw new RuntimeException(new IOException("test")) }
         info.isEmpty()
     }
 
