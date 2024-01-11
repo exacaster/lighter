@@ -22,7 +22,7 @@ lighter:
       url: jdbc:h2:mem:lighter;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE;MODE=PostgreSQL
       username: sa
       password: ""
-      driverClassName: org.h2.Driver
+      driver-class-name: org.h2.Driver
 
 # Micronaut specific configs
 jackson:
@@ -45,7 +45,7 @@ datasources:
     url: ${lighter.storage.jdbc.url}
     username: ${lighter.storage.jdbc.username}
     password: ${lighter.storage.jdbc.password}
-    driverClassName: ${lighter.storage.jdbc.driverClassName}
+    driverClassName: ${lighter.storage.jdbc.driver-class-name}
 
 micronaut:
   server:
