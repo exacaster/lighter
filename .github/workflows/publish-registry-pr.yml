@@ -30,6 +30,7 @@ jobs:
           password: ${{ github.token }}
       - uses: docker/build-push-action@v3
         with:
+          context: .
           push: true
           build-args: |
             SPARK_VERSION=${{ matrix.spark_version }}
