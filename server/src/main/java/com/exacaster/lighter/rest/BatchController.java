@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 
 import java.util.Optional;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 
 @Tags(@Tag(name = "Batches"))
 @Validated

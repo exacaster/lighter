@@ -8,7 +8,7 @@ import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.server.exceptions.response.ErrorContext;
 import io.micronaut.http.server.exceptions.response.ErrorResponseProcessor;
 
-import javax.inject.Singleton;
+import jakarta.inject.Singleton;
 
 @Primary
 @Singleton

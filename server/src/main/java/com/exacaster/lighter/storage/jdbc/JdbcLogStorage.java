@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 import jakarta.inject.Singleton;
 import javax.sql.DataSource;
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import org.jdbi.v3.core.Jdbi;
 import org.jdbi.v3.core.mapper.RowMapper;
 import org.jdbi.v3.core.statement.StatementContext;

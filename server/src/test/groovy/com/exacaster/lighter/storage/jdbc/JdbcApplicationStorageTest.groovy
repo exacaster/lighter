@@ -7,7 +7,7 @@ import com.exacaster.lighter.storage.ApplicationAlreadyExistsException
 import com.exacaster.lighter.storage.SortOrder
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import javax.transaction.Transactional
+import jakarta.transaction.Transactional
 import spock.lang.Specification
 
 import static com.exacaster.lighter.test.Factories.newApplication

@@ -4,7 +4,7 @@ import io.micronaut.context.annotation.ConfigurationInject;
 import io.micronaut.context.annotation.ConfigurationProperties;
 import io.micronaut.context.annotation.Requires;
 import io.micronaut.core.annotation.Nullable;
-import javax.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotBlank;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 @ConfigurationProperties("lighter.yarn")
@@ -18,6 +18,7 @@ public class YarnProperties {
         this.kerberos = kerberos;
     }
 
+    @Nullable
     @ConfigurationProperties("kerberos")
     public KerberosProperties getKerberos() {
         return kerberos;
@@ -30,6 +31,7 @@ public class YarnProperties {
                 .toString();
     }
 
+    @Requires(property="lighter.yarn.kerberos.principal")
     @ConfigurationProperties("kerberos")
     public static class KerberosProperties {
 

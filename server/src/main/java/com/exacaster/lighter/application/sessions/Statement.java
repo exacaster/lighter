@@ -4,7 +4,7 @@ import com.exacaster.lighter.application.sessions.processors.Output;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.StringJoiner;
 
