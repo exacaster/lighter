@@ -145,7 +145,15 @@ public class YarnBackend implements Backend {
                                 .map(ApplicationId::toString);
                     } catch (YarnException | IOException e) {
                         LOG.error("Failed to get app id for app: {}", application, e);
-                        throw new IllegalStateException(e);
+                        return Optional.empty();
+                    } catch (RuntimeException e) {
+                        // Yarn client sometimes throws IOException wrapped in RuntimeException
+                        LOG.error("Failed to get app id for app: {}", application, e);
+                        if (e.getCause() instanceof IOException) {
+                            return Optional.empty();
+                        }
+
+                        throw e;
                     }
                 });
     }

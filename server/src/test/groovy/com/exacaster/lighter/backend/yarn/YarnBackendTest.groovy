@@ -49,6 +49,29 @@ class YarnBackendTest extends Specification {
         info.state == ApplicationState.BUSY
     }
 
+    def "gets empty app info if IOException thrown"() {
+        given:
+        def app = newApplication(null)
+
+        when:
+        def info = backend.getInfo(app)
+
+        then:
+        1 * client.getApplications(*_) >> { throw new IOException() }
+        info.isEmpty()
+    }
+
+    def "gets empty app info if RuntimeException with IOException thrown"() {
+        given:
+        def app = newApplication(null)
+
+        when:
+        def info = backend.getInfo(app)
+
+        then:
+        1 * client.getApplications(*_) >> { throw new RuntimeException(new IOException("test")) }
+        info.isEmpty()
+    }
 
     def "fetches logs"() {
         given:
@@ -104,4 +127,5 @@ class YarnBackendTest extends Specification {
         client.getApplications(*_) >> [yarnApp]
         client.getApplicationReport(yarnId) >> yarnApp
     }
+
 }
