@@ -149,12 +149,11 @@ public class YarnBackend implements Backend {
                     } catch (RuntimeException e) {
                         // Yarn client sometimes throws IOException wrapped in RuntimeException
                         LOG.error("Failed to get app id for app: {}", application, e);
-                        String message = e.getMessage();
-                        if (message != null && message.contains("java.io.IOException")) {
+                        if (e.getCause() instanceof IOException) {
                             return Optional.empty();
-                        } else {
-                            throw e;
                         }
+
+                        throw e;
                     }
                 });
     }
