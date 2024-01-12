@@ -23,7 +23,7 @@ micronaut {
 mainClassName = "com.exacaster.lighter.Application"
 
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.5.0'
-def hadoopVersion = '3.3.3'
+def hadoopVersion = '3.3.6'
 def k8sClientVersion = '6.9.0'
 def shedlockVersion = '5.9.1'
 
