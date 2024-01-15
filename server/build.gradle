@@ -69,7 +69,7 @@ dependencies {
     runtimeOnly "org.postgresql:postgresql"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.1"
-    testRuntimeOnly "net.bytebuddy:byte-buddy:1.14.9"
+    testRuntimeOnly "net.bytebuddy:byte-buddy:1.14.11"
     testRuntimeOnly "org.objenesis:objenesis:3.3"
 
     testImplementation "io.micronaut:micronaut-inject-groovy"
