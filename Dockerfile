@@ -1,6 +1,6 @@
 FROM eclipse-temurin:17-jdk-jammy as server
 
-ARG SPARK_VERSION=3.5.0
+ARG SPARK_VERSION=3.5.1
 ARG HADOOP_VERSION=3
 
 WORKDIR /home/app/
@@ -11,7 +11,7 @@ RUN ./gradlew build -x test -PSPARK_VERSION=${SPARK_VERSION}
 
 FROM node:lts-alpine3.18 as frontend
 
-ARG SPARK_VERSION=3.5.0
+ARG SPARK_VERSION=3.5.1
 ARG HADOOP_VERSION=3
 
 ENV APP_BASE_URL='/lighter'
@@ -25,7 +25,7 @@ RUN yarn install && yarn build
 
 FROM eclipse-temurin:17-jre-jammy
 
-ARG SPARK_VERSION=3.5.0
+ARG SPARK_VERSION=3.5.1
 ARG HADOOP_VERSION=3
 
 ENV FRONTEND_PATH=/home/app/frontend/
@@ -38,7 +38,7 @@ RUN ln -s /etc/hadoop/conf.cloudera.yarn /etc/alternatives/hadoop-conf \
 WORKDIR /home/app/
 COPY --from=server /home/app/server/build/docker/main/layers/libs /home/app/libs
 COPY --from=server /home/app/server/build/docker/main/layers/resources /home/app/resources
-COPY --from=server /home/app/server/build/docker/main/layers/application.jar /home/app/application.jar
+COPY --from=server /home/app/server/build/docker/main/layers/app/application.jar /home/app/application.jar
 
 COPY --from=frontend /home/app/frontend/dist/ ./frontend/
 COPY --from=frontend /home/app/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}/ ./spark/
