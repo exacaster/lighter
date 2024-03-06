@@ -8,8 +8,6 @@ jobs:
     strategy:
       matrix:
         include:
-          - spark_version: 3.3.4
-            hadoop_version: 3
           - spark_version: 3.4.2
             hadoop_version: 3
           - spark_version: 3.5.1
