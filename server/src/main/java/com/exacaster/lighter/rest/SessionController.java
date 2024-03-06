@@ -66,7 +66,6 @@ public class SessionController {
         return sessionService.createSession(sessionParams);
     }
 
-
     @Put("/{id}")
     @Status(HttpStatus.CREATED)
     @ApiResponses(value = {
@@ -111,6 +110,7 @@ public class SessionController {
     }
 
     @Post("/{id}/statements")
+    @Status(HttpStatus.CREATED)
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Statement created", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = Statement.class))}),
             @ApiResponse(responseCode = "400", description = "Session in invalid state", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))}),
