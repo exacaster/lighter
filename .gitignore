@@ -1,6 +1,7 @@
 .idea
 .gradle
 .env
+.eslintcache
 build
 bin
 out

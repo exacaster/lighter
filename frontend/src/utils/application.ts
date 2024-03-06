@@ -5,7 +5,13 @@ export function getSparkSubmitArg(key: string, value: string) {
 }
 
 export function srcJoin(...elements: string[]) {
-  return '/' + elements.map((s) => s.replace(/^\//, '').replace(/\/$/, '')).join('/');
+  return (
+    '/' +
+    elements
+      .map((s) => s.replace(/^\//, '').replace(/\/$/, ''))
+      .filter((el) => !!el)
+      .join('/')
+  );
 }
 
 export function formatLink(template: string, app: Application) {
