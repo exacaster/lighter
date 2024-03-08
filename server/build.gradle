@@ -67,6 +67,7 @@ dependencies {
     runtimeOnly "org.yaml:snakeyaml"
     runtimeOnly "com.h2database:h2"
     runtimeOnly "org.postgresql:postgresql"
+    runtimeOnly "org.flywaydb:flyway-database-postgresql"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
     testRuntimeOnly "net.bytebuddy:byte-buddy:1.14.12"
