@@ -18,7 +18,10 @@ ENV APP_BASE_URL='/lighter'
 
 WORKDIR /home/app/
 COPY frontend/ ./frontend/
-RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" -O - | tar -xz
+COPY scripts/setup_spark.sh spark.sh
+RUN apk update; \
+    apk add bash curl; \
+    wget "$(./spark.sh ${SPARK_VERSION})/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" -O - | tar -xz
 
 WORKDIR /home/app/frontend/
 RUN yarn install && yarn build

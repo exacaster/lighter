@@ -6,4 +6,4 @@ on:
 
 jobs:
   publish-registry:
-    uses: exacaster/lighter/.github/workflows/publish-registry.yml@master
+    uses: ./.github/workflows/publish-registry.yml
