@@ -28,7 +28,7 @@
     "@nabla/vite-plugin-eslint": "^2.0.2",
     "@types/node": "^20.11.30",
     "@types/react": "^18.2.73",
-    "@types/react-dom": "^18.2.22",
+    "@types/react-dom": "^18.2.23",
     "@types/react-router-dom": "^5.1.7",
     "@typescript-eslint/eslint-plugin": "^7.0.0",
     "@typescript-eslint/parser": "^6.21.0",
