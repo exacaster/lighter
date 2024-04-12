@@ -21,7 +21,7 @@
     "react-dom": "^18.0.0",
     "react-moment": "^1.1.1",
     "react-router-dom": "^6.22.3",
-    "sass": "^1.74.1",
+    "sass": "^1.75.0",
     "typescript": "^5.4.4"
   },
   "devDependencies": {
