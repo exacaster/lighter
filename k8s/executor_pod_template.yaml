@@ -6,3 +6,5 @@ spec:
       operator: Equal
       value: user
       effect: NoSchedule
+  nodeSelector:
+    hub.jupyter.org/node-purpose: "user"
