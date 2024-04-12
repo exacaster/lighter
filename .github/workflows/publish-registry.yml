@@ -1,6 +1,6 @@
 name: Publish image to Github container registry
 on:
-  workflow_call: { }
+  workflow_call: {}
 env:
   TARGET_PLATFORMS: linux/amd64,linux/arm64
   REGISTRY: ghcr.io
@@ -36,4 +36,3 @@ jobs:
             SPARK_VERSION=${{ matrix.spark_version }}
             HADOOP_VERSION=${{ matrix.hadoop_version }}
           tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.event.release.tag_name }}-spark${{ matrix.spark_version }}
-          platforms: ${{ env.TARGET_PLATFORMS }}
