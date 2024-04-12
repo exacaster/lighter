@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 spec:
   tolerations:
-    - key: dedicated
+    - key: hub.jupyter.org/node-purpose
       operator: Equal
-      value: spark
+      value: user
       effect: NoSchedule
