@@ -71,7 +71,7 @@ dependencies {
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
     testRuntimeOnly "net.bytebuddy:byte-buddy:1.14.14"
-    testRuntimeOnly "org.objenesis:objenesis:3.3"
+    testRuntimeOnly "org.objenesis:objenesis:3.4"
 
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"
