@@ -20,11 +20,13 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.api.model.PodStatus;
 import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClientException;
+
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Consumer;
+
 import org.slf4j.Logger;
 
 public class KubernetesBackend implements Backend {
@@ -35,11 +37,13 @@ public class KubernetesBackend implements Backend {
     private static final String SPARK_ROLE_LABEL = "spark-role";
     private static final String SPARK_APP_ID_LABEL = "spark-app-selector";
 
+    private static final Map<String, String> OVERRIDABLE_STATIC_SUBMIT_PROPS = Map.of(
+        "spark.hadoop.fs.s3a.fast.upload", "true",
+        "spark.kubernetes.driver.podTemplateFile", "/home/app/k8s/driver_pod_template.yaml",
+        "spark.kubernetes.executor.podTemplateFile", "/home/app/k8s/executor_pod_template.yaml"
+    );
     private static final Map<String, String> STATIC_SUBMIT_PROPS = Map.of(
-            "spark.kubernetes.driver.podTemplateFile", "/home/app/k8s/driver_pod_template.yaml",
-            "spark.kubernetes.executor.podTemplateFile", "/home/app/k8s/executor_pod_template.yaml",
-            "spark.hadoop.fs.s3a.fast.upload", "true",
-            "spark.kubernetes.submission.waitAppCompletion", "false"
+        "spark.kubernetes.submission.waitAppCompletion", "false"
     );
 
     private final KubernetesClient client;
@@ -53,9 +57,23 @@ public class KubernetesBackend implements Backend {
     }
 
     @Override
-    public SparkApp prepareSparkApplication(Application application, Map<String, String> configDefaults,
-            Consumer<Throwable> errorHandler) {
-        return new SparkApp(application, configDefaults, getBackendConfiguration(application), errorHandler);
+    public SparkApp prepareSparkApplication(
+        Application application,
+        Map<String, String> configDefaults,
+        Consumer<Throwable> errorHandler
+    ) {
+        return new SparkApp(
+            application,
+            enrichConfigDefaults(configDefaults),
+            getBackendConfiguration(application),
+            errorHandler
+        );
+    }
+
+    private Map<String, String> enrichConfigDefaults(Map<String, String> configDefaults) {
+        var enrichedConfigs = new HashMap<>(OVERRIDABLE_STATIC_SUBMIT_PROPS);
+        enrichedConfigs.putAll(configDefaults);
+        return enrichedConfigs;
     }
 
     Map<String, String> getBackendConfiguration(Application application) {
