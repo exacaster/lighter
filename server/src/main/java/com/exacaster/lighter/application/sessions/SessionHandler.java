@@ -109,7 +109,7 @@ public class SessionHandler {
         assertLocked();
         var waitables = sessionService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 10).stream()
                 .map(this::launchSession)
-                .collect(Collectors.toList());
+                .toList();
 
         for (var waitable : waitables) {
             waitable.waitCompletion();
@@ -150,11 +150,6 @@ public class SessionHandler {
                     .forEach(sessionService::killOne);
         }
 
-    }
-
-    private boolean isNotPermanent(AppConfiguration.SessionConfiguration sessionConfiguration, Application session) {
-        return sessionConfiguration.getPermanentSessions().stream()
-                .noneMatch(conf -> conf.getId().equals(session.getId()));
     }
 
     private <T> List<T> selfOrEmpty(List<T> list) {
