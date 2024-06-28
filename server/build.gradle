@@ -69,7 +69,7 @@ dependencies {
     runtimeOnly "org.postgresql:postgresql"
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.2"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.10.3"
     testRuntimeOnly "net.bytebuddy:byte-buddy:1.14.17"
     testRuntimeOnly "org.objenesis:objenesis:3.4"
 
