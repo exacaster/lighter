@@ -25,7 +25,7 @@ mainClassName = "com.exacaster.lighter.Application"
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.5.1'
 def hadoopVersion = '3.4.0'
 def k8sClientVersion = '6.13.1'
-def shedlockVersion = '5.13.0'
+def shedlockVersion = '5.14.0'
 
 
 dependencies {
