@@ -5,6 +5,7 @@ lighter:
   frontend-path: file:${FRONTEND_PATH:../frontend/build}
   py-gateway-port: 25333
   url: http://lighter.spark:8080
+  zombie-interval: 30m
   session:
     timeout-interval: 90m
     timeout-active: false
