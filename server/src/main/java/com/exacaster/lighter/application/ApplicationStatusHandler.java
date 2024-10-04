@@ -4,6 +4,7 @@ import static com.exacaster.lighter.application.sessions.SessionUtils.adjustStat
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.storage.ApplicationStorage;
@@ -20,11 +21,13 @@ public class ApplicationStatusHandler {
     private final ApplicationStorage applicationStorage;
     private final Backend backend;
     private final LogService logService;
+    private final AppConfiguration conf;
 
-    public ApplicationStatusHandler(ApplicationStorage applicationStorage, Backend backend, LogService logService) {
+    public ApplicationStatusHandler(ApplicationStorage applicationStorage, Backend backend, LogService logService, AppConfiguration conf) {
         this.applicationStorage = applicationStorage;
         this.backend = backend;
         this.logService = logService;
+        this.conf = conf;
     }
 
     public Application processApplicationStarting(Application application) {
@@ -85,13 +88,13 @@ public class ApplicationStatusHandler {
 
     private ApplicationState checkZombie(Application app) {
         LOG.info("No info for {}", app);
-        if (app.getContactedAt() != null && app.getContactedAt().isBefore(LocalDateTime.now().minusMinutes(30))) {
+        if (app.getContactedAt() != null && app.getContactedAt().isBefore(LocalDateTime.now().minus(conf.getZombieInterval()))) {
             LOG.info("Assuming zombie ({})", app.getId());
             applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                     .setState(ApplicationState.ERROR)
                     .build());
             logService.save(new Log(app.getId(),
-                    "Application was not reachable for 10 minutes, so we assume something went wrong"));
+                    "Application was not reachable for " + conf.getZombieInterval().toMinutes() + " minutes, so we assume something went wrong"));
             return ApplicationState.ERROR;
         }
         return app.getState();

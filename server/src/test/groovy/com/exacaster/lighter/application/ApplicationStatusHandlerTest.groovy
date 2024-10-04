@@ -9,6 +9,7 @@ import spock.lang.Subject
 
 import java.time.LocalDateTime
 
+import static com.exacaster.lighter.test.Factories.appConfiguration
 import static com.exacaster.lighter.test.Factories.newSession
 
 class ApplicationStatusHandlerTest extends Specification {
@@ -21,7 +22,7 @@ class ApplicationStatusHandlerTest extends Specification {
     LogService logService = Mock()
 
     @Subject
-    ApplicationStatusHandler handler = new ApplicationStatusHandler(storage, backend, logService)
+    ApplicationStatusHandler handler = new ApplicationStatusHandler(storage, backend, logService, appConfiguration())
 
     def cleanup() {
         storage.cleanup()

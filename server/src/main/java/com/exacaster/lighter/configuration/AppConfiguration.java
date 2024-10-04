@@ -34,6 +34,7 @@ public class AppConfiguration {
     private final Integer pyGatewayPort;
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
+    private final Duration zombieInterval;
     private final SessionConfiguration sessionConfiguration;
     private final Map<String, String> batchDefaultConf;
     private final Map<String, String> sessionDefaultConf;
@@ -45,6 +46,7 @@ public class AppConfiguration {
             @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort,
             String url,
+            Duration zombieInterval,
             SessionConfiguration sessionConfiguration,
             @MapFormat(transformation = FLAT, keyFormat = RAW)
             @Nullable Map<String, String> batchDefaultConf,
@@ -55,6 +57,7 @@ public class AppConfiguration {
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
         this.url = url;
+        this.zombieInterval = zombieInterval;
         this.sessionConfiguration = sessionConfiguration;
         this.batchDefaultConf = ofNullable(batchDefaultConf).orElse(Map.of());
         this.sessionDefaultConf = ofNullable(sessionDefaultConf).orElse(Map.of());
@@ -84,6 +87,10 @@ public class AppConfiguration {
         return url;
     }
 
+    public Duration getZombieInterval() {
+        return zombieInterval;
+    }
+
     public SessionConfiguration getSessionConfiguration() {
         return sessionConfiguration;
     }
@@ -98,14 +105,18 @@ public class AppConfiguration {
 
     @Override
     public String toString() {
-        return new StringJoiner(", ", AppConfiguration.class.getSimpleName() + "[", "]")
-                .add("maxRunningJobs=" + maxRunningJobs)
-                .add("maxStartingJobs=" + maxStartingJobs)
-                .add("sparkHistoryServerUrl=" + sparkHistoryServerUrl)
-                .add("sessionConfiguration=" + sessionConfiguration)
-                .add("batchDefaultConf=" + batchDefaultConf)
-                .add("sessionDefaultConf=" + sessionDefaultConf)
-                .toString();
+        return "AppConfiguration{" +
+                "maxRunningJobs=" + maxRunningJobs +
+                ", maxStartingJobs=" + maxStartingJobs +
+                ", sparkHistoryServerUrl='" + sparkHistoryServerUrl + '\'' +
+                ", externalLogsUrlTemplate='" + externalLogsUrlTemplate + '\'' +
+                ", pyGatewayPort=" + pyGatewayPort +
+                ", url='" + url + '\'' +
+                ", zombieInterval=" + zombieInterval +
+                ", sessionConfiguration=" + sessionConfiguration +
+                ", batchDefaultConf=" + batchDefaultConf +
+                ", sessionDefaultConf=" + sessionDefaultConf +
+                '}';
     }
 
     @Introspected
