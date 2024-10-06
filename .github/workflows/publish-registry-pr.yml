@@ -13,7 +13,7 @@ jobs:
         include:
           - spark_version: 3.4.3
             hadoop_version: 3
-          - spark_version: 3.5.2
+          - spark_version: 3.5.3
             hadoop_version: 3
     steps:
       - name: Checkout pull request

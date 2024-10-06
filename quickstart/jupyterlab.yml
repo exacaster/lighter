@@ -62,7 +62,7 @@ spec:
         run: jupyterlab
     spec:
       containers:
-        - image: jupyter/base-notebook:lab-3.5.2
+        - image: jupyter/base-notebook:lab-3.5.3
           name: jupyterlab
           resources:
             requests:
