@@ -69,6 +69,11 @@ public class SubmitParams {
                 driverMemory, args, pyFiles, files, jars, archives, conf);
     }
 
+    public SubmitParams withRedactedConf() {
+        return new SubmitParams(name, file, master, mainClass, numExecutors, executorCores, executorMemory, driverCores,
+                driverMemory, args, pyFiles, files, jars, archives, Utils.redact(conf));
+    }
+
     public String getName() {
         return name;
     }
@@ -149,5 +154,4 @@ public class SubmitParams {
                 .add("conf=" + conf)
                 .toString();
     }
-
 }

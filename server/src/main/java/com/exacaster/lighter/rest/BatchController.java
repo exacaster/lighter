@@ -38,7 +38,7 @@ public class BatchController {
 
     @Post
     public Application create(@Valid @Body SubmitParams batch) {
-        return batchService.create(batch);
+        return batchService.create(batch).withRedactedConf();
     }
 
     @Get
@@ -47,13 +47,15 @@ public class BatchController {
             @Nullable @QueryValue String state) {
         var batches = ApplicationState.from(state)
                 .map(st -> batchService.fetchByState(st, SortOrder.DESC, from, size))
-                .orElseGet(() -> batchService.fetch(from, size));
+                .orElseGet(() -> batchService.fetch(from, size))
+                .stream().map(Application::withRedactedConf)
+                .toList();
         return new ApplicationList(from, batches.size(), batches);
     }
 
     @Get("/{id}")
     public Optional<Application> get(@PathVariable String id) {
-        return batchService.fetchOne(id);
+        return batchService.fetchOne(id).map(Application::withRedactedConf);
     }
 
     @Delete("/{id}")
@@ -64,7 +66,7 @@ public class BatchController {
     // For backwards compatibility with livy
     @Get("/{id}/state")
     public Optional<Application> getState(@PathVariable String id) {
-        return batchService.fetchOne(id);
+        return batchService.fetchOne(id).map(Application::withRedactedConf);
     }
 
     @Get("/{id}/log")

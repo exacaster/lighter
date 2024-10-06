@@ -26,8 +26,8 @@ public class Application implements Entity {
     private final boolean deleted;
 
     public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo,
-            SubmitParams submitParams,
-            LocalDateTime createdAt, LocalDateTime contactedAt, boolean deleted) {
+                       SubmitParams submitParams,
+                       LocalDateTime createdAt, LocalDateTime contactedAt, boolean deleted) {
         this.id = id;
         this.type = type;
         this.state = state;
@@ -90,6 +90,10 @@ public class Application implements Entity {
 
     public String getKind() {
         return kind;
+    }
+
+    public Application withRedactedConf() {
+        return new Application(id, type, state, appId, appInfo, submitParams.withRedactedConf(), createdAt, contactedAt, deleted);
     }
 
     @Override
