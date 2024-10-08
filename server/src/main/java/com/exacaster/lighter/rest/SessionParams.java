@@ -1,10 +1,14 @@
 package com.exacaster.lighter.rest;
 
 import com.exacaster.lighter.application.SubmitParams;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import io.micronaut.core.annotation.Introspected;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.core.convert.format.MapFormat;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +43,17 @@ public class SessionParams extends SubmitParams {
 
     public Boolean getPermanent() {
         return permanent;
+    }
+
+
+    private final Collection<String> FORBIDDEN_CONF_KEYS = List.of(
+            "spark.redaction.regex"
+    );
+
+    @JsonIgnore
+    @AssertTrue
+    public boolean isConfValid() {
+        return FORBIDDEN_CONF_KEYS.stream().noneMatch(it -> getConf().containsKey(it));
     }
 
 }

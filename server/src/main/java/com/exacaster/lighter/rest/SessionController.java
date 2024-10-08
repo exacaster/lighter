@@ -53,7 +53,10 @@ public class SessionController {
     @Get
     public Object get(@QueryValue(defaultValue = "0") Integer from,
                       @QueryValue(defaultValue = "100") Integer size, @Nullable @Header("X-Compatibility-Mode") String mode) {
-        var sessions = sessionService.fetch(from, size);
+        var sessions = sessionService.fetch(from, size)
+                .stream()
+                .map(Application::withRedactedConf)
+                .toList();
         return magicCompatibility.transformOrElse(mode,
                 () -> new SessionList(from, sessions.size(), sessions),
                 () -> new ApplicationList(from, sessions.size(), sessions)
@@ -63,7 +66,7 @@ public class SessionController {
     @Post
     @Status(HttpStatus.CREATED)
     public Application create(@Valid @Body SessionParams sessionParams) {
-        return sessionService.createSession(sessionParams);
+        return sessionService.createSession(sessionParams).withRedactedConf();
     }
 
     @Put("/{id}")
@@ -73,13 +76,14 @@ public class SessionController {
             @ApiResponse(responseCode = "409", description = "session with given id already exists", content = {@Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))})
     })
     public Application insertNewSession(@PathVariable String id, @Valid @Body SessionParams sessionParams) {
-        return sessionService.createSession(id, sessionParams);
+        return sessionService.createSession(id, sessionParams)
+                .withRedactedConf();
     }
 
     @Get("/{id}")
     public Optional<Application> get(@PathVariable String id) {
         // Fetch with live state, to make sessions faster
-        return sessionService.fetchOne(id, true);
+        return sessionService.fetchOne(id, true).map(Application::withRedactedConf);
     }
 
     @Delete("/{id}")
@@ -90,7 +94,7 @@ public class SessionController {
     // For backwards compatibility with livy
     @Get("/{id}/state")
     public Optional<Application> getState(@PathVariable String id) {
-        return sessionService.fetchOne(id);
+        return sessionService.fetchOne(id).map(Application::withRedactedConf);
     }
 
     @Get("/{id}/log")

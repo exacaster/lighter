@@ -14,4 +14,19 @@ class UtilsTest extends Specification {
         then:
         result == [bar: "foo", foo: "bar"]
     }
+
+    def "redacts sensitive values using default pattern"() {
+        given:
+        def conf = [
+                "spring.lighter.password": "foo",
+                "spark.log.level": "ALL",
+        ]
+        when:
+        def redacted = Utils.redact(conf)
+        then:
+        redacted == [
+                "spring.lighter.password": "[redacted]",
+                "spark.log.level": "ALL",
+        ]
+    }
 }
