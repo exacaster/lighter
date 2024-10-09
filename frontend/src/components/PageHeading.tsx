@@ -1,5 +1,5 @@
-import {Heading, HeadingProps} from '@chakra-ui/layout';
 import {ReactNode} from 'react';
+import {Heading, HeadingProps} from '@chakra-ui/react';
 
 interface Props {
   children: ReactNode;
