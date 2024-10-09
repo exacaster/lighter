@@ -1,8 +1,8 @@
-import {Spacer, Stack} from '@chakra-ui/layout';
 import React from 'react';
 import {generatePath} from 'react-router';
 import {toQueryString, useQueryString} from '../hooks/common';
 import ButtonLink from './ButtonLink';
+import {Spacer, Stack} from '@chakra-ui/react';
 
 interface PaginationProps {
   path: string;
