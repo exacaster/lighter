@@ -9,6 +9,7 @@ import re
 import tempfile
 import zipfile
 import requests
+import shutil
 from typing import Callable, Any, List, Dict
 from pathlib import Path
 
@@ -114,11 +115,8 @@ class CommandHandler:
             "traceback": traceback.format_exception(exc_type, exc_value, exc_tb),
         }
 
-    def _exec_then_eval(self, code: str) -> None:
-        block = ast.parse(code, mode="exec")
-        last = ast.Interactive([block.body.pop()])
-        exec(compile(block, "<string>", "exec"), self.globals)
-        exec(compile(last, "<string>", "single"), self.globals)
+    def _exec(self, code: str) -> None:
+        exec(code, self.globals)
 
     def _download_then_exec(self, url: str) -> None:
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -129,13 +127,25 @@ class CommandHandler:
             else:
                 code_file = Path(temp_dir) / self.code_file
                 with code_file.open("r") as f:
-                    self._exec_then_eval(f.read())
+                    self._exec(f.read())
 
     def _download_and_extract(self, url: str, temp_dir: str) -> None:
         temp_file_path = Path(temp_dir) / self.code_file
         self._download(url, temp_file_path)
         if self._is_zip(temp_file_path):
             self._extract(temp_file_path)
+    
+    def _copy_to_worker_module_path(self, temp_dir: str) -> None:
+        worker_module_path = Path(temp_dir) / "shared"
+        worker_module_path.mkdir(parents=True, exist_ok=True)
+        for file in Path(temp_dir).glob("**/*"):
+            if file.is_file():
+                shutil.copy(file, worker_module_path / file.name)
+
+    def _remove_worker_module_path(self, temp_dir: str) -> None:
+        worker_module_path = Path(temp_dir) / "shared"
+        if worker_module_path.exists():
+            shutil.rmtree(worker_module_path)
 
     def _download(self, url: str, temp_file_path: Path) -> None:
         response = requests.get(url)
@@ -152,35 +162,28 @@ class CommandHandler:
             zip_ref.extractall(path=file_path.parent)
 
     def _execute_main_file(self, temp_dir: str) -> None:
+        log.info(f"Inserting {temp_dir} to sys.path")
+        log.info(f"Current sys.path: {sys.path}")
         sys.path.insert(0, temp_dir)
+        log.info(f"New sys.path: {sys.path}")
         try:
             main_file_path = Path(temp_dir) / "main.py"
             with main_file_path.open("r") as f:
                 log.info(f"Executing {main_file_path}")
-                self._exec_then_eval(f.read())
+                self._exec(f.read())
         finally:
+            log.info(f"Removing {temp_dir} from sys.path")
+            log.info(f"Current sys.path: {sys.path}")
             sys.path.remove(temp_dir)
-            self._remove_modules(temp_dir)
+            log.info(f"New sys.path: {sys.path}")
+            remove_modules(temp_dir)
 
-    @staticmethod
-    def _remove_modules(temp_dir: str) -> None:
-        modules_to_remove = [
-            name
-            for name, mod in sys.modules.items()
-            if hasattr(mod, "__spec__")
-            and mod.__spec__
-            and mod.__spec__.origin
-            and temp_dir in mod.__spec__.origin
-        ]
-        for name in modules_to_remove:
-            log.info(f"Unloading {name}")
-            del sys.modules[name]
 
     def _exec_code(self, code: str) -> None:
         if is_url(code):
             self._download_then_exec(code)
         else:
-            self._exec_then_eval(code)
+            self._exec(code)
 
     def exec(self, request: Dict[str, str]) -> Dict[str, Any]:
         try:
@@ -193,6 +196,20 @@ class CommandHandler:
             log.exception(e)
             return self._error_response(e)
 
+def remove_modules(temp_dir: str) -> None:
+    modules_to_remove = [
+        name
+        for name, mod in sys.modules.items()
+        if hasattr(mod, "__spec__")
+        and mod.__spec__
+        and mod.__spec__.origin
+        and temp_dir in mod.__spec__.origin
+    ]
+    log.info(f"Removing {len(modules_to_remove)} modules")
+    log.info(f"Modules to remove: {modules_to_remove}")
+    for name in modules_to_remove:
+        log.info(f"Unloading {name}")
+        del sys.modules[name]
 
 def init_globals(name: str) -> Dict[str, Any]:
     if is_test:
