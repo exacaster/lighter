@@ -1,7 +1,6 @@
 import json
 import sys
 import io
-import ast
 import traceback
 import os
 import logging
@@ -12,6 +11,7 @@ import requests
 import shutil
 from typing import Callable, Any, List, Dict
 from pathlib import Path
+from time import sleep
 
 
 sys_stdin = sys.stdin
@@ -134,7 +134,7 @@ class CommandHandler:
         self._download(url, temp_file_path)
         if self._is_zip(temp_file_path):
             self._extract(temp_file_path)
-    
+
     def _copy_to_worker_module_path(self, temp_dir: str) -> None:
         worker_module_path = Path(temp_dir) / "shared"
         worker_module_path.mkdir(parents=True, exist_ok=True)
@@ -178,7 +178,6 @@ class CommandHandler:
             log.info(f"New sys.path: {sys.path}")
             remove_modules(temp_dir)
 
-
     def _exec_code(self, code: str) -> None:
         if is_url(code):
             self._download_then_exec(code)
@@ -196,6 +195,7 @@ class CommandHandler:
             log.exception(e)
             return self._error_response(e)
 
+
 def remove_modules(temp_dir: str) -> None:
     modules_to_remove = [
         name
@@ -210,6 +210,7 @@ def remove_modules(temp_dir: str) -> None:
     for name in modules_to_remove:
         log.info(f"Unloading {name}")
         del sys.modules[name]
+
 
 def init_globals(name: str) -> Dict[str, Any]:
     if is_test:
@@ -239,6 +240,8 @@ def main() -> int:
                 result = handler.exec(command)
                 controller.write(command["id"], result)
                 log.debug("Response sent")
+            sleep(0.25)
+
     except Exception:
         log.exception("Error in main loop")
         return 1
