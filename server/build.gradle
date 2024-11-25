@@ -25,7 +25,7 @@ mainClassName = "com.exacaster.lighter.Application"
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.5.3'
 def hadoopVersion = '3.4.1'
 def k8sClientVersion = '6.13.4'
-def shedlockVersion = '5.16.0'
+def shedlockVersion = '6.0.1'
 
 dependencies {
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
