@@ -46,8 +46,13 @@ public class ApplicationStatusHandler {
     }
 
     public ApplicationState processApplicationRunning(Application app) {
-        return backend.getInfo(app)
-                .map(info -> trackStatus(app, info))
+            return backend.getInfo(app)
+                .map(info -> {
+                    var state = adjustState(false, info.getState());
+                    var busyInfo = new ApplicationInfo(state, info.getApplicationId());
+                    trackStatus(app, busyInfo);
+                    return state;
+                })
                 .orElseGet(() -> checkZombie(app));
     }
 
