@@ -10,7 +10,7 @@ lighter:
     timeout-active: false
     permanent-sessions: [ ]
     schedule-interval: 1m
-    track-running-interval: 2m
+    track-running-interval: 15s
   kubernetes:
     enabled: false
     master: k8s://kubernetes.default.svc.cluster.local:443
@@ -66,6 +66,13 @@ micronaut:
 
   metrics:
     enabled: true
+    binders:
+      jvm:
+        enabled: true
+      web:
+        enabled: true
+      jdbc:
+        enabled: true
     export:
       prometheus:
         enabled: true
