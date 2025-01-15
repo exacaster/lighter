@@ -14,6 +14,8 @@ const Statement: React.FC<{sessionId: string; statement: SessionStatement; theme
     switch (statement.state) {
       case 'available':
         return <CheckIcon color="green.500" />;
+      case 'to_cancel':
+        return <CloseIcon />;
       case 'canceled':
         return <CloseIcon />;
       case 'error':
