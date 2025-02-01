@@ -13,11 +13,11 @@ const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({
   const statusIcon = useMemo(() => {
     switch (statement.state) {
       case 'available':
-        return <FaCheck color="green.500" />;
+        return <FaCheck color="green" />;
       case 'canceled':
         return <FaStop />;
       case 'error':
-        return <RiErrorWarningFill color="red.500" />;
+        return <RiErrorWarningFill color="red" />;
       case 'waiting':
         return <Spinner />;
     }
@@ -36,7 +36,7 @@ const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({
               <VStack>
                 {statusIcon}
                 {statement.state !== 'canceled' ? (
-                  <IconButton onClick={() => cancel()} loading={isCanceling} aria-label="Cancel">
+                  <IconButton variant="ghost" onClick={() => cancel()} loading={isCanceling} aria-label="Cancel">
                     <FaStop />
                   </IconButton>
                 ) : null}

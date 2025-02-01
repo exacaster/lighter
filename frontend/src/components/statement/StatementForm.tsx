@@ -1,4 +1,4 @@
-import {Button, Card, Center, Field, HStack, Spacer, Textarea, VStack} from '@chakra-ui/react';
+import {Button, Card, Center, Field, Textarea, VStack} from '@chakra-ui/react';
 import React from 'react';
 import {useSessionStatementSubmit} from '../../hooks/session';
 import {Application} from '../../client/types';
@@ -37,12 +37,9 @@ const StatementForm: React.FC<StatementFormProps> = ({session}) => {
               <Textarea name="code" />
             </Field.Root>
             <Field.Root>
-              <HStack>
-                <Spacer />
-                <Button type="submit" loading={isSubmitting}>
-                  Submit
-                </Button>
-              </HStack>
+              <Button type="submit" loading={isSubmitting}>
+                Submit
+              </Button>
             </Field.Root>
           </VStack>
         </Card.Body>
