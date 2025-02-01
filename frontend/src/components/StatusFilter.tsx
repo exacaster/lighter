@@ -16,7 +16,7 @@ const StatusFilter: React.FC<Props> = ({status, path}) => {
       </Link>
       {Object.keys(statusMap).map((key) => (
         <Link to={generatePath(path + `?status=${key}`)} key={key}>
-          <AppStatus prefix={status === key ? <FaCheck /> : null} status={key} />
+          <AppStatus prefix={status === key ? <FaCheck size={10} /> : null} status={key} />
         </Link>
       ))}
     </Stack>
