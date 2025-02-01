@@ -1,4 +1,4 @@
-import {Box, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
+import {Box, Table} from '@chakra-ui/react';
 import React from 'react';
 import {Application} from '../client/types';
 import styles from './AppInfo.module.scss';
@@ -10,70 +10,70 @@ interface Props {
 const AppInfo: React.FC<Props> = ({app}) => {
   return (
     <Box mt="5" className={styles.appInfo}>
-      <Table className={styles.noWrapTable} variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th>Property</Th>
-            <Th>Value</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
-          <Tr>
-            <Td>File</Td>
-            <Td>{app.submitParams.file}</Td>
-          </Tr>
-          <Tr>
-            <Td>Args</Td>
-            <Td>{app.submitParams.args.join(', ')}</Td>
-          </Tr>
-          <Tr>
-            <Td>Name (--name)</Td>
-            <Td>{app.submitParams.name}</Td>
-          </Tr>
-          <Tr>
-            <Td>Driver Cores (--driver-cores)</Td>
-            <Td>{app.submitParams.driverCores}</Td>
-          </Tr>
-          <Tr>
-            <Td>Driver Memory (--driver-memory)</Td>
-            <Td>{app.submitParams.driverMemory}</Td>
-          </Tr>
-          <Tr>
-            <Td>Number Of Executors (--num-executors)</Td>
-            <Td>{app.submitParams.numExecutors}</Td>
-          </Tr>
-          <Tr>
-            <Td>Executor Cores (--executor-cores)</Td>
-            <Td>{app.submitParams.executorCores}</Td>
-          </Tr>
-          <Tr>
-            <Td>Executor Memory (--executor-memory)</Td>
-            <Td>{app.submitParams.executorMemory}</Td>
-          </Tr>
-          <Tr>
-            <Td>Python files (--py-files)</Td>
-            <Td>{app.submitParams.pyFiles.join(', ')}</Td>
-          </Tr>
-          <Tr>
-            <Td>Archives (--archives)</Td>
-            <Td>{app.submitParams.archives.join(', ')}</Td>
-          </Tr>
-          <Tr>
-            <Td>Additional files (--files)</Td>
-            <Td>{app.submitParams.files.join(', ')}</Td>
-          </Tr>
-          <Tr>
-            <Td>Additional JARs (--jars)</Td>
-            <Td>{app.submitParams.jars.join(', ')}</Td>
-          </Tr>
+      <Table.Root className={styles.noWrapTable} size="sm">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Property</Table.ColumnHeader>
+            <Table.ColumnHeader>Value</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          <Table.Row>
+            <Table.Cell>File</Table.Cell>
+            <Table.Cell>{app.submitParams.file}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Args</Table.Cell>
+            <Table.Cell>{app.submitParams.args.join(', ')}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Name (--name)</Table.Cell>
+            <Table.Cell>{app.submitParams.name}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Driver Cores (--driver-cores)</Table.Cell>
+            <Table.Cell>{app.submitParams.driverCores}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Driver Memory (--driver-memory)</Table.Cell>
+            <Table.Cell>{app.submitParams.driverMemory}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Number Of Executors (--num-executors)</Table.Cell>
+            <Table.Cell>{app.submitParams.numExecutors}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Executor Cores (--executor-cores)</Table.Cell>
+            <Table.Cell>{app.submitParams.executorCores}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Executor Memory (--executor-memory)</Table.Cell>
+            <Table.Cell>{app.submitParams.executorMemory}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Python files (--py-files)</Table.Cell>
+            <Table.Cell>{app.submitParams.pyFiles.join(', ')}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Archives (--archives)</Table.Cell>
+            <Table.Cell>{app.submitParams.archives.join(', ')}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Additional files (--files)</Table.Cell>
+            <Table.Cell>{app.submitParams.files.join(', ')}</Table.Cell>
+          </Table.Row>
+          <Table.Row>
+            <Table.Cell>Additional JARs (--jars)</Table.Cell>
+            <Table.Cell>{app.submitParams.jars.join(', ')}</Table.Cell>
+          </Table.Row>
           {Object.entries(app.submitParams.conf).map(([name, val]) => (
-            <Tr key={name}>
-              <Td>--conf {name}</Td>
-              <Td>{val}</Td>
-            </Tr>
+            <Table.Row key={name}>
+              <Table.Cell>--conf {name}</Table.Cell>
+              <Table.Cell>{val}</Table.Cell>
+            </Table.Row>
           ))}
-        </Tbody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
     </Box>
   );
 };

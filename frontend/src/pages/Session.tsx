@@ -2,7 +2,7 @@ import React from 'react';
 import {useParams} from 'react-router';
 import {useSession, useSessionDelete, useSessionLog} from '../hooks/session';
 import AppInfo from '../components/AppInfo';
-import {Box, Spinner, Tab, TabList, TabPanel, TabPanels, Tabs} from '@chakra-ui/react';
+import {Box, Spinner, Tabs} from '@chakra-ui/react';
 import AppLogs from '../components/AppLogs';
 import AppTitle from '../components/AppTitle';
 import {useNavigate} from 'react-router-dom';
@@ -32,28 +32,26 @@ const Session: React.FC = () => {
   return (
     <div>
       <AppTitle app={session} onDelete={onDelete} />
-      <Tabs isLazy>
-        <TabList>
-          <Tab>Info</Tab>
-          <Tab>Statements</Tab>
-        </TabList>
+      <Tabs.Root isLazy defaultValue="info">
+        <Tabs.List>
+          <Tabs.Trigger value="info">Info</Tabs.Trigger>
+          <Tabs.Trigger value="statements">Statements</Tabs.Trigger>
+        </Tabs.List>
 
-        <TabPanels>
-          <TabPanel>
-            <Box textStyle="caption" mt="5">
-              Logs:
-            </Box>
-            <Box mt="1">
-              <AppLogs logs={logs} />
-            </Box>
+        <Tabs.Content value="info">
+          <Box textStyle="caption" mt="5">
+            Logs:
+          </Box>
+          <Box mt="1">
+            <AppLogs logs={logs} />
+          </Box>
 
-            <AppInfo app={session} />
-          </TabPanel>
-          <TabPanel>
-            <Statements session={session} />
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          <AppInfo app={session} />
+        </Tabs.Content>
+        <Tabs.Content value="statements">
+          <Statements session={session} />
+        </Tabs.Content>
+      </Tabs.Root>
     </div>
   );
 };

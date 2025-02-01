@@ -1,49 +1,51 @@
 import React, {useMemo} from 'react';
 import {SessionStatement} from '../../client/types';
 import {useSessionStatementCancel} from '../../hooks/session';
-import {CheckIcon, CloseIcon, WarningTwoIcon} from '@chakra-ui/icons';
-import {Box, Card, CardBody, Flex, IconButton, Spinner, VStack} from '@chakra-ui/react';
-import {CodeBlock} from 'react-code-blocks';
+import {Box, Card, Flex, IconButton, Spinner, VStack} from '@chakra-ui/react';
+import {CodeBlock, a11yLight} from 'react-code-blocks';
 import StatementOutput from './StatementOutput';
+import {FaCheck, FaStop} from 'react-icons/fa';
+import {RiErrorWarningFill} from 'react-icons/ri';
 
-// eslint-disable-next-line
-const Statement: React.FC<{sessionId: string; statement: SessionStatement; theme: any}> = ({sessionId, statement, theme}) => {
+const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({sessionId, statement}) => {
   const {mutate: cancel, isPending: isCanceling} = useSessionStatementCancel(sessionId, statement.id);
 
   const statusIcon = useMemo(() => {
     switch (statement.state) {
       case 'available':
-        return <CheckIcon color="green.500" />;
+        return <FaCheck color="green.500" />;
       case 'canceled':
-        return <CloseIcon />;
+        return <FaStop />;
       case 'error':
-        return <WarningTwoIcon color="red.500" />;
+        return <RiErrorWarningFill color="red.500" />;
       case 'waiting':
         return <Spinner />;
     }
   }, [statement.state]);
 
   return (
-    <Card>
-      <CardBody>
-        <VStack align="stretch" spacing={1}>
+    <Card.Root>
+      <Card.Body>
+        <VStack align="stretch" gap={1}>
           <Flex gap={2}>
             <Box flex={1}>
-              <CodeBlock language="python" text={statement.code} theme={theme} />
-              <StatementOutput theme={theme} output={statement.output} />
+              <CodeBlock theme={a11yLight} language="python" text={statement.code} />
+              <StatementOutput output={statement.output} />
             </Box>
             <Box>
               <VStack>
                 {statusIcon}
                 {statement.state !== 'canceled' ? (
-                  <IconButton onClick={() => cancel()} isLoading={isCanceling} aria-label="Cancel" icon={<CloseIcon />} />
+                  <IconButton onClick={() => cancel()} loading={isCanceling} aria-label="Cancel">
+                    <FaStop />
+                  </IconButton>
                 ) : null}
               </VStack>
             </Box>
           </Flex>
         </VStack>
-      </CardBody>
-    </Card>
+      </Card.Body>
+    </Card.Root>
   );
 };
 

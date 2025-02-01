@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <svg width="520px" height="110px" viewBox="0 0 520 110" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-    <style>
-        <![CDATA[
-        @media (prefers-color-scheme: dark) {
-            .text {
-                fill: rgba(255, 255, 255, 0.92);
-            }
-        }
-        ]]>
-    </style>
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Lighter---Logo---Preview" transform="translate(-190.000000, -380.000000)">
             <g id="logo-Lighter" transform="translate(190.778442, 379.998758)">

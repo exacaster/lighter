@@ -1,4 +1,4 @@
-import {Button, Card, CardBody, FormControl, FormLabel, HStack, Spacer, Textarea, VStack} from '@chakra-ui/react';
+import {Button, Card, Center, Field, HStack, Spacer, Textarea, VStack} from '@chakra-ui/react';
 import React from 'react';
 import {useSessionStatementSubmit} from '../../hooks/session';
 import {Application} from '../../client/types';
@@ -19,32 +19,34 @@ const StatementForm: React.FC<StatementFormProps> = ({session}) => {
 
   if (session.state !== 'idle') {
     return (
-      <Card align="center">
-        <CardBody>Session cannot accept new statements.</CardBody>
-      </Card>
+      <Card.Root>
+        <Card.Body>
+          <Center>Session cannot accept new statements.</Center>
+        </Card.Body>
+      </Card.Root>
     );
   }
 
   return (
     <form onSubmit={handleSubmit}>
-      <Card>
-        <CardBody>
-          <VStack align="stretch" spacing={2}>
-            <FormControl>
-              <FormLabel>New Statement</FormLabel>
+      <Card.Root>
+        <Card.Body>
+          <VStack align="stretch" gap={2}>
+            <Field.Root>
+              <Field.Label>New Statement</Field.Label>
               <Textarea name="code" />
-            </FormControl>
-            <FormControl>
+            </Field.Root>
+            <Field.Root>
               <HStack>
                 <Spacer />
-                <Button type="submit" isLoading={isSubmitting}>
+                <Button type="submit" loading={isSubmitting}>
                   Submit
                 </Button>
               </HStack>
-            </FormControl>
+            </Field.Root>
           </VStack>
-        </CardBody>
-      </Card>
+        </Card.Body>
+      </Card.Root>
     </form>
   );
 };

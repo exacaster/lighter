@@ -1,4 +1,4 @@
-import {Spinner, Table, Tbody, Td, Th, Thead, Tr} from '@chakra-ui/react';
+import {Spinner, Table} from '@chakra-ui/react';
 import React from 'react';
 import {generatePath} from 'react-router-dom';
 import AppActions from '../components/AppActions';
@@ -23,36 +23,36 @@ const Sessions: React.FC = () => {
   return (
     <>
       <PageHeading>Sessions</PageHeading>
-      <Table variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th>Id</Th>
-            <Th>Name</Th>
-            <Th>Created</Th>
-            <Th>State</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+      <Table.Root size="sm">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Id</Table.ColumnHeader>
+            <Table.ColumnHeader>Name</Table.ColumnHeader>
+            <Table.ColumnHeader>Created</Table.ColumnHeader>
+            <Table.ColumnHeader>State</Table.ColumnHeader>
+            <Table.ColumnHeader>Actions</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {data?.applications?.map((session) => (
-            <Tr key={session.id}>
-              <Td>
+            <Table.Row key={session.id}>
+              <Table.Cell>
                 <Link to={generatePath(RoutePath.SESSION, {id: session.id})}>{session.id}</Link>
-              </Td>
-              <Td>{session.submitParams.name}</Td>
-              <Td>
+              </Table.Cell>
+              <Table.Cell>{session.submitParams.name}</Table.Cell>
+              <Table.Cell>
                 <DateTime>{session.createdAt}</DateTime>
-              </Td>
-              <Td>
+              </Table.Cell>
+              <Table.Cell>
                 <AppStatus status={session.state} />
-              </Td>
-              <Td>
+              </Table.Cell>
+              <Table.Cell>
                 <AppActions app={session} onDelete={() => doDelete(session.id)} />
-              </Td>
-            </Tr>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </Tbody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
       <Pagination path="./" size={pageSize} visibleSize={data?.applications?.length || 0} />
     </>
   );

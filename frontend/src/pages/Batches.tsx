@@ -1,7 +1,7 @@
 import React from 'react';
 import PageHeading from '../components/PageHeading';
 import {useBatchDelete, useBatches} from '../hooks/batch';
-import {Table, Thead, Tbody, Tr, Th, Td, Spinner} from '@chakra-ui/react';
+import {Table, Spinner} from '@chakra-ui/react';
 import {generatePath} from 'react-router';
 import {useQueryString} from '../hooks/common';
 import {pageSize, RoutePath} from '../configuration/consts';
@@ -26,36 +26,36 @@ const Batches: React.FC = () => {
     <>
       <PageHeading>Batches</PageHeading>
       <StatusFilter path="./" status={status as string} />
-      <Table variant="simple" size="sm">
-        <Thead>
-          <Tr>
-            <Th>Id</Th>
-            <Th>Name</Th>
-            <Th>Created</Th>
-            <Th>State</Th>
-            <Th>Actions</Th>
-          </Tr>
-        </Thead>
-        <Tbody>
+      <Table.Root size="sm">
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader>Id</Table.ColumnHeader>
+            <Table.ColumnHeader>Name</Table.ColumnHeader>
+            <Table.ColumnHeader>Created</Table.ColumnHeader>
+            <Table.ColumnHeader>State</Table.ColumnHeader>
+            <Table.ColumnHeader>Actions</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
           {data?.applications?.map((batch) => (
-            <Tr key={batch.id}>
-              <Td>
+            <Table.Row key={batch.id}>
+              <Table.Cell>
                 <Link to={generatePath(RoutePath.BATCH, {id: batch.id})}>{batch.id}</Link>
-              </Td>
-              <Td>{batch.submitParams.name}</Td>
-              <Td>
+              </Table.Cell>
+              <Table.Cell>{batch.submitParams.name}</Table.Cell>
+              <Table.Cell>
                 <DateTime>{batch.createdAt}</DateTime>
-              </Td>
-              <Td>
+              </Table.Cell>
+              <Table.Cell>
                 <AppStatus status={batch.state} />
-              </Td>
-              <Td>
+              </Table.Cell>
+              <Table.Cell>
                 <AppActions app={batch} onDelete={() => doDelete(batch.id)} />
-              </Td>
-            </Tr>
+              </Table.Cell>
+            </Table.Row>
           ))}
-        </Tbody>
-      </Table>
+        </Table.Body>
+      </Table.Root>
       <Pagination path="./" size={pageSize} visibleSize={data?.applications?.length || 0} />
     </>
   );
