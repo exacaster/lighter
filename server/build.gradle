@@ -1,8 +1,8 @@
 plugins {
     id "java"
     id "groovy"
-    id "io.micronaut.application" version "4.4.3"
-    id "com.github.ben-manes.versions" version "0.51.0"
+    id "io.micronaut.application" version "4.4.5"
+    id "com.github.ben-manes.versions" version "0.52.0"
 }
 
 group "org.exacaster.lighter"
@@ -17,15 +17,15 @@ java {
 }
 
 micronaut {
-    version = "4.6.2"
+    version = "4.7.4"
     runtime "netty"
 }
 mainClassName = "com.exacaster.lighter.Application"
 
-def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : '3.5.3'
-def hadoopVersion = '3.4.1'
-def k8sClientVersion = '6.13.4'
-def shedlockVersion = '5.16.0'
+def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : "3.5.3"
+def hadoopVersion = "3.4.1"
+def k8sClientVersion = "7.1.0"
+def shedlockVersion = "6.2.0"
 
 dependencies {
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
@@ -54,7 +54,7 @@ dependencies {
         exclude(group: "ch.qos.reload4j", module: "reload4j")
         exclude(group: "org.slf4j", module: "slf4j-reload4j")
     }
-    implementation 'net.sf.py4j:py4j:0.10.9.7'
+    implementation "net.sf.py4j:py4j:0.10.9.9"
 
     implementation "net.javacrumbs.shedlock:shedlock-micronaut4:${shedlockVersion}"
     implementation "net.javacrumbs.shedlock:shedlock-provider-jdbc-template:${shedlockVersion}"
@@ -68,8 +68,8 @@ dependencies {
     runtimeOnly "org.postgresql:postgresql"
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.3"
-    testRuntimeOnly "net.bytebuddy:byte-buddy:1.15.10"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.11.4"
+    testRuntimeOnly "net.bytebuddy:byte-buddy:1.17.0"
     testRuntimeOnly "org.objenesis:objenesis:3.4"
 
     testImplementation "io.micronaut:micronaut-inject-groovy"
