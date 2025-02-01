@@ -22,7 +22,7 @@ const Pagination: React.FC<PaginationProps> = ({path, size, visibleSize}) => {
   }
 
   return (
-    <Stack borderWidth="1px" borderRadius="lg" padding="4" mt="5" direction="row" spacing={4}>
+    <Stack borderWidth="1px" borderRadius="lg" padding="4" mt="5" direction="row" gap={4}>
       <Spacer />
       {from > 0 && (
         <ButtonLink size="sm" to={generatePath(path + queryString(from - size))}>

@@ -34,10 +34,13 @@ const Session: React.FC = () => {
       <AppTitle app={session} onDelete={onDelete} />
       <Tabs.Root isLazy defaultValue="info">
         <Tabs.List>
+          {/* @ts-ignore */}
           <Tabs.Trigger value="info">Info</Tabs.Trigger>
+          {/* @ts-ignore */}
           <Tabs.Trigger value="statements">Statements</Tabs.Trigger>
         </Tabs.List>
 
+        {/* @ts-ignore */}
         <Tabs.Content value="info">
           <Box textStyle="caption" mt="5">
             Logs:
@@ -45,9 +48,9 @@ const Session: React.FC = () => {
           <Box mt="1">
             <AppLogs logs={logs} />
           </Box>
-
           <AppInfo app={session} />
         </Tabs.Content>
+        {/* @ts-ignore */}
         <Tabs.Content value="statements">
           <Statements session={session} />
         </Tabs.Content>
