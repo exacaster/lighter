@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public enum ApplicationState {
     NOT_STARTED,
@@ -17,13 +16,9 @@ public enum ApplicationState {
     KILLED(true),
     SUCCESS(true);
 
-    private static final List<ApplicationState> INCOMPLETE_STATES = Arrays.stream(values())
-            .filter(val -> !val.isComplete)
-            .collect(Collectors.toList());
-
     private static final List<ApplicationState> RUNNING_STATES = Arrays.stream(values())
             .filter(val -> !val.isComplete && !val.equals(NOT_STARTED))
-            .collect(Collectors.toList());
+            .toList();
 
     private final boolean isComplete;
 
@@ -33,10 +28,6 @@ public enum ApplicationState {
 
     ApplicationState() {
         this(false);
-    }
-
-    public static List<ApplicationState> incompleteStates() {
-        return INCOMPLETE_STATES;
     }
 
     public static List<ApplicationState> runningStates() {

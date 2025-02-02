@@ -92,4 +92,6 @@ spec:
                   value: "15"
               -   name: LIGHTER_KUBERNETES_SERVICE_ACCOUNT
                   value: lighter
+              -   name: LIGHTER_SESSION_TRACK_RUNNING_INTERVAL
+                  value: 10s
       serviceAccountName: lighter

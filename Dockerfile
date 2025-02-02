@@ -1,4 +1,4 @@
-FROM eclipse-temurin:17-jdk-jammy as server
+FROM eclipse-temurin:17-jdk-jammy AS server
 
 ARG SPARK_VERSION=3.5.4
 ARG HADOOP_VERSION=3
@@ -9,7 +9,7 @@ COPY server/ ./server/
 WORKDIR /home/app/server/
 RUN ./gradlew build -x test -PSPARK_VERSION=${SPARK_VERSION}
 
-FROM node:lts-alpine3.18 as frontend
+FROM node:lts-alpine3.18 AS frontend
 
 ARG SPARK_VERSION=3.5.4
 ARG HADOOP_VERSION=3

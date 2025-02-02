@@ -11,13 +11,13 @@ class SessionUtilsTest extends Specification {
     @Unroll
     def "converts #originalState to #expectedState when hasWaitingStatements: #hasWaitingStatements"() {
         expect:
-        SessionUtils.adjustState(!hasWaitingStatements, originalState) == expectedState
+        SessionUtils.adjustState(hasWaitingStatements, originalState) == expectedState
 
         where:
         originalState | hasWaitingStatements | expectedState
         BUSY          | false                | IDLE
         BUSY          | true                 | BUSY
         DEAD          | false                | DEAD
-
+        IDLE          | true                 | BUSY
     }
 }

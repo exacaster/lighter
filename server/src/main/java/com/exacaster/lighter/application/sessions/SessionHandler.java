@@ -23,7 +23,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Optional.ofNullable;
+import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
 import static net.javacrumbs.shedlock.core.LockAssert.assertLocked;
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -39,10 +39,10 @@ public class SessionHandler {
     private final AppConfiguration appConfiguration;
 
     public SessionHandler(SessionService sessionService,
-            Backend backend,
-            StatementHandler statementStatusChecker,
-            ApplicationStatusHandler statusTracker,
-            AppConfiguration appConfiguration) {
+                          Backend backend,
+                          StatementHandler statementStatusChecker,
+                          ApplicationStatusHandler statusTracker,
+                          AppConfiguration appConfiguration) {
         this.sessionService = sessionService;
         this.backend = backend;
         this.statementStatusChecker = statementStatusChecker;
@@ -64,18 +64,18 @@ public class SessionHandler {
         final var allPermanentSessions = getPermanentSessionToCheck();
 
         for (var perm : allPermanentSessions) {
-            var session = sessionService.fetchOne(perm.getSessionId());
+            var session = sessionService.fetchOne(perm.sessionId());
             if (session.map(Application::getState).filter(this::running).isEmpty() ||
-                    session.flatMap(backend::getInfo).map(ApplicationInfo::getState).filter(this::running).isEmpty()) {
-                LOG.info("Permanent session {} needs to be (re)started.", perm.getSessionId());
+                    session.flatMap(backend::getInfo).map(ApplicationInfo::state).filter(this::running).isEmpty()) {
+                LOG.info("Permanent session {} needs to be (re)started.", perm.sessionId());
                 sessionService.deletePermanentSession(perm.sessionId);
                 var sessionToLaunch = sessionService.createPermanentSession(
-                        perm.getSessionId(),
-                        perm.getSubmitParams()
+                        perm.sessionId(),
+                        perm.submitParams()
                 );
 
                 launchSession(sessionToLaunch).waitCompletion();
-                LOG.info("Permanent session {} (re)started.", perm.getSessionId());
+                LOG.info("Permanent session {} (re)started.", perm.sessionId());
             }
         }
         LOG.info("End provisioning permanent sessions.");
@@ -128,11 +128,10 @@ public class SessionHandler {
         assertLocked();
         var running = sessionService.fetchRunningSession();
 
-        var idleAndRunning = running.stream()
-                .collect(Collectors.groupingBy(statementStatusChecker::hasWaitingStatement));
-
-        selfOrEmpty(idleAndRunning.get(false)).forEach(statusTracker::processApplicationIdle);
-        selfOrEmpty(idleAndRunning.get(true)).forEach(statusTracker::processApplicationRunning);
+        running.forEach(session -> {
+            var hasWaiting = statementStatusChecker.hasWaitingStatement(session);
+            statusTracker.processApplicationRunning(session, info -> adjustApplicationInfo(info, hasWaiting));
+        });
     }
 
     @SchedulerLock(name = "handleTimeoutSessions")
@@ -152,29 +151,15 @@ public class SessionHandler {
 
     }
 
-    private <T> List<T> selfOrEmpty(List<T> list) {
-        return ofNullable(list).orElse(List.of());
+    private ApplicationInfo adjustApplicationInfo(ApplicationInfo info, boolean waiting) {
+        var state = adjustState(waiting, info.state());
+        return new ApplicationInfo(state, info.applicationId());
     }
 
     private boolean running(ApplicationState state) {
         return !state.isComplete();
     }
 
-    private static class PermanentSessionParam {
-        private final String sessionId;
-        private final SubmitParams submitParams;
-
-        public PermanentSessionParam(String sessionId, SubmitParams submitParams) {
-            this.sessionId = sessionId;
-            this.submitParams = submitParams;
-        }
-
-        public String getSessionId() {
-            return sessionId;
-        }
-
-        public SubmitParams getSubmitParams() {
-            return submitParams;
-        }
+    private record PermanentSessionParam(String sessionId, SubmitParams submitParams) {
     }
 }

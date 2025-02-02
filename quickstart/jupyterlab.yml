@@ -146,7 +146,7 @@ data:
         "{\n",
         "    \"name\": \"Test Lighter\",\n",
         "    \"conf\":{\n",
-        "        \"spark.kubernetes.container.image\": \"apache/spark-py:v3.4.0\"\n",
+        "        \"spark.kubernetes.container.image\": \"apache/spark:3.5.4-java17-python3\"\n",
         "    }\n",
         "}"
        ]

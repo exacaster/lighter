@@ -1,6 +1,5 @@
 package com.exacaster.lighter.application;
 
-import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import com.exacaster.lighter.backend.Backend;
@@ -8,7 +7,10 @@ import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
 import com.exacaster.lighter.storage.ApplicationStorage;
+
 import java.time.LocalDateTime;
+import java.util.function.Function;
+
 import jakarta.inject.Singleton;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -37,26 +39,22 @@ public class ApplicationStatusHandler {
                 .build());
     }
 
-    public void processApplicationIdle(Application application) {
-        backend.getInfo(application).ifPresentOrElse(
-                info -> {
-                    var state = adjustState(true, info.getState());
-                    var idleInfo = new ApplicationInfo(state, info.getApplicationId());
-                    trackStatus(application, idleInfo);
-                },
-                () -> checkZombie(application)
-        );
+    public ApplicationState processApplicationRunning(Application application) {
+        return this.processApplicationRunning(application, Function.identity());
     }
 
-    public ApplicationState processApplicationRunning(Application app) {
-        return backend.getInfo(app)
-                .map(info -> trackStatus(app, info))
-                .orElseGet(() -> checkZombie(app));
+    public ApplicationState processApplicationRunning(Application application, Function<ApplicationInfo, ApplicationInfo> infoTransformer) {
+        return backend.getInfo(application)
+                .map(info -> {
+                    var transformedInfo = infoTransformer.apply(info);
+                    return trackStatus(application, transformedInfo);
+                })
+                .orElseGet(() -> checkZombie(application));
     }
 
     public void processApplicationError(Application application, Throwable error) {
-        LOG.warn("Marking application " + application.getId() + " failed because of error", error);
-        var appId = backend.getInfo(application).map(ApplicationInfo::getApplicationId)
+        LOG.warn("Marking application {} failed because of error", application.getId(), error);
+        var appId = backend.getInfo(application).map(ApplicationInfo::applicationId)
                 .orElse(null);
         applicationStorage.saveApplication(
                 ApplicationBuilder.builder(application)
@@ -74,16 +72,16 @@ public class ApplicationStatusHandler {
     private ApplicationState trackStatus(Application app, ApplicationInfo info) {
         LOG.info("Tracking {}, info: {}", app, info);
         applicationStorage.saveApplication(ApplicationBuilder.builder(app)
-                .setState(info.getState())
+                .setState(info.state())
                 .setContactedAt(LocalDateTime.now())
-                .setAppId(info.getApplicationId())
+                .setAppId(info.applicationId())
                 .build());
 
-        if (info.getState().isComplete()) {
+        if (info.state().isComplete()) {
             backend.getLogs(app).ifPresent(logService::save);
         }
 
-        return info.getState();
+        return info.state();
     }
 
     private ApplicationState checkZombie(Application app) {
