@@ -30,7 +30,7 @@ class SessionHandlerTest extends Specification {
     @Subject
     SessionHandler handler = Spy(new SessionHandler(service, backend, statementHandler, tracker, conf))
 
-    def "kills timeouted sessions"() {
+    def "kills timed-out sessions"() {
         given:
         def oldSession = newSession()
         service.lastUsed(oldSession.id) >> LocalDateTime.now() - conf.sessionConfiguration.timeoutInterval.plusMinutes(1)
@@ -51,7 +51,7 @@ class SessionHandlerTest extends Specification {
         0 * service.killOne(newSession)
     }
 
-    def "preserves active timeouted sessions"() {
+    def "preserves active timed-out sessions"() {
         given:
         def oldSession = newSession()
         service.lastUsed(oldSession.id) >> LocalDateTime.now() - conf.sessionConfiguration.timeoutInterval.plusMinutes(1)
@@ -85,12 +85,9 @@ class SessionHandlerTest extends Specification {
         handler.trackRunning()
 
         then:
-        1 * tracker.processApplicationIdle(session)
-        0 * tracker.processApplicationIdle(session2)
-        1 * tracker.processApplicationIdle(permanentSession)
-        1 * tracker.processApplicationRunning(session2)
-        0 * tracker.processApplicationRunning(session)
-        0 * tracker.processApplicationRunning(permanentSession)
+        1 * tracker.processApplicationRunning(session, _)
+        1 * tracker.processApplicationRunning(session2, _)
+        1 * tracker.processApplicationRunning(permanentSession, _)
     }
 
     def app() {

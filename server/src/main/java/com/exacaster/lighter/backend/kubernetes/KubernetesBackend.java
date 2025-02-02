@@ -135,19 +135,13 @@ public class KubernetesBackend implements Backend {
     }
 
     private ApplicationState mapStatus(PodStatus status) {
-        switch (status.getPhase()) {
-            case "Unknown":
-            case "Pending":
-                return ApplicationState.STARTING;
-            case "Running":
-                return ApplicationState.BUSY;
-            case "Succeeded":
-                return ApplicationState.SUCCESS;
-            case "Failed":
-                return ApplicationState.DEAD;
-            default:
-                throw new IllegalStateException("Unexpected phase: " + status.getPhase());
-        }
+        return switch (status.getPhase()) {
+            case "Unknown", "Pending" -> ApplicationState.STARTING;
+            case "Running" -> ApplicationState.BUSY;
+            case "Succeeded" -> ApplicationState.SUCCESS;
+            case "Failed" -> ApplicationState.DEAD;
+            default -> throw new IllegalStateException("Unexpected phase: " + status.getPhase());
+        };
     }
 
     private Optional<Pod> getDriverPod(String appIdentifier) {

@@ -1,5 +1,6 @@
 package com.exacaster.lighter.application
 
+import com.exacaster.lighter.application.sessions.SessionUtils
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.log.Log
 import com.exacaster.lighter.log.LogService
@@ -8,12 +9,13 @@ import spock.lang.Specification
 import spock.lang.Subject
 
 import java.time.LocalDateTime
+import java.util.function.Function
 
 import static com.exacaster.lighter.test.Factories.appConfiguration
 import static com.exacaster.lighter.test.Factories.newSession
 
 class ApplicationStatusHandlerTest extends Specification {
-    def storage  = new InMemoryStorage()
+    def storage = new InMemoryStorage()
 
     Backend backend = Mock() {
         getLogs(_) >> Optional.of(new Log("", "log"))
@@ -28,14 +30,22 @@ class ApplicationStatusHandlerTest extends Specification {
         storage.cleanup()
     }
 
-    def "handles idle state"() {
+    def "handles state with transformation"() {
         given:
+        def transformation = new Function<ApplicationInfo, ApplicationInfo>() {
+            @Override
+            ApplicationInfo apply(ApplicationInfo info) {
+                return new ApplicationInfo(SessionUtils.adjustState(false, info.state()), info.applicationId())
+            }
+        }
+
         def application = newSession(ApplicationState.IDLE)
         application = storage.saveApplication(application)
 
         when:
         1 * backend.getInfo(application) >> Optional.of(new ApplicationInfo(ApplicationState.BUSY, "we"))
-        handler.processApplicationIdle(application)
+
+        handler.processApplicationRunning(application, transformation)
         def updated = storage.findApplication(application.id).get()
 
         then:
@@ -44,7 +54,7 @@ class ApplicationStatusHandlerTest extends Specification {
 
         when:
         1 * backend.getInfo(application) >> Optional.of(new ApplicationInfo(ApplicationState.KILLED, "we"))
-        handler.processApplicationIdle(application)
+        handler.processApplicationRunning(application, transformation)
         updated = storage.findApplication(application.id).get()
 
         then:

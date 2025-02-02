@@ -100,7 +100,7 @@ public class SessionService {
                         return backend.getInfo(app)
                                 .map(info -> {
                                     var hasWaiting = statementHandler.hasWaitingStatement(app);
-                                    var state = adjustState(!hasWaiting, info.getState());
+                                    var state = adjustState(hasWaiting, info.state());
                                     return ApplicationBuilder.builder(app).setState(state).build();
                                 })
                                 .orElse(app);
