@@ -5,7 +5,7 @@
   "private": true,
   "type": "module",
   "dependencies": {
-    "@chakra-ui/react": "^3.5.1",
+    "@chakra-ui/react": "^3.6.0",
     "@chakra-ui/system": "^2.5.8",
     "@emotion/react": "^11.14.0",
     "@fontsource/open-sans": "^5.1.0",
