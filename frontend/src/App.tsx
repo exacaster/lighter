@@ -1,14 +1,10 @@
-import React from 'react';
+import React, {lazy} from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import Sessions from './pages/Sessions';
-import Batches from './pages/Batches';
 import Layout from './components/Layout';
 import {QueryCache, QueryClient, QueryClientProvider} from '@tanstack/react-query';
-import Batch from './pages/Batch';
 import '@fontsource/open-sans/700.css';
 import '@fontsource/open-sans/600.css';
 import '@fontsource/open-sans';
-import Session from './pages/Session';
 import {RoutePath} from './configuration/consts';
 import {ChakraProvider, createSystem, defaultConfig} from '@chakra-ui/react';
 
@@ -37,6 +33,11 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+const Session = lazy(() => import('./pages/Session'));
+const Sessions = lazy(() => import('./pages/Sessions'));
+const Batch = lazy(() => import('./pages/Batch'));
+const Batches = lazy(() => import('./pages/Batches'));
 
 function App() {
   return (

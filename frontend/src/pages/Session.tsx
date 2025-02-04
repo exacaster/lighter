@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {lazy} from 'react';
 import {useParams} from 'react-router';
 import {useSession, useSessionDelete, useSessionLog} from '../hooks/session';
 import AppInfo from '../components/AppInfo';
@@ -7,8 +7,8 @@ import AppLogs from '../components/AppLogs';
 import AppTitle from '../components/AppTitle';
 import {useNavigate} from 'react-router-dom';
 import {RoutePath} from '../configuration/consts';
-import Statements from '../components/Statements';
 
+const Statements = lazy(() => import('../components/Statements'));
 const Session: React.FC = () => {
   const {id} = useParams();
   const {data: logs} = useSessionLog(id!);
@@ -32,7 +32,7 @@ const Session: React.FC = () => {
   return (
     <div>
       <AppTitle app={session} onDelete={onDelete} />
-      <Tabs.Root isLazy defaultValue="info">
+      <Tabs.Root isLazy lazyMount unmountOnExit defaultValue="info">
         <Tabs.List>
           {/* @ts-expect-error - TS integration problems */}
           <Tabs.Trigger value="info">Info</Tabs.Trigger>
