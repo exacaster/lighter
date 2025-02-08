@@ -85,9 +85,9 @@ class SessionHandlerTest extends Specification {
         handler.trackRunning()
 
         then:
-        1 * tracker.processApplicationRunning(session, _)
-        1 * tracker.processApplicationRunning(session2, _)
-        1 * tracker.processApplicationRunning(permanentSession, _)
+        1 * tracker.processApplicationRunning(session, _) >> ApplicationState.BUSY
+        1 * tracker.processApplicationRunning(session2, _) >> ApplicationState.BUSY
+        1 * tracker.processApplicationRunning(permanentSession, _) >> ApplicationState.BUSY
     }
 
     def app() {

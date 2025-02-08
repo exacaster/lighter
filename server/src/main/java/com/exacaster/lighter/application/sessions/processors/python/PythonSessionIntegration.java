@@ -16,6 +16,8 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import jakarta.transaction.Transactional;
 import org.slf4j.Logger;
 import py4j.GatewayServer;
 
@@ -80,7 +82,15 @@ public class PythonSessionIntegration implements StatementHandler {
 
     @Override
     public Optional<Statement> cancelStatement(String id, String statementId) {
-        return statementStorage.updateState(id, statementId, "canceled");
+        return statementStorage.updateState(id, statementId, "cancelled");
+    }
+
+    @Transactional
+    @Override
+    public void cancelStatements(String id) {
+        statementStorage.findByState(id, "waiting").forEach(statement -> {
+            cancelStatement(id, statement.getId());
+        });
     }
 
     @EventListener

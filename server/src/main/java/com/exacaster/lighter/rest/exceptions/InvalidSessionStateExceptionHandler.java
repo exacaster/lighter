@@ -12,7 +12,6 @@ import io.micronaut.http.server.exceptions.response.ErrorResponseProcessor;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import java.util.List;
 import java.util.Map;
 
 @Produces

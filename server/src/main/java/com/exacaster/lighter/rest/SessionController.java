@@ -99,18 +99,23 @@ public class SessionController {
 
     @Get("/{id}/log")
     public Optional<Object> getLog(@PathVariable String id, @Nullable @Header("X-Compatibility-Mode") String mode) {
-        return sessionService.fetchOne(id).flatMap(session -> {
+        var logs = sessionService.fetchOne(id).flatMap(session -> {
             if (session.getState().isComplete()) {
                 return logService.fetch(id);
             }
-
             return logService.fetchLive(session);
-        }).map(log -> magicCompatibility.transformOrElse(mode, () -> {
+        });
+
+        var result = magicCompatibility.transformOrElse(mode, () -> {
             Map<String, Object> res = new HashMap<>();
-            res.put("id", log.getId());
-            res.put("log", List.of(log.getLog().split("\n")));
+            logs.ifPresent(log -> {
+                res.put("id", log.getId());
+                res.put("log", List.of(log.getLog().split("\n")));
+            });
             return res;
-        }, () -> log));
+        }, () -> logs.orElse(null));
+
+        return Optional.ofNullable(result);
     }
 
     @Post("/{id}/statements")
