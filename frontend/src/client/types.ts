@@ -42,7 +42,7 @@ export type SessionStatementCode = {
 
 export type SessionStatement = SessionStatementCode & {
   id: string;
-  state: 'available' | 'error' | 'waiting' | 'canceled';
+  state: 'available' | 'error' | 'waiting' | 'cancelled';
   output?: {
     status: 'ok' | 'error';
     traceback?: string;

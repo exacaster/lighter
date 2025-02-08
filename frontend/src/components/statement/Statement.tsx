@@ -14,7 +14,7 @@ const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({
     switch (statement.state) {
       case 'available':
         return <FaCheck color="green" />;
-      case 'canceled':
+      case 'cancelled':
         return <FaStop />;
       case 'error':
         return <RiErrorWarningFill color="red" />;
@@ -35,7 +35,7 @@ const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({
             <Box>
               <VStack>
                 {statusIcon}
-                {statement.state !== 'canceled' ? (
+                {statement.state !== 'cancelled' ? (
                   <IconButton variant="ghost" onClick={() => cancel()} loading={isCanceling} aria-label="Cancel">
                     <FaStop />
                   </IconButton>

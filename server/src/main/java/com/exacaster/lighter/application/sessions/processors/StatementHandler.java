@@ -8,6 +8,7 @@ public interface StatementHandler {
     Statement processStatement(String id, Statement statement);
     Statement getStatement(String id, String statementId);
     Optional<Statement> cancelStatement(String id, String statementId);
+    void cancelStatements(String id);
 
     boolean hasWaitingStatement(Application application);
 }

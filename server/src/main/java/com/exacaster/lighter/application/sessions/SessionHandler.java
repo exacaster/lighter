@@ -34,18 +34,18 @@ public class SessionHandler {
 
     private final SessionService sessionService;
     private final Backend backend;
-    private final StatementHandler statementStatusChecker;
+    private final StatementHandler statementHandler;
     private final ApplicationStatusHandler statusTracker;
     private final AppConfiguration appConfiguration;
 
     public SessionHandler(SessionService sessionService,
                           Backend backend,
-                          StatementHandler statementStatusChecker,
+                          StatementHandler statementHandler,
                           ApplicationStatusHandler statusTracker,
                           AppConfiguration appConfiguration) {
         this.sessionService = sessionService;
         this.backend = backend;
-        this.statementStatusChecker = statementStatusChecker;
+        this.statementHandler = statementHandler;
         this.statusTracker = statusTracker;
         this.appConfiguration = appConfiguration;
     }
@@ -129,8 +129,11 @@ public class SessionHandler {
         var running = sessionService.fetchRunningSession();
 
         running.forEach(session -> {
-            var hasWaiting = statementStatusChecker.hasWaitingStatement(session);
-            statusTracker.processApplicationRunning(session, info -> adjustApplicationInfo(info, hasWaiting));
+            var hasWaiting = statementHandler.hasWaitingStatement(session);
+            var status = statusTracker.processApplicationRunning(session, info -> adjustApplicationInfo(info, hasWaiting));
+            if (status.isComplete()) {
+                statementHandler.cancelStatements(session.getId());
+            }
         });
     }
 
