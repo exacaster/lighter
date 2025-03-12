@@ -24,7 +24,7 @@
   "devDependencies": {
     "@eslint/js": "^9.22.0",
     "@nabla/vite-plugin-eslint": "^2.0.4",
-    "@types/node": "^22.13.9",
+    "@types/node": "^22.13.10",
     "@types/react": "^19.0.10",
     "@types/react-dom": "^19.0.3",
     "@types/react-router-dom": "^5.1.7",
