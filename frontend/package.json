@@ -19,7 +19,7 @@
     "react-moment": "^1.1.1",
     "react-router-dom": "^7.3.0",
     "sass": "^1.85.1",
-    "typescript": "^5.6.3"
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
