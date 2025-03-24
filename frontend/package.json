@@ -18,7 +18,7 @@
     "react-icons": "^5.5.0",
     "react-moment": "^1.1.1",
     "react-router-dom": "^7.3.0",
-    "sass": "^1.85.1",
+    "sass": "^1.86.0",
     "typescript": "^5.8.2"
   },
   "devDependencies": {
