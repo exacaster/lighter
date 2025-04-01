@@ -69,7 +69,7 @@ dependencies {
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
 
     testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.12.1"
-    testRuntimeOnly "net.bytebuddy:byte-buddy:1.17.4"
+    testRuntimeOnly "net.bytebuddy:byte-buddy:1.17.5"
     testRuntimeOnly "org.objenesis:objenesis:3.4"
 
     testImplementation "io.micronaut:micronaut-inject-groovy"
