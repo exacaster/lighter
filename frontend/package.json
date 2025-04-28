@@ -8,7 +8,7 @@
     "@chakra-ui/react": "^3.16.1",
     "@emotion/react": "^11.14.0",
     "@fontsource/open-sans": "^5.2.5",
-    "@tanstack/react-query": "^5.74.4",
+    "@tanstack/react-query": "^5.74.7",
     "axios": "^1.9.0",
     "moment": "^2.30.1",
     "query-string": "^9.1.1",
