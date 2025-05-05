@@ -938,10 +938,10 @@
   resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.75.0.tgz#6a29620a58cf91cac5f804dde44bb8904df071d7"
   integrity sha512-rk8KQuCdhoRkzjRVF3QxLgAfFUyS0k7+GCQjlGEpEGco+qazJ0eMH6aO1DjDjibH7/ik383nnztua3BG+lOnwg==
 
-"@tanstack/react-query@^5.75.0":
-  version "5.75.0"
-  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.75.0.tgz#0e31ee00b90b51ece81833ce4f8784f5dc3ce9d9"
-  integrity sha512-H+TNgxmTbzH8qQ5MT5xsZEhQ8BG1tUYduDSfeAOzroVZgd/AEjg1rRYSP/9Tl9/hPobZ7iZzV401n77kStrbKw==
+"@tanstack/react-query@^5.75.2":
+  version "5.75.2"
+  resolved "https://registry.yarnpkg.com/@tanstack/react-query/-/react-query-5.75.2.tgz#6397277c90aa4d4203bf1b53738397bc51c00d7c"
+  integrity sha512-8F8VOsWUfSkCFoi62O9HSZT9jDgg28Ln8Z2dYKfRo/O2A0sgvr0uxTuNoon3PPXoDuHofv5V3elBI1M2Gh1MPg==
   dependencies:
     "@tanstack/query-core" "5.75.0"
 
