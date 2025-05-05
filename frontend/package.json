@@ -22,7 +22,7 @@
     "typescript": "^5.8.3"
   },
   "devDependencies": {
-    "@eslint/js": "^9.24.0",
+    "@eslint/js": "^9.26.0",
     "@nabla/vite-plugin-eslint": "^2.0.4",
     "@types/node": "^22.15.3",
     "@types/react": "^19.1.2",
