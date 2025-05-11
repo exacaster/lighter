@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "groovy"
-    id "io.micronaut.application" version "4.4.5"
+    id "io.micronaut.application" version "4.5.3"
     id "com.github.ben-manes.versions" version "0.52.0"
 }
 
@@ -17,14 +17,14 @@ java {
 }
 
 micronaut {
-    version = "4.7.4"
+    version = "4.8.2"
     runtime "netty"
 }
 mainClassName = "com.exacaster.lighter.Application"
 
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : "3.5.5"
 def hadoopVersion = "3.4.1"
-def k8sClientVersion = "7.1.0"
+def k8sClientVersion = "7.2.0"
 def shedlockVersion = "6.4.0"
 
 dependencies {
