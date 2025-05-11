@@ -2,10 +2,10 @@ import React, {useMemo} from 'react';
 import {SessionStatement} from '../../client/types';
 import {useSessionStatementCancel} from '../../hooks/session';
 import {Box, Card, Flex, IconButton, Spinner, VStack} from '@chakra-ui/react';
-import {CodeBlock, a11yLight} from 'react-code-blocks';
 import StatementOutput from './StatementOutput';
 import {FaCheck, FaStop} from 'react-icons/fa';
 import {RiErrorWarningFill} from 'react-icons/ri';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({sessionId, statement}) => {
   const {mutate: cancel, isPending: isCanceling} = useSessionStatementCancel(sessionId, statement.id);
@@ -29,7 +29,7 @@ const Statement: React.FC<{sessionId: string; statement: SessionStatement}> = ({
         <VStack align="stretch" gap={1}>
           <Flex gap={2}>
             <Box flex={1}>
-              <CodeBlock theme={a11yLight} language="python" text={statement.code} />
+              <SyntaxHighlighter language="python">{statement.code}</SyntaxHighlighter>
               <StatementOutput output={statement.output} />
             </Box>
             <Box>

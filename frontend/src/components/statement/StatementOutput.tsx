@@ -1,10 +1,10 @@
 import React from 'react';
 import {SessionStatement} from '../../client/types';
-import {CodeBlock} from 'react-code-blocks';
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 
 const StatementOutput: React.FC<{output?: SessionStatement['output']}> = ({output}) => {
   if (output?.traceback) {
-    return <CodeBlock showLineNumbers={false} text={output.traceback} />;
+    return <SyntaxHighlighter>{output.traceback}</SyntaxHighlighter>;
   }
 
   if (!output?.data) {
@@ -16,7 +16,7 @@ const StatementOutput: React.FC<{output?: SessionStatement['output']}> = ({outpu
     return null;
   }
 
-  return <CodeBlock showLineNumbers={false} text={text} />;
+  return <SyntaxHighlighter>{text}</SyntaxHighlighter>;
 };
 
 export default StatementOutput;
