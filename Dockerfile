@@ -21,7 +21,7 @@ COPY frontend/ ./frontend/
 RUN wget "https://downloads.apache.org/spark/spark-${SPARK_VERSION}/spark-${SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" -O - | tar -xz
 
 WORKDIR /home/app/frontend/
-RUN yarn install && yarn build
+RUN yarn install --network-timeout 1000000 && yarn build
 
 FROM eclipse-temurin:17-jre-jammy
 
