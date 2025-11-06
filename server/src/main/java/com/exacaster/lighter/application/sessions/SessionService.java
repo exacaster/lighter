@@ -1,30 +1,33 @@
 package com.exacaster.lighter.application.sessions;
 
-import com.exacaster.lighter.application.Application;
-import com.exacaster.lighter.application.ApplicationBuilder;
-import com.exacaster.lighter.application.ApplicationState;
-import com.exacaster.lighter.application.ApplicationType;
-import com.exacaster.lighter.application.SubmitParams;
-import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException;
-import com.exacaster.lighter.application.sessions.processors.StatementHandler;
-import com.exacaster.lighter.backend.Backend;
-import com.exacaster.lighter.rest.SessionParams;
-import com.exacaster.lighter.storage.ApplicationStorage;
-import com.exacaster.lighter.storage.SortOrder;
-import com.exacaster.lighter.storage.StatementStorage;
-import jakarta.inject.Singleton;
-
 import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import static java.util.Optional.ofNullable;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import com.exacaster.lighter.application.Application;
+import com.exacaster.lighter.application.ApplicationBuilder;
+import com.exacaster.lighter.application.ApplicationState;
+import com.exacaster.lighter.application.ApplicationType;
+import com.exacaster.lighter.application.SubmitParams;
 import static com.exacaster.lighter.application.sessions.SessionUtils.adjustState;
-import static java.util.Optional.ofNullable;
+import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException;
+import com.exacaster.lighter.application.sessions.exceptions.SessionLimitExceededException;
+import com.exacaster.lighter.application.sessions.processors.StatementHandler;
+import com.exacaster.lighter.backend.Backend;
+import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.rest.SessionParams;
+import com.exacaster.lighter.storage.ApplicationStorage;
+import com.exacaster.lighter.storage.SortOrder;
+import com.exacaster.lighter.storage.StatementStorage;
+
+import jakarta.inject.Singleton;
 
 @Singleton
 public class SessionService {
@@ -34,14 +37,17 @@ public class SessionService {
     private final StatementStorage statementStorage;
     private final Backend backend;
     private final StatementHandler statementHandler;
+    private final AppConfiguration appConfiguration;
 
     public SessionService(ApplicationStorage applicationStorage,
                           StatementStorage statementStorage, Backend backend,
-                          StatementHandler statementHandler) {
+                          StatementHandler statementHandler,
+                          AppConfiguration appConfiguration) {
         this.applicationStorage = applicationStorage;
         this.statementStorage = statementStorage;
         this.backend = backend;
         this.statementHandler = statementHandler;
+        this.appConfiguration = appConfiguration;
     }
 
     public List<Application> fetch(Integer from, Integer size) {
@@ -60,10 +66,26 @@ public class SessionService {
     }
 
     public Application createPermanentSession(String sessionId, SubmitParams params) {
+        validateSessionLimit(ApplicationType.PERMANENT_SESSION);
         return createSession(params, sessionId, ApplicationType.PERMANENT_SESSION);
     }
 
+    private void validateSessionLimit(ApplicationType type) {
+        if (!SESSIONS.contains(type)) {
+            return;
+        }
+
+        var runningSessions = fetchRunningSession().size();
+        var maxRunning = appConfiguration.getMaxRunningSessions();
+        if (maxRunning != null && runningSessions >= maxRunning) {
+            throw new SessionLimitExceededException(
+                    String.format("Maximum number of running sessions (%d) has been reached", maxRunning)
+            );
+        }
+    }
+
     private Application createRegularSession(String sessionId, SubmitParams params) {
+        validateSessionLimit(ApplicationType.SESSION);
         return createSession(params, sessionId, ApplicationType.SESSION);
     }
 
@@ -85,8 +107,12 @@ public class SessionService {
     }
 
     protected List<Application> fetchRunningSession() {
-        return applicationStorage
+        var regularSessions = applicationStorage
                 .findApplicationsByStates(ApplicationType.SESSION, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
+        var permanentSessions = applicationStorage
+                .findApplicationsByStates(ApplicationType.PERMANENT_SESSION, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
+        return Stream.concat(regularSessions.stream(), permanentSessions.stream())
+                .collect(Collectors.toList());
     }
 
     public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer limit) {
