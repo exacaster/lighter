@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.sessions.exceptions.InvalidSessionStateException
 import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
+import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.storage.ApplicationStorage
 import com.exacaster.lighter.storage.StatementStorage
 import com.exacaster.lighter.test.InMemoryStorage
@@ -18,9 +19,10 @@ class CreateStatementTest extends Specification {
     ApplicationStorage storage = new InMemoryStorage()
     Backend backend = Mock()
     StatementHandler statementHandler = Mock()
+    AppConfiguration config = appConfiguration()
 
     @Subject
-    SessionService service = new SessionService(storage, Mock(StatementStorage), backend, statementHandler)
+    SessionService service = new SessionService(storage, Mock(StatementStorage), backend, statementHandler, config)
 
     def 'on non existing session id returns NoSessionExists'() {
         given:

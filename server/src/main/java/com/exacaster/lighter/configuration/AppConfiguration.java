@@ -28,6 +28,8 @@ public class AppConfiguration {
     private final Integer maxRunningJobs;
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer maxStartingJobs;
+    @JsonProperty(access = Access.WRITE_ONLY)
+    private final Integer maxRunningSessions;
     private final String sparkHistoryServerUrl;
     private final String externalLogsUrlTemplate;
     @JsonProperty(access = Access.WRITE_ONLY)
@@ -42,6 +44,7 @@ public class AppConfiguration {
     @ConfigurationInject
     public AppConfiguration(Integer maxRunningJobs,
             Integer maxStartingJobs,
+            Integer maxRunningSessions,
             @Nullable String sparkHistoryServerUrl,
             @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort,
@@ -53,6 +56,7 @@ public class AppConfiguration {
             @Nullable Map<String, String> sessionDefaultConf) {
         this.maxRunningJobs = maxRunningJobs;
         this.maxStartingJobs = maxStartingJobs;
+        this.maxRunningSessions = maxRunningSessions;
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
@@ -70,6 +74,11 @@ public class AppConfiguration {
     public Integer getMaxStartingJobs() {
         return maxStartingJobs;
     }
+
+    public Integer getMaxRunningSessions() {
+        return maxRunningSessions;
+    }
+
 
     public String getSparkHistoryServerUrl() {
         return sparkHistoryServerUrl;
@@ -108,6 +117,7 @@ public class AppConfiguration {
         return "AppConfiguration{" +
                 "maxRunningJobs=" + maxRunningJobs +
                 ", maxStartingJobs=" + maxStartingJobs +
+                ", maxRunningSessions=" + maxRunningSessions +
                 ", sparkHistoryServerUrl='" + sparkHistoryServerUrl + '\'' +
                 ", externalLogsUrlTemplate='" + externalLogsUrlTemplate + '\'' +
                 ", pyGatewayPort=" + pyGatewayPort +

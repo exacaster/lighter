@@ -1,6 +1,7 @@
 lighter:
   max-running-jobs: 5
   max-starting-jobs: 5
+  max-running-sessions: 5
   spark-history-server-url: http://localhost/spark-history/
   frontend-path: file:${FRONTEND_PATH:../frontend/build}
   py-gateway-port: 25333
