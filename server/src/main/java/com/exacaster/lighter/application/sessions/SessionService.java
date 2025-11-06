@@ -75,9 +75,13 @@ public class SessionService {
             return;
         }
 
-        var allSessions = applicationStorage.findApplications(SESSIONS, 0, Integer.MAX_VALUE).size();
         var maxRunning = appConfiguration.getMaxRunningSessions();
-        if (maxRunning != null && allSessions >= maxRunning) {
+        if (maxRunning == null) {
+            return;
+        }
+
+        var sessionCount = applicationStorage.findApplications(SESSIONS, 0, maxRunning).size();
+        if (sessionCount >= maxRunning) {
             throw new SessionLimitExceededException(
                     String.format("Maximum number of running sessions (%d) has been reached", maxRunning)
             );
