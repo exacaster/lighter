@@ -76,24 +76,24 @@ class SessionServiceTest extends Specification {
 
     def "validate max running sessions limit"() {
         given:
-        def runningSession1 = ApplicationBuilder.builder().setAppId("app1")
+        def session1 = ApplicationBuilder.builder().setAppId("app1")
                 .setType(ApplicationType.SESSION)
-                .setState(ApplicationState.IDLE)
+                .setState(ApplicationState.NOT_STARTED)
                 .setAppInfo("info")
                 .setCreatedAt(LocalDateTime.now())
                 .setId("session1")
                 .setSubmitParams(null)
                 .build()
-        def runningSession2 = ApplicationBuilder.builder().setAppId("app2")
+        def session2 = ApplicationBuilder.builder().setAppId("app2")
                 .setType(ApplicationType.SESSION)
-                .setState(ApplicationState.BUSY)
+                .setState(ApplicationState.IDLE)
                 .setAppInfo("info")
                 .setCreatedAt(LocalDateTime.now())
                 .setId("session2")
                 .setSubmitParams(null)
                 .build()
-        storage.saveApplication(runningSession1)
-        storage.saveApplication(runningSession2)
+        storage.saveApplication(session1)
+        storage.saveApplication(session2)
         def configWithLimit = new AppConfiguration(
                 config.maxRunningJobs,
                 config.maxStartingJobs,
@@ -120,8 +120,8 @@ class SessionServiceTest extends Specification {
 
     def "allows session creation when limit not exceeded"() {
         given:
-        def runningSession = newSession(ApplicationState.IDLE)
-        storage.saveApplication(runningSession)
+        def existingSession = newSession(ApplicationState.NOT_STARTED)
+        storage.saveApplication(existingSession)
         def configWithLimit = new AppConfiguration(
                 config.maxRunningJobs,
                 config.maxStartingJobs,
