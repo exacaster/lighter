@@ -111,12 +111,8 @@ public class SessionService {
     }
 
     protected List<Application> fetchRunningSession() {
-        var regularSessions = applicationStorage
+        return applicationStorage
                 .findApplicationsByStates(ApplicationType.SESSION, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
-        var permanentSessions = applicationStorage
-                .findApplicationsByStates(ApplicationType.PERMANENT_SESSION, ApplicationState.runningStates(), SortOrder.ASC, 0, Integer.MAX_VALUE);
-        return Stream.concat(regularSessions.stream(), permanentSessions.stream())
-                .collect(Collectors.toList());
     }
 
     public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer limit) {
