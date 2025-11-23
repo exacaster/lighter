@@ -5,6 +5,7 @@ import com.exacaster.lighter.application.sessions.processors.StatementHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
+import com.exacaster.lighter.storage.ApplicationStorage
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
@@ -23,8 +24,10 @@ class PermanentSessionHandlerTest extends Specification {
 
     StatementHandler statementHandler = Mock()
 
+    ApplicationStorage applicationStorage = Mock()
+
     @Subject
-    SessionHandler handler = Spy(new SessionHandler(service, backend, statementHandler, tracker, conf))
+    SessionHandler handler = Spy(new SessionHandler(service, backend, statementHandler, tracker, conf, applicationStorage))
 
     def configPermanentSession = conf.sessionConfiguration.permanentSessions.iterator().next()
 

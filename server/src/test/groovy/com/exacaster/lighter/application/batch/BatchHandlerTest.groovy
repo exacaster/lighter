@@ -6,6 +6,7 @@ import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
+import com.exacaster.lighter.storage.ApplicationStorage
 import com.exacaster.lighter.storage.SortOrder
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
@@ -23,8 +24,10 @@ class BatchHandlerTest extends Specification {
 
     AppConfiguration config = appConfiguration()
 
+    ApplicationStorage applicationStorage = Mock()
+
     @Subject
-    def handler = Spy(new BatchHandler(backend, service, config, statusHandler))
+    def handler = Spy(new BatchHandler(backend, service, config, statusHandler, applicationStorage))
 
     def setup() {
         LockAssert.TestHelper.makeAllAssertsPass(true)
