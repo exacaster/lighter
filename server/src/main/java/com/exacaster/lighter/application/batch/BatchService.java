@@ -15,6 +15,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Singleton
 public class BatchService {
@@ -64,6 +65,18 @@ public class BatchService {
             backend.kill(app);
             applicationStorage.deleteApplication(id);
         });
+    }
+
+    public List<Application> fetchFinishedBatchesOlderThan(LocalDateTime cutoffDate) {
+        return applicationStorage.findApplicationsByStates(
+                ApplicationType.BATCH,
+                ApplicationState.finishedStates(),
+                SortOrder.ASC,
+                0,
+                Integer.MAX_VALUE
+        ).stream()
+                .filter(app -> app.getContactedAt() != null && app.getContactedAt().isBefore(cutoffDate))
+                .collect(Collectors.toList());
     }
 
 }

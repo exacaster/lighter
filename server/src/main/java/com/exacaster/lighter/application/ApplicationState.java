@@ -20,6 +20,10 @@ public enum ApplicationState {
             .filter(val -> !val.isComplete && !val.equals(NOT_STARTED))
             .toList();
 
+    private static final List<ApplicationState> FINISHED_STATES = Arrays.stream(values())
+            .filter(val -> val.isComplete)
+            .toList();
+
     private final boolean isComplete;
 
     ApplicationState(boolean isComplete) {
@@ -32,6 +36,10 @@ public enum ApplicationState {
 
     public static List<ApplicationState> runningStates() {
         return RUNNING_STATES;
+    }
+
+    public static List<ApplicationState> finishedStates() {
+        return FINISHED_STATES;
     }
 
     public static Optional<ApplicationState> from(String state) {

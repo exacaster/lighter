@@ -151,7 +151,10 @@ public class SessionService {
 
     public void killOne(Application app) {
         backend.kill(app);
-        applicationStorage.saveApplication(ApplicationBuilder.builder(app).setState(ApplicationState.KILLED).build());
+        applicationStorage.saveApplication(ApplicationBuilder.builder(app)
+                .setState(ApplicationState.KILLED)
+                .setContactedAt(LocalDateTime.now())
+                .build());
     }
 
     public Optional<Statement> createStatement(String id, Statement statement) {
@@ -198,6 +201,18 @@ public class SessionService {
     protected void deletePermanentSession(String id) {
         applicationStorage.findApplication(id).ifPresent(backend::kill);
         applicationStorage.hardDeleteApplication(id);
+    }
+
+    public List<Application> fetchFinishedSessionsOlderThan(LocalDateTime cutoffDate) {
+        return applicationStorage.findApplicationsByStates(
+                ApplicationType.SESSION,
+                ApplicationState.finishedStates(),
+                SortOrder.ASC,
+                0,
+                Integer.MAX_VALUE
+        ).stream()
+                .filter(app -> app.getContactedAt() != null && app.getContactedAt().isBefore(cutoffDate))
+                .collect(Collectors.toList());
     }
 
 }
