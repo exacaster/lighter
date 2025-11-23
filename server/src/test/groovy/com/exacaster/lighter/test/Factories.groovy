@@ -92,6 +92,7 @@ class Factories {
                 5432,
                 "http://lighter:8080",
                 Duration.ofMinutes(30),
+                Duration.ofMinutes(10),
                 new AppConfiguration.SessionConfiguration(Duration.ofMinutes(20), false,
                         [new AppConfiguration.PermanentSession("permanentSessionId", submitParams())]
                         , Duration.ofMinutes(1), Duration.ofMinutes(2)),

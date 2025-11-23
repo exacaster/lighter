@@ -103,6 +103,7 @@ class SessionServiceTest extends Specification {
                 config.pyGatewayPort,
                 config.url,
                 config.zombieInterval,
+                config.stateRetainInterval,
                 config.sessionConfiguration,
                 config.batchDefaultConf,
                 config.sessionDefaultConf
@@ -131,6 +132,7 @@ class SessionServiceTest extends Specification {
                 config.pyGatewayPort,
                 config.url,
                 config.zombieInterval,
+                config.stateRetainInterval,
                 config.sessionConfiguration,
                 config.batchDefaultConf,
                 config.sessionDefaultConf
@@ -157,6 +159,7 @@ class SessionServiceTest extends Specification {
                 config.pyGatewayPort,
                 config.url,
                 config.zombieInterval,
+                config.stateRetainInterval,
                 config.sessionConfiguration,
                 config.batchDefaultConf,
                 config.sessionDefaultConf
