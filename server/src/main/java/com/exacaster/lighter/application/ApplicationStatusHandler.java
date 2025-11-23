@@ -90,6 +90,7 @@ public class ApplicationStatusHandler {
             LOG.info("Assuming zombie ({})", app.getId());
             applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                     .setState(ApplicationState.ERROR)
+                    .setContactedAt(LocalDateTime.now())
                     .build());
             logService.save(new Log(app.getId(),
                     "Application was not reachable for " + conf.getZombieInterval().toMinutes() + " minutes, so we assume something went wrong"));

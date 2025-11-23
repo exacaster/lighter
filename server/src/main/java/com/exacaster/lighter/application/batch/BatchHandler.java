@@ -9,10 +9,12 @@ import com.exacaster.lighter.application.ApplicationStatusHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 
+import java.time.LocalDateTime;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -28,13 +30,15 @@ public class BatchHandler {
     private final BatchService batchService;
     private final AppConfiguration appConfiguration;
     private final ApplicationStatusHandler statusTracker;
+    private final ApplicationStorage applicationStorage;
 
     public BatchHandler(Backend backend, BatchService batchService, AppConfiguration appConfiguration,
-                        ApplicationStatusHandler statusTracker) {
+                        ApplicationStatusHandler statusTracker, ApplicationStorage applicationStorage) {
         this.backend = backend;
         this.batchService = batchService;
         this.appConfiguration = appConfiguration;
         this.statusTracker = statusTracker;
+        this.applicationStorage = applicationStorage;
     }
 
     public Waitable launch(Application application, Consumer<Throwable> errorHandler) {
@@ -92,6 +96,21 @@ public class BatchHandler {
         if (completedCount > 0) {
             this.processScheduledBatches();
         }
+    }
+
+    @SchedulerLock(name = "cleanupFinishedBatches", lockAtMostFor = "1m")
+    @Scheduled(fixedRate = "1m")
+    public void cleanupFinishedBatches() {
+        assertLocked();
+        var stateRetainInterval = appConfiguration.getStateRetainInterval();
+        
+        var cutoffDate = LocalDateTime.now().minus(stateRetainInterval);
+        var expiredBatches = batchService.fetchFinishedBatchesOlderThan(cutoffDate);
+        
+        expiredBatches.parallelStream().forEach(batch -> {
+            LOG.info("Deleting {} because it was finished for more than {}", batch, stateRetainInterval);
+            applicationStorage.hardDeleteApplication(batch.getId());
+        });
     }
 
 }

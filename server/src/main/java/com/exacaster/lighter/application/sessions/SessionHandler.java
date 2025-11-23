@@ -9,6 +9,7 @@ import com.exacaster.lighter.application.sessions.processors.StatementHandler;
 import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
+import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
@@ -37,17 +38,20 @@ public class SessionHandler {
     private final StatementHandler statementHandler;
     private final ApplicationStatusHandler statusTracker;
     private final AppConfiguration appConfiguration;
+    private final ApplicationStorage applicationStorage;
 
     public SessionHandler(SessionService sessionService,
                           Backend backend,
                           StatementHandler statementHandler,
                           ApplicationStatusHandler statusTracker,
-                          AppConfiguration appConfiguration) {
+                          AppConfiguration appConfiguration,
+                          ApplicationStorage applicationStorage) {
         this.sessionService = sessionService;
         this.backend = backend;
         this.statementHandler = statementHandler;
         this.statusTracker = statusTracker;
         this.appConfiguration = appConfiguration;
+        this.applicationStorage = applicationStorage;
     }
 
     public Waitable launch(Application application, Consumer<Throwable> errorHandler) {
@@ -152,6 +156,21 @@ public class SessionHandler {
                     .forEach(sessionService::killOne);
         }
 
+    }
+
+    @SchedulerLock(name = "cleanupFinishedSessions", lockAtMostFor = "1m")
+    @Scheduled(fixedRate = "1m")
+    public void cleanupFinishedSessions() {
+        assertLocked();
+        var stateRetainInterval = appConfiguration.getStateRetainInterval();
+        
+        var cutoffDate = LocalDateTime.now().minus(stateRetainInterval);
+        var expiredSessions = sessionService.fetchFinishedSessionsOlderThan(cutoffDate);
+        
+        expiredSessions.parallelStream().forEach(session -> {
+            LOG.info("Deleting {} because it was finished for more than {}", session, stateRetainInterval);
+            applicationStorage.hardDeleteApplication(session.getId());
+        });
     }
 
     private ApplicationInfo adjustApplicationInfo(ApplicationInfo info, boolean waiting) {
