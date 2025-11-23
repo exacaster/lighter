@@ -73,7 +73,7 @@ public class BatchService {
                 ApplicationState.finishedStates(),
                 SortOrder.ASC,
                 0,
-                Integer.MAX_VALUE
+                100
         ).stream()
                 .filter(app -> app.getContactedAt() != null && app.getContactedAt().isBefore(cutoffDate))
                 .collect(Collectors.toList());
