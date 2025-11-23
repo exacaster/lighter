@@ -7,7 +7,6 @@ lighter:
   py-gateway-port: 25333
   url: http://lighter.spark:8080
   zombie-interval: 30m
-  state-retain-interval: 10m
   session:
     timeout-interval: 90m
     timeout-active: false

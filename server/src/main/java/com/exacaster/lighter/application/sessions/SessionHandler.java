@@ -163,6 +163,9 @@ public class SessionHandler {
     public void cleanupFinishedSessions() {
         assertLocked();
         var stateRetainInterval = appConfiguration.getStateRetainInterval();
+        if (stateRetainInterval == null) {
+            return;
+        }
         
         var cutoffDate = LocalDateTime.now().minus(stateRetainInterval);
         var expiredSessions = sessionService.fetchFinishedSessionsOlderThan(cutoffDate);
