@@ -1,6 +1,7 @@
 package com.exacaster.lighter.application.batch
 
 import com.exacaster.lighter.Application
+import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
 import com.exacaster.lighter.backend.Backend
@@ -11,6 +12,8 @@ import com.exacaster.lighter.storage.SortOrder
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
+
+import java.time.LocalDateTime
 
 import static com.exacaster.lighter.test.Factories.*
 
@@ -105,5 +108,30 @@ class BatchHandlerTest extends Specification {
         then:
         1 * statusHandler.processApplicationRunning(app) >> ApplicationState.SUCCESS
         1 * handler.processScheduledBatches()
+    }
+
+    def "cleans up old finished batches"() {
+        given:
+        def oldBatch = ApplicationBuilder.builder(newApplication())
+                .setId("old-1")
+                .setState(ApplicationState.SUCCESS)
+                .setContactedAt(LocalDateTime.now().minus(config.stateRetainInterval.plusMinutes(1)))
+                .build()
+
+        when:
+        handler.cleanupFinishedBatches()
+
+        then:
+        1 * service.fetchFinishedBatchesOlderThan(_) >> [oldBatch]
+        1 * applicationStorage.hardDeleteApplication("old-1")
+    }
+
+    def "does not clean up recent finished batches"() {
+        when:
+        handler.cleanupFinishedBatches()
+
+        then:
+        1 * service.fetchFinishedBatchesOlderThan(_) >> []
+        0 * applicationStorage.hardDeleteApplication(_)
     }
 }

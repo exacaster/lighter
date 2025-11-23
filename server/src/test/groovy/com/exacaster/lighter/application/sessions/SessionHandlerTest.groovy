@@ -100,6 +100,30 @@ class SessionHandlerTest extends Specification {
                 .build()
     }
 
+    def "cleans up old finished sessions"() {
+        given:
+        def oldSession = ApplicationBuilder.builder(newSession(ApplicationState.SUCCESS))
+                .setId("old-1")
+                .setContactedAt(LocalDateTime.now().minus(conf.stateRetainInterval.plusMinutes(1)))
+                .build()
+
+        when:
+        handler.cleanupFinishedSessions()
+
+        then:
+        1 * service.fetchFinishedSessionsOlderThan(_) >> [oldSession]
+        1 * applicationStorage.hardDeleteApplication("old-1")
+    }
+
+    def "does not clean up recent finished sessions"() {
+        when:
+        handler.cleanupFinishedSessions()
+
+        then:
+        1 * service.fetchFinishedSessionsOlderThan(_) >> []
+        0 * applicationStorage.hardDeleteApplication(_)
+    }
+
     def setup() {
         LockAssert.TestHelper.makeAllAssertsPass(true)
     }
