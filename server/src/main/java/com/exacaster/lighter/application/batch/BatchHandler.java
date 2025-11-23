@@ -103,6 +103,9 @@ public class BatchHandler {
     public void cleanupFinishedBatches() {
         assertLocked();
         var stateRetainInterval = appConfiguration.getStateRetainInterval();
+        if (stateRetainInterval == null) {
+            return;
+        }
         
         var cutoffDate = LocalDateTime.now().minus(stateRetainInterval);
         var expiredBatches = batchService.fetchFinishedBatchesOlderThan(cutoffDate);

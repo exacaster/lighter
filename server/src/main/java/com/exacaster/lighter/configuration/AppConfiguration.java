@@ -37,6 +37,7 @@ public class AppConfiguration {
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
     private final Duration zombieInterval;
+    @Nullable
     private final Duration stateRetainInterval;
     private final SessionConfiguration sessionConfiguration;
     private final Map<String, String> batchDefaultConf;
@@ -51,7 +52,7 @@ public class AppConfiguration {
             Integer pyGatewayPort,
             String url,
             Duration zombieInterval,
-            Duration stateRetainInterval,
+            @Nullable Duration stateRetainInterval,
             SessionConfiguration sessionConfiguration,
             @MapFormat(transformation = FLAT, keyFormat = RAW)
             @Nullable Map<String, String> batchDefaultConf,
