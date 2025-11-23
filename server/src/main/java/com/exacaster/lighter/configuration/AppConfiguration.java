@@ -37,6 +37,7 @@ public class AppConfiguration {
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
     private final Duration zombieInterval;
+    private final Duration stateRetainInterval;
     private final SessionConfiguration sessionConfiguration;
     private final Map<String, String> batchDefaultConf;
     private final Map<String, String> sessionDefaultConf;
@@ -50,6 +51,7 @@ public class AppConfiguration {
             Integer pyGatewayPort,
             String url,
             Duration zombieInterval,
+            Duration stateRetainInterval,
             SessionConfiguration sessionConfiguration,
             @MapFormat(transformation = FLAT, keyFormat = RAW)
             @Nullable Map<String, String> batchDefaultConf,
@@ -62,6 +64,7 @@ public class AppConfiguration {
         this.pyGatewayPort = pyGatewayPort;
         this.url = url;
         this.zombieInterval = zombieInterval;
+        this.stateRetainInterval = stateRetainInterval;
         this.sessionConfiguration = sessionConfiguration;
         this.batchDefaultConf = ofNullable(batchDefaultConf).orElse(Map.of());
         this.sessionDefaultConf = ofNullable(sessionDefaultConf).orElse(Map.of());
@@ -100,6 +103,10 @@ public class AppConfiguration {
         return zombieInterval;
     }
 
+    public Duration getStateRetainInterval() {
+        return stateRetainInterval;
+    }
+
     public SessionConfiguration getSessionConfiguration() {
         return sessionConfiguration;
     }
@@ -123,6 +130,7 @@ public class AppConfiguration {
                 ", pyGatewayPort=" + pyGatewayPort +
                 ", url='" + url + '\'' +
                 ", zombieInterval=" + zombieInterval +
+                ", stateRetainInterval=" + stateRetainInterval +
                 ", sessionConfiguration=" + sessionConfiguration +
                 ", batchDefaultConf=" + batchDefaultConf +
                 ", sessionDefaultConf=" + sessionDefaultConf +
