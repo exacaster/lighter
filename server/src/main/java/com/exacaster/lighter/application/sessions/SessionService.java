@@ -153,7 +153,7 @@ public class SessionService {
         backend.kill(app);
         applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                 .setState(ApplicationState.KILLED)
-                .setContactedAt(LocalDateTime.now())
+                .setFinishedAt(LocalDateTime.now())
                 .build());
     }
 
@@ -211,7 +211,7 @@ public class SessionService {
                 0,
                 100
         ).stream()
-                .filter(app -> app.getContactedAt() != null && app.getContactedAt().isBefore(cutoffDate))
+                .filter(app -> app.getFinishedAt() != null && app.getFinishedAt().isBefore(cutoffDate))
                 .collect(Collectors.toList());
     }
 

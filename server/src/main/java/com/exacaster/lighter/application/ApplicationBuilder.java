@@ -12,6 +12,7 @@ public class ApplicationBuilder {
     private SubmitParams submitParams;
     private LocalDateTime createdAt;
     private LocalDateTime contactedAt;
+    private LocalDateTime finishedAt;
     private boolean deleted;
 
     private ApplicationBuilder() {
@@ -28,6 +29,7 @@ public class ApplicationBuilder {
         builder.setId(batch.getId());
         builder.setCreatedAt(batch.getCreatedAt());
         builder.setContactedAt(batch.getContactedAt());
+        builder.setFinishedAt(batch.getFinishedAt());
 
         return builder;
     }
@@ -76,12 +78,17 @@ public class ApplicationBuilder {
         return this;
     }
 
+    public ApplicationBuilder setFinishedAt(LocalDateTime finishedAt) {
+        this.finishedAt = finishedAt;
+        return this;
+    }
+
     public ApplicationBuilder setDeleted(boolean deleted) {
         this.deleted = deleted;
         return this;
     }
 
     public Application build() {
-        return new Application(id, type, state, appId, appInfo, submitParams, createdAt, contactedAt, deleted);
+        return new Application(id, type, state, appId, appInfo, submitParams, createdAt, contactedAt, finishedAt, deleted);
     }
 }

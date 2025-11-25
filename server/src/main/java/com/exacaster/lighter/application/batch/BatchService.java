@@ -75,7 +75,7 @@ public class BatchService {
                 0,
                 100
         ).stream()
-                .filter(app -> app.getContactedAt() != null && app.getContactedAt().isBefore(cutoffDate))
+                .filter(app -> app.getFinishedAt() != null && app.getFinishedAt().isBefore(cutoffDate))
                 .collect(Collectors.toList());
     }
 
