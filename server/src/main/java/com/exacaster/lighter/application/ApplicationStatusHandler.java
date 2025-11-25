@@ -56,12 +56,12 @@ public class ApplicationStatusHandler {
         LOG.warn("Marking application {} failed because of error", application.getId(), error);
         var appId = backend.getInfo(application).map(ApplicationInfo::applicationId)
                 .orElse(null);
-        applicationStorage.saveApplication(
-                ApplicationBuilder.builder(application)
-                        .setState(ApplicationState.ERROR)
-                        .setAppId(appId)
-                        .setContactedAt(LocalDateTime.now())
-                        .build());
+        applicationStorage.saveApplication(ApplicationBuilder.builder(application)
+                .setState(ApplicationState.ERROR)
+                .setAppId(appId)
+                .setContactedAt(LocalDateTime.now())
+                .setFinishedAt(LocalDateTime.now())
+                .build());
 
         backend.getLogs(application).ifPresentOrElse(
                 logService::save,
@@ -71,15 +71,17 @@ public class ApplicationStatusHandler {
 
     private ApplicationState trackStatus(Application app, ApplicationInfo info) {
         LOG.info("Tracking {}, info: {}", app, info);
-        applicationStorage.saveApplication(ApplicationBuilder.builder(app)
+        var now = LocalDateTime.now();
+        var builder = ApplicationBuilder.builder(app)
                 .setState(info.state())
-                .setContactedAt(LocalDateTime.now())
-                .setAppId(info.applicationId())
-                .build());
-
+                .setContactedAt(now)
+                .setAppId(info.applicationId());
+        
         if (info.state().isComplete()) {
+            builder.setFinishedAt(now);
             backend.getLogs(app).ifPresent(logService::save);
         }
+        applicationStorage.saveApplication(builder.build());
 
         return info.state();
     }
@@ -90,7 +92,7 @@ public class ApplicationStatusHandler {
             LOG.info("Assuming zombie ({})", app.getId());
             applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                     .setState(ApplicationState.ERROR)
-                    .setContactedAt(LocalDateTime.now())
+                    .setFinishedAt(LocalDateTime.now())
                     .build());
             logService.save(new Log(app.getId(),
                     "Application was not reachable for " + conf.getZombieInterval().toMinutes() + " minutes, so we assume something went wrong"));
