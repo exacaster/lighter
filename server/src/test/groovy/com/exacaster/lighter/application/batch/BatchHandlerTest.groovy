@@ -115,7 +115,7 @@ class BatchHandlerTest extends Specification {
         def oldBatch = ApplicationBuilder.builder(newApplication())
                 .setId("old-1")
                 .setState(ApplicationState.SUCCESS)
-                .setContactedAt(LocalDateTime.now().minus(config.stateRetainInterval.plusMinutes(1)))
+                .setFinishedAt(LocalDateTime.now().minus(config.stateRetainInterval.plusMinutes(1)))
                 .build()
 
         when:
