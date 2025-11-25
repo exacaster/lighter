@@ -104,7 +104,7 @@ class SessionHandlerTest extends Specification {
         given:
         def oldSession = ApplicationBuilder.builder(newSession(ApplicationState.SUCCESS))
                 .setId("old-1")
-                .setContactedAt(LocalDateTime.now().minus(conf.stateRetainInterval.plusMinutes(1)))
+                .setFinishedAt(LocalDateTime.now().minus(conf.stateRetainInterval.plusMinutes(1)))
                 .build()
 
         when:

@@ -56,11 +56,12 @@ public class ApplicationStatusHandler {
         LOG.warn("Marking application {} failed because of error", application.getId(), error);
         var appId = backend.getInfo(application).map(ApplicationInfo::applicationId)
                 .orElse(null);
+        var now = LocalDateTime.now();
         applicationStorage.saveApplication(ApplicationBuilder.builder(application)
                 .setState(ApplicationState.ERROR)
                 .setAppId(appId)
-                .setContactedAt(LocalDateTime.now())
-                .setFinishedAt(LocalDateTime.now())
+                .setContactedAt(now)
+                .setFinishedAt(now)
                 .build());
 
         backend.getLogs(application).ifPresentOrElse(
@@ -88,11 +89,12 @@ public class ApplicationStatusHandler {
 
     private ApplicationState checkZombie(Application app) {
         LOG.info("No info for {}", app);
-        if (app.getContactedAt() != null && app.getContactedAt().isBefore(LocalDateTime.now().minus(conf.getZombieInterval()))) {
+        var now = LocalDateTime.now();
+        if (app.getContactedAt() != null && app.getContactedAt().isBefore(now.minus(conf.getZombieInterval()))) {
             LOG.info("Assuming zombie ({})", app.getId());
             applicationStorage.saveApplication(ApplicationBuilder.builder(app)
                     .setState(ApplicationState.ERROR)
-                    .setFinishedAt(LocalDateTime.now())
+                    .setFinishedAt(now)
                     .build());
             logService.save(new Log(app.getId(),
                     "Application was not reachable for " + conf.getZombieInterval().toMinutes() + " minutes, so we assume something went wrong"));
