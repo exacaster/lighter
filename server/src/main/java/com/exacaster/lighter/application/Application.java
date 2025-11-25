@@ -22,12 +22,13 @@ public class Application implements Entity {
     private final SubmitParams submitParams;
     private final LocalDateTime createdAt;
     private final LocalDateTime contactedAt;
+    private final LocalDateTime finishedAt;
 
     private final boolean deleted;
 
     public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo,
                        SubmitParams submitParams,
-                       LocalDateTime createdAt, LocalDateTime contactedAt, boolean deleted) {
+                       LocalDateTime createdAt, LocalDateTime contactedAt, LocalDateTime finishedAt, boolean deleted) {
         this.id = id;
         this.type = type;
         this.state = state;
@@ -36,6 +37,7 @@ public class Application implements Entity {
         this.submitParams = submitParams;
         this.createdAt = createdAt;
         this.contactedAt = contactedAt;
+        this.finishedAt = finishedAt;
         this.kind = "pyspark";
         this.deleted = deleted;
     }
@@ -88,12 +90,16 @@ public class Application implements Entity {
         return contactedAt;
     }
 
+    public LocalDateTime getFinishedAt() {
+        return finishedAt;
+    }
+
     public String getKind() {
         return kind;
     }
 
     public Application withRedactedConf() {
-        return new Application(id, type, state, appId, appInfo, submitParams.withRedactedConf(), createdAt, contactedAt, deleted);
+        return new Application(id, type, state, appId, appInfo, submitParams.withRedactedConf(), createdAt, contactedAt, finishedAt, deleted);
     }
 
     @Override
@@ -107,6 +113,7 @@ public class Application implements Entity {
                 .add("submitParams=" + submitParams)
                 .add("createdAt=" + createdAt)
                 .add("contactedAt=" + contactedAt)
+                .add("finishedAt=" + finishedAt)
                 .add("deleted=" + deleted)
                 .toString();
     }

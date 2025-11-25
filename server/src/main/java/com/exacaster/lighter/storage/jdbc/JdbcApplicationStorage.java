@@ -111,11 +111,13 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                         + "app_id=:app_id, "
                         + "app_info=:app_info, "
                         + "state=:state, "
-                        + "contacted_at=:contacted_at WHERE id=:id")
+                        + "contacted_at=:contacted_at, "
+                        + "finished_at=:finished_at WHERE id=:id")
                 .bind("state", application.getState().name())
                 .bind("app_id", application.getAppId())
                 .bind("app_info", application.getAppInfo())
                 .bind("contacted_at", application.getContactedAt())
+                .bind("finished_at", application.getFinishedAt())
                 .bind("id", application.getId())
                 .execute();
         return updated;
@@ -130,8 +132,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
         }
         handle
                 .createCall(
-                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at, deleted) "
-                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at, :deleted)")
+                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at, finished_at, deleted) "
+                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at, :finished_at, :deleted)")
                 .bind("id", application.getId())
                 .bind("type", application.getType().name())
                 .bind("state", application.getState().name())
@@ -140,6 +142,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .bind("submit_params", conf)
                 .bind("created_at", application.getCreatedAt())
                 .bind("contacted_at", application.getContactedAt())
+                .bind("finished_at", application.getFinishedAt())
                 .bind("deleted", false)
                 .invoke();
     }
@@ -189,6 +192,8 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
         var contactedAtTs = rs.getTimestamp("contacted_at");
         var contactedAt = contactedAtTs != null ? contactedAtTs.toLocalDateTime() : null;
+        var finishedAtTs = rs.getTimestamp("finished_at");
+        var finishedAt = finishedAtTs != null ? finishedAtTs.toLocalDateTime() : null;
         return ApplicationBuilder.builder()
                 .setId(rs.getString("id"))
                 .setType(ApplicationType.valueOf(rs.getString("type")))
@@ -198,6 +203,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .setSubmitParams(params)
                 .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
                 .setContactedAt(contactedAt)
+                .setFinishedAt(finishedAt)
                 .setDeleted(rs.getBoolean("deleted"))
                 .build();
     }
