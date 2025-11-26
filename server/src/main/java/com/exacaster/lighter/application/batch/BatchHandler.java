@@ -108,7 +108,7 @@ public class BatchHandler {
         }
         
         var cutoffDate = LocalDateTime.now().minus(stateRetainInterval);
-        var expiredBatches = batchService.fetchFinishedBatchesOlderThan(cutoffDate);
+        var expiredBatches = batchService.fetchFinishedBatchesOlderThan(cutoffDate, 100);
         
         expiredBatches.parallelStream().forEach(batch -> {
             LOG.info("Deleting {} because it was finished for more than {}", batch, stateRetainInterval);

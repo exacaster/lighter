@@ -1,5 +1,11 @@
 package com.exacaster.lighter.application.batch;
 
+import java.time.LocalDateTime;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
 import com.exacaster.lighter.application.ApplicationState;
@@ -9,13 +15,6 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.storage.ApplicationStorage;
 import com.exacaster.lighter.storage.SortOrder;
 import jakarta.inject.Singleton;
-
-import java.time.LocalDateTime;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 @Singleton
 public class BatchService {
@@ -67,16 +66,13 @@ public class BatchService {
         });
     }
 
-    public List<Application> fetchFinishedBatchesOlderThan(LocalDateTime cutoffDate) {
-        return applicationStorage.findApplicationsByStates(
+    public List<Application> fetchFinishedBatchesOlderThan(LocalDateTime cutoffDate, Integer limit) {
+        return applicationStorage.findFinishedApplicationsOlderThan(
                 ApplicationType.BATCH,
                 ApplicationState.finishedStates(),
-                SortOrder.ASC,
-                0,
-                100
-        ).stream()
-                .filter(app -> app.getFinishedAt() != null && app.getFinishedAt().isBefore(cutoffDate))
-                .collect(Collectors.toList());
+                cutoffDate,
+                limit
+        );
     }
 
 }
