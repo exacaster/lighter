@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -171,6 +172,20 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .bind("type", type.name())
                 .map(this)
                 .list());
+    }
+
+    @Override
+    @Transactional
+    public List<Application> findFinishedApplicationsOlderThan(ApplicationType type, List<ApplicationState> states, LocalDateTime cutoffDate, Integer limit) {
+        return jdbi.withHandle(handle -> handle
+                .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) and finished_at IS NOT NULL and finished_at < :cutoffDate ORDER BY finished_at ASC LIMIT :limit")
+                .bind("type", type.name())
+                .bindList("states", states.stream().map(ApplicationState::name).collect(Collectors.toList()))
+                .bind("cutoffDate", cutoffDate)
+                .bind("limit", limit)
+                .map(this)
+                .list()
+        );
     }
 
     @Override
