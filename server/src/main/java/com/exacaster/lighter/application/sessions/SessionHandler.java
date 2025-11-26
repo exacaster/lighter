@@ -168,7 +168,7 @@ public class SessionHandler {
         }
         
         var cutoffDate = LocalDateTime.now().minus(stateRetainInterval);
-        var expiredSessions = sessionService.fetchFinishedSessionsOlderThan(cutoffDate);
+        var expiredSessions = sessionService.fetchFinishedSessionsOlderThan(cutoffDate, 100);
         
         expiredSessions.parallelStream().forEach(session -> {
             LOG.info("Deleting {} because it was finished for more than {}", session, stateRetainInterval);

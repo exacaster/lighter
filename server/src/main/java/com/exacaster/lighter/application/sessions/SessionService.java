@@ -203,16 +203,13 @@ public class SessionService {
         applicationStorage.hardDeleteApplication(id);
     }
 
-    public List<Application> fetchFinishedSessionsOlderThan(LocalDateTime cutoffDate) {
-        return applicationStorage.findApplicationsByStates(
+    public List<Application> fetchFinishedSessionsOlderThan(LocalDateTime cutoffDate, Integer limit) {
+        return applicationStorage.findFinishedApplicationsOlderThan(
                 ApplicationType.SESSION,
                 ApplicationState.finishedStates(),
-                SortOrder.ASC,
-                0,
-                100
-        ).stream()
-                .filter(app -> app.getFinishedAt() != null && app.getFinishedAt().isBefore(cutoffDate))
-                .collect(Collectors.toList());
+                cutoffDate,
+                limit
+        );
     }
 
 }

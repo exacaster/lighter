@@ -111,7 +111,7 @@ class SessionHandlerTest extends Specification {
         handler.cleanupFinishedSessions()
 
         then:
-        1 * service.fetchFinishedSessionsOlderThan(_) >> [oldSession]
+        1 * service.fetchFinishedSessionsOlderThan(_, _) >> [oldSession]
         1 * applicationStorage.hardDeleteApplication("old-1")
     }
 
@@ -120,7 +120,7 @@ class SessionHandlerTest extends Specification {
         handler.cleanupFinishedSessions()
 
         then:
-        1 * service.fetchFinishedSessionsOlderThan(_) >> []
+        1 * service.fetchFinishedSessionsOlderThan(_, _) >> []
         0 * applicationStorage.hardDeleteApplication(_)
     }
 

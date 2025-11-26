@@ -122,7 +122,7 @@ class BatchHandlerTest extends Specification {
         handler.cleanupFinishedBatches()
 
         then:
-        1 * service.fetchFinishedBatchesOlderThan(_) >> [oldBatch]
+        1 * service.fetchFinishedBatchesOlderThan(_, _) >> [oldBatch]
         1 * applicationStorage.hardDeleteApplication("old-1")
     }
 
@@ -131,7 +131,7 @@ class BatchHandlerTest extends Specification {
         handler.cleanupFinishedBatches()
 
         then:
-        1 * service.fetchFinishedBatchesOlderThan(_) >> []
+        1 * service.fetchFinishedBatchesOlderThan(_, _) >> []
         0 * applicationStorage.hardDeleteApplication(_)
     }
 }

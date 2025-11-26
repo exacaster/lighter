@@ -10,6 +10,7 @@ import com.exacaster.lighter.storage.Entity
 import com.exacaster.lighter.storage.LogStorage
 import com.exacaster.lighter.storage.SortOrder
 
+import java.time.LocalDateTime
 import java.util.concurrent.ConcurrentHashMap
 import java.util.function.Predicate
 import java.util.stream.Collectors
@@ -60,6 +61,20 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
                 .sorted((app1, app2) ->  app2.createdAt <=> app1.createdAt)
                 .skip(0)
                 .limit(Integer.MAX_VALUE)
+                .collect(Collectors.toList())
+    }
+
+    @Override
+    List<Application> findFinishedApplicationsOlderThan(ApplicationType type, List<ApplicationState> states, LocalDateTime cutoffDate, Integer limit) {
+        return findMany({ 
+            type == it.getType() && 
+            states.contains(it.getState()) && 
+            it.getFinishedAt() != null && 
+            it.getFinishedAt().isBefore(cutoffDate) 
+        }, Application.class)
+                .sorted((app1, app2) -> app1.finishedAt <=> app2.finishedAt)
+                .skip(0)
+                .limit(limit)
                 .collect(Collectors.toList())
     }
 
