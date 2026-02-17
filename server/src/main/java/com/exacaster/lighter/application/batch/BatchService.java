@@ -46,6 +46,10 @@ public class BatchService {
         return applicationStorage.saveApplication(application);
     }
 
+    public List<Application> search(String search, Integer from, Integer size) {
+        return applicationStorage.findApplicationsBySearch(ApplicationType.BATCH, search, from, size);
+    }
+
     public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer from, Integer limit) {
         return applicationStorage.findApplicationsByStates(ApplicationType.BATCH, List.of(state), order, from, limit);
     }

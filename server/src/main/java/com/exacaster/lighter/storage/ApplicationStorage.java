@@ -29,4 +29,6 @@ public interface ApplicationStorage {
     List<Application> findFinishedApplicationsOlderThan(ApplicationType type, List<ApplicationState> states, LocalDateTime cutoffDate, Integer limit);
 
     void hardDeleteApplication(String internalApplicationId);
+
+    List<Application> findApplicationsBySearch(ApplicationType type, String search, Integer from, Integer size);
 }

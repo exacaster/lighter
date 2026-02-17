@@ -20,6 +20,7 @@ import io.micronaut.validation.Validated;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 
+import java.util.List;
 import java.util.Optional;
 import jakarta.validation.Valid;
 
@@ -44,12 +45,17 @@ public class BatchController {
     @Get
     public ApplicationList get(@QueryValue(defaultValue = "0") Integer from,
             @QueryValue(defaultValue = "100") Integer size,
-            @Nullable @QueryValue String state) {
-        var batches = ApplicationState.from(state)
-                .map(st -> batchService.fetchByState(st, SortOrder.DESC, from, size))
-                .orElseGet(() -> batchService.fetch(from, size))
-                .stream().map(Application::withRedactedConf)
-                .toList();
+            @Nullable @QueryValue String state,
+            @Nullable @QueryValue String search) {
+        List<Application> result;
+        if (search != null && !search.isBlank()) {
+            result = batchService.search(search.trim(), from, size);
+        } else {
+            result = ApplicationState.from(state)
+                    .map(st -> batchService.fetchByState(st, SortOrder.DESC, from, size))
+                    .orElseGet(() -> batchService.fetch(from, size));
+        }
+        var batches = result.stream().map(Application::withRedactedConf).toList();
         return new ApplicationList(from, batches.size(), batches);
     }
 

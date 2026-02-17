@@ -197,6 +197,22 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
 
     @Override
+    @Transactional
+    public List<Application> findApplicationsBySearch(ApplicationType type, String search, Integer from, Integer size) {
+        return jdbi.withHandle(handle -> handle
+                .createQuery("SELECT * FROM application WHERE type=:type AND deleted = false"
+                        + " AND (LOWER(id) LIKE :search OR LOWER(submit_params) LIKE :search)"
+                        + " ORDER BY created_at DESC LIMIT :limit OFFSET :from")
+                .bind("type", type.name())
+                .bind("search", "%" + search.toLowerCase() + "%")
+                .bind("from", from)
+                .bind("limit", size)
+                .map(this)
+                .list()
+        );
+    }
+
+    @Override
     public Application map(ResultSet rs, StatementContext ctx) throws SQLException {
         SubmitParams params = null;
         try {
