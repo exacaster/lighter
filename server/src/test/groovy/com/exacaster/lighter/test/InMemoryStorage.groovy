@@ -85,6 +85,19 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
+    List<Application> findApplicationsBySearch(ApplicationType type, String search, Integer from, Integer size) {
+        def term = search.toLowerCase()
+        return findMany({
+            type == it.getType() &&
+            (it.getId().toLowerCase().contains(term) ||
+             it.getSubmitParams()?.getName()?.toLowerCase()?.contains(term))
+        }, Application.class)
+                .skip(from)
+                .limit(size)
+                .collect(Collectors.toList())
+    }
+
+    @Override
     Optional<Log> findApplicationLog(String internalApplicationId) {
         return findEntity(internalApplicationId, Log.class)
     }

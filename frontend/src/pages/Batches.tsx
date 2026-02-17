@@ -1,7 +1,7 @@
-import React from 'react';
+import React, {useState} from 'react';
 import PageHeading from '../components/PageHeading';
 import {useBatchDelete, useBatches} from '../hooks/batch';
-import {Table, Spinner} from '@chakra-ui/react';
+import {Table, Spinner, Input, Flex} from '@chakra-ui/react';
 import {generatePath} from 'react-router';
 import {useQueryString} from '../hooks/common';
 import {pageSize, RoutePath} from '../configuration/consts';
@@ -15,7 +15,10 @@ import StatusFilter from '../components/StatusFilter';
 const Batches: React.FC = () => {
   const {from, status} = useQueryString();
   const fromInt = Number(from) || 0;
-  const {data, isLoading} = useBatches(pageSize, fromInt, status as string);
+  const [search, setSearch] = useState('');
+  const [activeSearch, setActiveSearch] = useState('');
+
+  const {data, isLoading} = useBatches(pageSize, fromInt, status as string, activeSearch || null);
   const {mutate: doDelete, isPending: isDeleting} = useBatchDelete();
 
   if (isLoading || isDeleting) {
@@ -24,7 +27,16 @@ const Batches: React.FC = () => {
 
   return (
     <>
-      <PageHeading>Batches</PageHeading>
+      <Flex align="center" justify="space-between" mb="5">
+        <PageHeading mb="0">Batches</PageHeading>
+        <Input
+          placeholder="Search by id or name... (press Enter)"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={(e) => e.key === 'Enter' && setActiveSearch(search)}
+          maxW="400px"
+        />
+      </Flex>
       <StatusFilter path="./" status={status as string} />
       <Table.Root size="sm">
         <Table.Header>
