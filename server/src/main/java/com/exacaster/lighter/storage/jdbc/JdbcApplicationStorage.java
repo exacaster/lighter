@@ -198,18 +198,22 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     @Override
     @Transactional
-    public List<Application> findApplicationsBySearch(ApplicationType type, String search, Integer from, Integer size) {
-        return jdbi.withHandle(handle -> handle
-                .createQuery("SELECT * FROM application WHERE type=:type AND deleted = false"
-                        + " AND (LOWER(id) LIKE :search OR LOWER(submit_params) LIKE :search)"
-                        + " ORDER BY created_at DESC LIMIT :limit OFFSET :from")
-                .bind("type", type.name())
-                .bind("search", "%" + search.toLowerCase() + "%")
-                .bind("from", from)
-                .bind("limit", size)
-                .map(this)
-                .list()
-        );
+    public List<Application> findApplicationsBySearch(ApplicationType type, String search, ApplicationState state, Integer from, Integer size) {
+        var sql = "SELECT * FROM application WHERE type=:type AND deleted = false"
+                + " AND (LOWER(id) LIKE :search OR LOWER(submit_params) LIKE :search)"
+                + (state != null ? " AND state=:state" : "")
+                + " ORDER BY created_at DESC LIMIT :limit OFFSET :from";
+        return jdbi.withHandle(handle -> {
+            var query = handle.createQuery(sql)
+                    .bind("type", type.name())
+                    .bind("search", "%" + search.toLowerCase() + "%")
+                    .bind("from", from)
+                    .bind("limit", size);
+            if (state != null) {
+                query = query.bind("state", state.name());
+            }
+            return query.map(this).list();
+        });
     }
 
     @Override

@@ -47,11 +47,13 @@ public class BatchController {
             @QueryValue(defaultValue = "100") Integer size,
             @Nullable @QueryValue String state,
             @Nullable @QueryValue String search) {
+        var stateOpt = ApplicationState.from(state);
         List<Application> result;
-        if (search != null && !search.isBlank()) {
-            result = batchService.search(search.trim(), from, size);
+        var trimmedSearch = search != null ? search.trim() : "";
+        if (!trimmedSearch.isEmpty()) {
+            result = batchService.search(trimmedSearch, stateOpt.orElse(null), from, size);
         } else {
-            result = ApplicationState.from(state)
+            result = stateOpt
                     .map(st -> batchService.fetchByState(st, SortOrder.DESC, from, size))
                     .orElseGet(() -> batchService.fetch(from, size));
         }

@@ -30,5 +30,5 @@ public interface ApplicationStorage {
 
     void hardDeleteApplication(String internalApplicationId);
 
-    List<Application> findApplicationsBySearch(ApplicationType type, String search, Integer from, Integer size);
+    List<Application> findApplicationsBySearch(ApplicationType type, String search, ApplicationState state, Integer from, Integer size);
 }
