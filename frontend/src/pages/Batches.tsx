@@ -15,7 +15,6 @@ import StatusFilter from '../components/StatusFilter';
 const Batches: React.FC = () => {
   const {from, status} = useQueryString();
   const fromInt = Number(from) || 0;
-  const [search, setSearch] = useState('');
   const [activeSearch, setActiveSearch] = useState('');
 
   const {data, isLoading} = useBatches(pageSize, fromInt, status as string, activeSearch || null);
@@ -31,9 +30,7 @@ const Batches: React.FC = () => {
         <PageHeading mb="0">Batches</PageHeading>
         <Input
           placeholder="Search by id or name... (press Enter)"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && setActiveSearch(search)}
+          onKeyDown={(e) => e.key === 'Enter' && setActiveSearch((e.target as HTMLInputElement).value)}
           maxW="400px"
         />
       </Flex>
