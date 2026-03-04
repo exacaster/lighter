@@ -145,7 +145,13 @@ def main():
     log.info("Starting session loop")
     try:
         while True:
-            for command in controller.read():
+            commands = controller.read()
+
+            if not commands:
+                time.sleep(0.1)
+                continue
+
+            for command in commands:
                 setup_output()
                 log.debug(f"Processing command {command}")
                 result = handler.exec(command)
