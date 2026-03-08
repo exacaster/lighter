@@ -33,6 +33,7 @@ const StatementForm: React.FC<StatementFormProps> = ({session}) => {
         <Card.Body>
           <VStack align="stretch" gap={2}>
             <Field.Root>
+              {/* @ts-expect-error - TS integration problems */}
               <Field.Label>New Statement</Field.Label>
               <Textarea name="code" />
             </Field.Root>

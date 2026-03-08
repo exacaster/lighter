@@ -9,7 +9,7 @@ COPY server/ ./server/
 WORKDIR /home/app/server/
 RUN ./gradlew build -x test -PSPARK_VERSION=${SPARK_VERSION}
 
-FROM node:lts-alpine3.18 AS frontend
+FROM node:lts-alpine3.23 AS frontend
 
 ARG SPARK_VERSION=3.5.8
 ARG HADOOP_VERSION=3

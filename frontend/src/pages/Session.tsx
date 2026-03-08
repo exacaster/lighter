@@ -33,6 +33,7 @@ const Session: React.FC = () => {
     <div>
       <AppTitle app={session} onDelete={onDelete} />
       <Tabs.Root isLazy lazyMount unmountOnExit defaultValue="info">
+        {/* @ts-expect-error - TS integration problems */}
         <Tabs.List>
           {/* @ts-expect-error - TS integration problems */}
           <Tabs.Trigger value="info">Info</Tabs.Trigger>
