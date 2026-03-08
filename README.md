@@ -29,7 +29,7 @@ docker build -t lighter .
 
 ### Spark versions
 
-Lighter will always try to support the latest patch version for all officially recommended [Apache Spark](https://spark.apache.org/) releases i.e.: 3.5.6 and 4.0.0.
+Lighter will always try to support the latest patch version for all officially recommended [Apache Spark](https://spark.apache.org/) releases i.e.: 3.5.8 and 4.1.1.
 
 ### Contributing
 
