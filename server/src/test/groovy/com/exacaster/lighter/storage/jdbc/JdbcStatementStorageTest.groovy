@@ -6,13 +6,10 @@ import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import spock.lang.Specification
 
-import jakarta.transaction.Transactional
-
 import static com.exacaster.lighter.test.Factories.newSession
 import static com.exacaster.lighter.test.Factories.statement
 
 @MicronautTest
-@Transactional
 class JdbcStatementStorageTest extends Specification {
     @Inject
     JdbcApplicationStorage applicationStorage

@@ -1,7 +1,7 @@
 plugins {
     id "java"
     id "groovy"
-    id "io.micronaut.application" version "4.5.4"
+    id "io.micronaut.application" version "4.6.2"
     id "com.github.ben-manes.versions" version "0.53.0"
 }
 
@@ -17,15 +17,17 @@ java {
 }
 
 micronaut {
-    version = "4.9.4"
+    version = "4.10.9"
     runtime "netty"
 }
-mainClassName = "com.exacaster.lighter.Application"
+application {
+    mainClass = "com.exacaster.lighter.Application"
+}
 
 def sparkVersion = project.hasProperty("SPARK_VERSION") ? project.getProperty("SPARK_VERSION") : "3.5.8"
-def hadoopVersion = "3.4.2"
-def k8sClientVersion = "7.3.1"
-def shedlockVersion = "6.8.0"
+def hadoopVersion = "3.4.3"
+def k8sClientVersion = "7.6.1"
+def shedlockVersion = "7.6.0"
 
 dependencies {
     annotationProcessor "io.micronaut.openapi:micronaut-openapi"
@@ -68,9 +70,10 @@ dependencies {
     runtimeOnly "org.postgresql:postgresql"
     runtimeOnly "org.flywaydb:flyway-database-postgresql"
 
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:5.12.2"
+    testRuntimeOnly "org.junit.platform:junit-platform-launcher"
+    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine"
     testRuntimeOnly "net.bytebuddy:byte-buddy:1.17.5"
-    testRuntimeOnly "org.objenesis:objenesis:3.4"
+    testRuntimeOnly "org.objenesis:objenesis:3.5"
 
     testImplementation "io.micronaut:micronaut-inject-groovy"
     testImplementation "io.micronaut.test:micronaut-test-spock"

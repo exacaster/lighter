@@ -7,7 +7,6 @@ import com.exacaster.lighter.storage.ApplicationAlreadyExistsException
 import com.exacaster.lighter.storage.SortOrder
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
-import jakarta.transaction.Transactional
 import spock.lang.Specification
 
 import static com.exacaster.lighter.test.Factories.newApplication
@@ -15,7 +14,6 @@ import static com.exacaster.lighter.test.Factories.newPermanentSession
 import static com.exacaster.lighter.test.Factories.newSession
 
 @MicronautTest
-@Transactional
 class JdbcApplicationStorageTest extends Specification {
 
     @Inject
@@ -80,18 +78,17 @@ class JdbcApplicationStorageTest extends Specification {
         storage.findApplication(savedRegularSession.id) != Optional.empty()
     }
 
-    //TODO this test won't work as keepPermanentSessions interferes with it.
-//    def "findAllPermanentSessions returns safe deleted"() {
-//        given:
-//        def savedPermanentSession = storage.saveApplication(newPermanentSession())
-//
-//        when: "deleting"
-//        storage.deleteApplication(savedPermanentSession.id)
-//
-//        then: "fetching apps ignores soft deleted ones"
-//        storage.findAllApplications(ApplicationType.PERMANENT_SESSION).size() == 1
-//        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION, ApplicationType.SESSION), 0, 10).size() == 0
-//    }
+    def "findAllPermanentSessions returns safe deleted"() {
+        given:
+        def savedPermanentSession = storage.saveApplication(newPermanentSession())
+
+        when: "deleting"
+        storage.deleteApplication(savedPermanentSession.id)
+
+        then: "fetching apps ignores soft deleted ones"
+        storage.findAllApplications(ApplicationType.PERMANENT_SESSION).any { it.id == savedPermanentSession.id }
+        storage.findApplications(EnumSet.of(ApplicationType.PERMANENT_SESSION, ApplicationType.SESSION), 0, 10).every { it.id != savedPermanentSession.id }
+    }
 
 
     def "insert"() {
