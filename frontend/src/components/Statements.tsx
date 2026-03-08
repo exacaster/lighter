@@ -23,7 +23,9 @@ const Statements: React.FC<StatementsProps> = ({session}) => {
           <Card.Body>Session has no statements</Card.Body>
         </Card.Root>
       )}
-      {page?.statements.reverse().map((statement) => <Statement key={statement.id} sessionId={session.id} statement={statement} />)}
+      {page?.statements.reverse().map((statement) => (
+        <Statement key={statement.id} sessionId={session.id} statement={statement} />
+      ))}
       <StatementForm session={session} />
     </VStack>
   );
