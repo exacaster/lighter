@@ -9,7 +9,7 @@ import importPlugin from 'eslint-plugin-import';
 export default tseslint.config(eslint.configs.recommended, eslintConfigPrettier, tseslint.configs.recommended, react.configs.flat.recommended, {
   settings: {
     react: {
-      version: 'detect',
+      version: '19.1.0',
     },
   },
   files: ['**/*.{ts,tsx}'],
