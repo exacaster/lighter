@@ -1,9 +1,8 @@
-import React, {useState} from 'react';
+import React, {useCallback} from 'react';
 import PageHeading from '../components/PageHeading';
 import {useBatchDelete, useBatches} from '../hooks/batch';
-import {Table, Spinner, Input, Flex} from '@chakra-ui/react';
+import {Table, Spinner, Flex, Box} from '@chakra-ui/react';
 import {generatePath} from 'react-router';
-import {useQueryString} from '../hooks/common';
 import {pageSize, RoutePath} from '../configuration/consts';
 import Pagination from '../components/Pagination';
 import Link from '../components/Link';
@@ -11,14 +10,25 @@ import AppStatus from '../components/AppStatus';
 import DateTime from '../components/DateTime';
 import AppActions from '../components/AppActions';
 import StatusFilter from '../components/StatusFilter';
+import SearchInput from '../components/SearchInput';
+import {useSearchParams} from 'react-router-dom';
 
 const Batches: React.FC = () => {
-  const {from, status} = useQueryString();
-  const fromInt = Number(from) || 0;
-  const [activeSearch, setActiveSearch] = useState('');
-
-  const {data, isLoading} = useBatches(pageSize, fromInt, status as string, activeSearch || null);
+  const [params, setParams] = useSearchParams();
+  const fromInt = Number(params.get('from')) || 0;
+  const status = params.get('status');
+  const search = params.get('search') ?? undefined;
+  const {data, isLoading} = useBatches(pageSize, fromInt, params.get('status'), search);
   const {mutate: doDelete, isPending: isDeleting} = useBatchDelete();
+
+  const doSearch = useCallback(
+    (value: string) => {
+      const newParams = new URLSearchParams(params);
+      newParams.set('search', value);
+      setParams(newParams);
+    },
+    [params, setParams],
+  );
 
   if (isLoading || isDeleting) {
     return <Spinner />;
@@ -26,15 +36,15 @@ const Batches: React.FC = () => {
 
   return (
     <>
-      <Flex align="center" justify="space-between" mb="5">
-        <PageHeading mb="0">Batches</PageHeading>
-        <Input
-          placeholder="Search by id or name... (press Enter)"
-          onKeyDown={(e) => e.key === 'Enter' && setActiveSearch((e.target as HTMLInputElement).value)}
-          maxW="400px"
-        />
+      <Flex align="center" mb="5" gap="4">
+        <Box flex="3">
+          <PageHeading mb="0">Batches</PageHeading>
+        </Box>
+        <Box flex="1">
+          <SearchInput key={search} initialValue={search ?? ''} onSearch={doSearch} />
+        </Box>
       </Flex>
-      <StatusFilter path="./" status={status as string} />
+      <StatusFilter path="./" status={status} />
       <Table.Root size="sm">
         <Table.Header>
           <Table.Row>

@@ -1,9 +1,13 @@
 import {useApi} from '../client/hooks';
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {keepPreviousData, useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
 
 export function useBatches(size: number, from: number, status?: string | null, search?: string | null) {
   const api = useApi();
-  return useQuery({queryKey: ['batches', size, from, status, search], queryFn: () => api.fetchBatches(size, from, status, search)});
+  return useQuery({
+    queryKey: ['batches', size, from, status, search],
+    queryFn: () => api.fetchBatches(size, from, status, search),
+    placeholderData: keepPreviousData,
+  });
 }
 
 export function useBatch(id: string) {

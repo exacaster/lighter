@@ -4,7 +4,7 @@ import AppStatus, {statusMap} from './AppStatus';
 import {FaCheck} from 'react-icons/fa';
 
 interface Props {
-  status?: string;
+  status?: string | null;
   path: string;
 }
 const StatusFilter: React.FC<Props> = ({status, path}) => {

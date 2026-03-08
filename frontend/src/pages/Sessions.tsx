@@ -1,6 +1,6 @@
 import {Spinner, Table} from '@chakra-ui/react';
 import React from 'react';
-import {generatePath} from 'react-router-dom';
+import {generatePath, useSearchParams} from 'react-router-dom';
 import AppActions from '../components/AppActions';
 import AppStatus from '../components/AppStatus';
 import DateTime from '../components/DateTime';
@@ -8,11 +8,11 @@ import Link from '../components/Link';
 import PageHeading from '../components/PageHeading';
 import Pagination from '../components/Pagination';
 import {pageSize, RoutePath} from '../configuration/consts';
-import {useQueryString} from '../hooks/common';
 import {useSessionDelete, useSessions} from '../hooks/session';
 
 const Sessions: React.FC = () => {
-  const from = Number(useQueryString().from) || 0;
+  const [params] = useSearchParams();
+  const from = Number(params.get('from')) || 0;
   const {data, isLoading} = useSessions(pageSize, from);
   const {mutate: doDelete, isPending: isDeleting} = useSessionDelete();
 

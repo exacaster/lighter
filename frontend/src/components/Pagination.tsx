@@ -1,8 +1,9 @@
 import React from 'react';
 import {generatePath} from 'react-router';
-import {toQueryString, useQueryString} from '../hooks/common';
+import {toQueryString} from '../hooks/common';
 import ButtonLink from './ButtonLink';
 import {Spacer, Stack} from '@chakra-ui/react';
+import {useSearchParams} from 'react-router-dom';
 
 interface PaginationProps {
   path: string;
@@ -11,8 +12,8 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({path, size, visibleSize}) => {
-  const queryParams = useQueryString();
-  const from = Number(queryParams.from) || 0;
+  const [queryParams] = useSearchParams();
+  const from = Number(queryParams.get('from')) || 0;
   const queryString = (from: number) => {
     return toQueryString({...queryParams, from});
   };
