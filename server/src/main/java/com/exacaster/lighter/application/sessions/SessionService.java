@@ -9,7 +9,6 @@ import static java.util.Optional.ofNullable;
 import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.exacaster.lighter.application.Application;
 import com.exacaster.lighter.application.ApplicationBuilder;
@@ -80,8 +79,14 @@ public class SessionService {
             return;
         }
 
-        var sessionCount = applicationStorage.findApplications(SESSIONS, 0, maxRunning).size();
-        if (sessionCount >= maxRunning) {
+        long runningCount = applicationStorage.findApplicationsByStates(
+                ApplicationType.SESSION,
+                ApplicationState.runningStates(),
+                SortOrder.DESC,
+                0,
+                maxRunning
+        ).size();
+        if (runningCount >= maxRunning) {
             throw new SessionLimitExceededException(maxRunning);
         }
     }

@@ -78,7 +78,7 @@ class SessionServiceTest extends Specification {
         given:
         def session1 = ApplicationBuilder.builder().setAppId("app1")
                 .setType(ApplicationType.SESSION)
-                .setState(ApplicationState.NOT_STARTED)
+                .setState(ApplicationState.STARTING)
                 .setAppInfo("info")
                 .setCreatedAt(LocalDateTime.now())
                 .setId("session1")
@@ -146,6 +146,51 @@ class SessionServiceTest extends Specification {
         then:
         created != null
         created.id != null
+    }
+
+    def "allows session creation when existing sessions are killed"() {
+        given: "limit of 2 and 2 killed sessions"
+        def killedSession1 = ApplicationBuilder.builder().setAppId("app1")
+                .setType(ApplicationType.SESSION)
+                .setState(ApplicationState.KILLED)
+                .setAppInfo("info")
+                .setCreatedAt(LocalDateTime.now())
+                .setId("killed1")
+                .setSubmitParams(null)
+                .build()
+        def killedSession2 = ApplicationBuilder.builder().setAppId("app2")
+                .setType(ApplicationType.SESSION)
+                .setState(ApplicationState.KILLED)
+                .setAppInfo("info")
+                .setCreatedAt(LocalDateTime.now())
+                .setId("killed2")
+                .setSubmitParams(null)
+                .build()
+        storage.saveApplication(killedSession1)
+        storage.saveApplication(killedSession2)
+        def configWithLimit = new AppConfiguration(
+                config.maxRunningJobs,
+                config.maxStartingJobs,
+                2, // maxRunningSessions
+                config.sparkHistoryServerUrl,
+                config.externalLogsUrlTemplate,
+                config.pyGatewayPort,
+                config.url,
+                config.zombieInterval,
+                config.stateRetainInterval,
+                config.sessionConfiguration,
+                config.batchDefaultConf,
+                config.sessionDefaultConf
+        )
+        def serviceWithLimit = new SessionService(storage, statementStorage, backend, statementHandler, configWithLimit)
+        backend.getSessionJobResources() >> []
+
+        when:
+        def created = serviceWithLimit.createSession(sessionParams())
+
+        then:
+        noExceptionThrown()
+        created != null
     }
 
     def "blocks session creation when limit is 0"() {
