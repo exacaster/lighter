@@ -82,7 +82,7 @@ class Factories {
                 "spark")
     }
 
-    static appConfiguration() {
+    static appConfiguration(String pyGatewayAuthToken = null) {
         new AppConfiguration(
                 3,
                 2,
@@ -90,6 +90,7 @@ class Factories {
                 "http://history",
                 null,
                 5432,
+                pyGatewayAuthToken,
                 "http://lighter:8080",
                 Duration.ofMinutes(30),
                 Duration.ofMinutes(10),

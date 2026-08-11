@@ -34,6 +34,9 @@ public class AppConfiguration {
     private final String externalLogsUrlTemplate;
     @JsonProperty(access = Access.WRITE_ONLY)
     private final Integer pyGatewayPort;
+    @Nullable
+    @JsonProperty(access = Access.WRITE_ONLY)
+    private final String pyGatewayAuthToken;
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
     private final Duration zombieInterval;
@@ -50,6 +53,7 @@ public class AppConfiguration {
             @Nullable String sparkHistoryServerUrl,
             @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort,
+            @Nullable String pyGatewayAuthToken,
             String url,
             Duration zombieInterval,
             @Nullable Duration stateRetainInterval,
@@ -63,6 +67,7 @@ public class AppConfiguration {
         this.sparkHistoryServerUrl = sparkHistoryServerUrl;
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
+        this.pyGatewayAuthToken = pyGatewayAuthToken;
         this.url = url;
         this.zombieInterval = zombieInterval;
         this.stateRetainInterval = stateRetainInterval;
@@ -94,6 +99,15 @@ public class AppConfiguration {
 
     public Integer getPyGatewayPort() {
         return pyGatewayPort;
+    }
+
+    @Nullable
+    public String getPyGatewayAuthToken() {
+        return pyGatewayAuthToken;
+    }
+
+    public boolean hasPyGatewayAuthToken() {
+        return pyGatewayAuthToken != null && !pyGatewayAuthToken.isBlank();
     }
 
     public String getUrl() {
@@ -129,6 +143,7 @@ public class AppConfiguration {
                 ", sparkHistoryServerUrl='" + sparkHistoryServerUrl + '\'' +
                 ", externalLogsUrlTemplate='" + externalLogsUrlTemplate + '\'' +
                 ", pyGatewayPort=" + pyGatewayPort +
+                ", pyGatewayAuthToken=" + (hasPyGatewayAuthToken() ? "'[redacted]'" : null) +
                 ", url='" + url + '\'' +
                 ", zombieInterval=" + zombieInterval +
                 ", stateRetainInterval=" + stateRetainInterval +

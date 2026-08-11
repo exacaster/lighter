@@ -32,6 +32,13 @@ class LocalBackendTest extends Specification {
         ]
 
         when:
+        def withToken = new LocalBackend(appConfiguration("s3cret"))
+                .prepareSparkApplication(newApplication(), [:], {})
+
+        then:
+        withToken.getEnvVariables()["PY_GATEWAY_AUTH_TOKEN"] == "s3cret"
+
+        when:
         def info = backend.getInfo(app)
 
         then:

@@ -1,5 +1,6 @@
 package com.exacaster.lighter.rest
 
+import io.micronaut.context.annotation.Property
 import io.micronaut.http.HttpRequest
 import io.micronaut.http.client.HttpClient
 import io.micronaut.http.client.annotation.Client
@@ -8,6 +9,7 @@ import jakarta.inject.Inject
 import spock.lang.Specification
 
 @MicronautTest
+@Property(name = "lighter.py-gateway-auth-token", value = "s3cret")
 class ConfigurationControllerTest extends Specification {
     @Inject
     @Client("/lighter/api/")
@@ -20,5 +22,14 @@ class ConfigurationControllerTest extends Specification {
         then:
         result.maxRunningJobs == null
         result.sparkHistoryServerUrl != null
+        result.pyGatewayAuthToken == null
+    }
+
+    def "does not expose the gateway auth token"() {
+        when:
+        def result = client.toBlocking().retrieve(HttpRequest.GET("/configuration"), String.class)
+
+        then:
+        !result.contains("s3cret")
     }
 }

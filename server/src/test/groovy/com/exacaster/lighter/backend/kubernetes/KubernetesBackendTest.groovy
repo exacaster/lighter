@@ -35,6 +35,18 @@ class KubernetesBackendTest extends Specification {
         result["spark.kubernetes.driverEnv.PY_GATEWAY_HOST"] == "lighter"
         result["spark.kubernetes.driverEnv.LIGHTER_SESSION_ID"] == app.id
         result["spark.kubernetes.namespace"] == "spark"
+        !result.containsKey("spark.kubernetes.driverEnv.PY_GATEWAY_AUTH_TOKEN")
+    }
+
+    def "passes gateway auth token to the driver"() {
+        given:
+        def backendWithToken = new KubernetesBackend(properties, appConfiguration("s3cret"), server.createClient())
+
+        when:
+        def result = backendWithToken.getBackendConfiguration(newApplication())
+
+        then:
+        result["spark.kubernetes.driverEnv.PY_GATEWAY_AUTH_TOKEN"] == "s3cret"
     }
 
     def "gets application info"() {

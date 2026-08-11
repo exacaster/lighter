@@ -12,6 +12,7 @@ Lighter can be configured by using environment variables. Currently, Lighter sup
 | LIGHTER_SPARK_HISTORY_SERVER_URL       | Spark history server URL used on the Lighter UI                                                                                                                                                        | http://localhost/spark-history/ |
 | LIGHTER_EXTERNAL_LOGS_URL_TEMPLATE     | Template for link to external logs (Grafana, Graylog, etc.) used on the Lighter UI. Allowed placeholders: `{{id}}`, `{{appId}}`, `{{createdTs}}`                                                       |                                 |
 | LIGHTER_PY_GATEWAY_PORT                | Port for live Spark session communication                                                                                                                                                              | 25333                           |
+| LIGHTER_PY_GATEWAY_AUTH_TOKEN          | Shared secret required from Spark sessions connecting to the Python gateway<sup>***</sup>                                                                                                                |                                 |
 | LIGHTER_URL                            | URL which can be used to access Lighter form Spark Job                                                                                                                                                 | http://lighter.spark:8080       |
 | LIGHTER_ZOMBIE_INTERVAL                | How long for Lighter to try to fetch the status of the job before marking it as a zombie. (For jobs that "disappear" before Lighter could determine their final status)                                | 30m                             |
 | LIGHTER_SESSION_TIMEOUT_INTERVAL       | `java.time.Duration` representing session lifetime (from last statement creation). Use `0m` value to disable                                                                                           | 90m                             |
@@ -35,6 +36,12 @@ Example of `LIGHTER_BATCH_DEFAULT_CONF`: `{"spark.kubernetes.driverEnv.TEST1":"t
 `/lighter/api` instead of calling it cross-origin, so neither needs this. The REST API is
 unauthenticated, so every page served from a listed origin can submit applications on a visiting
 browser's behalf; keep the list as narrow as possible.
+
+<sup>***</sup> The Python gateway is a Py4J gateway, which exposes the Lighter JVM to its clients, so
+anything able to connect to the port can run code as Lighter. Lighter logs a warning at startup while
+this is unset. The token reaches the session driver as an environment variable, and is therefore
+visible to anyone who can read the driver's pod spec or YARN application environment; it protects the
+port from clients that have neither, and does not replace restricting the port at the network level.
 
 ## Kubernetes configuration
 

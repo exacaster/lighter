@@ -34,6 +34,18 @@ class YarnBackendTest extends Specification {
         result["spark.master"] == "yarn"
         result["spark.yarn.tags"] == "lighter,${app.id}"
         result["spark.yarn.submit.waitAppCompletion"] == "false"
+        !result.containsKey("spark.yarn.appMasterEnv.PY_GATEWAY_AUTH_TOKEN")
+    }
+
+    def "passes gateway auth token to the application master"() {
+        given:
+        def backendWithToken = new YarnBackend(yarnProps, client, appConfiguration("s3cret"))
+
+        when:
+        def result = backendWithToken.getBackendConfiguration(newApplication())
+
+        then:
+        result["spark.yarn.appMasterEnv.PY_GATEWAY_AUTH_TOKEN"] == "s3cret"
     }
 
     def "gets app info"() {

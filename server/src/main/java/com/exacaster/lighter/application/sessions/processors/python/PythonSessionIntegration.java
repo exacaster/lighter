@@ -27,10 +27,12 @@ public class PythonSessionIntegration implements StatementHandler {
     private static final Logger LOG = getLogger(PythonSessionIntegration.class);
 
     private final Integer gatewayPort;
+    private final String gatewayAuthToken;
     private final StatementStorage statementStorage;
 
     public PythonSessionIntegration(AppConfiguration conf, StatementStorage statementStorage) {
         this.gatewayPort = conf.getPyGatewayPort();
+        this.gatewayAuthToken = conf.hasPyGatewayAuthToken() ? conf.getPyGatewayAuthToken() : null;
         this.statementStorage = statementStorage;
     }
 
@@ -96,11 +98,18 @@ public class PythonSessionIntegration implements StatementHandler {
     @EventListener
     @Async
     public void runServer(StartupEvent event) {
-        var server = new GatewayServer.GatewayServerBuilder(this)
+        var builder = new GatewayServer.GatewayServerBuilder(this)
                 .javaAddress(new InetSocketAddress(0).getAddress())
-                .javaPort(gatewayPort)
-                .build();
-        server.start();
+                .javaPort(gatewayPort);
+        if (gatewayAuthToken != null) {
+            builder.authToken(gatewayAuthToken);
+        } else {
+            LOG.warn("Python gateway on port {} accepts unauthenticated connections. Py4J exposes this "
+                    + "JVM to its clients, so anything able to reach the port can run code as Lighter. "
+                    + "Set lighter.py-gateway-auth-token and keep the port reachable only from the "
+                    + "Spark cluster.", gatewayPort);
+        }
+        builder.build().start();
     }
 
     @Override

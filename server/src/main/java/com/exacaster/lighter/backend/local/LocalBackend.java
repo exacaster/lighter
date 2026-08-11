@@ -18,6 +18,7 @@ import java.util.function.Consumer;
 import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLIENT;
 import static com.exacaster.lighter.backend.Constants.LIGHTER_CONF_PREFIX;
 import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_AUTH_TOKEN_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
 import static org.apache.spark.launcher.SparkLauncher.CHILD_PROCESS_LOGGER_NAME;
@@ -100,6 +101,9 @@ public class LocalBackend implements Backend {
                 PY_GATEWAY_PORT_ENV_NAME, conf.getPyGatewayPort().toString(),
                 PY_GATEWAY_HOST_ENV_NAME, "localhost"
         ));
+        if (conf.hasPyGatewayAuthToken()) {
+            env.put(PY_GATEWAY_AUTH_TOKEN_ENV_NAME, conf.getPyGatewayAuthToken());
+        }
         return env;
     }
 
