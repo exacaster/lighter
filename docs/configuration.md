@@ -25,10 +25,16 @@ Lighter can be configured by using environment variables. Currently, Lighter sup
 | LIGHTER_STORAGE_JDBC_DRIVER_CLASS_NAME | JDBC driver class name                                                                                                                                                                                 | org.h2.Driver                   |
 | LIGHTER_BATCH_DEFAULT_CONF             | Default `conf` props for batch applications (JSON)<sup>*</sup>                                                                                                                                         |                                 |
 | LIGHTER_SESSION_DEFAULT_CONF           | Default `conf` props for session applications (JSON)                                                                                                                                                   |                                 |
+| LIGHTER_CORS_ALLOWED_ORIGINS           | Comma separated list of browser origins allowed to call the REST API cross-origin, e.g. `https://lighter.example.com`. Every origin is rejected while empty<sup>**</sup>                                |                                 |
 | LIGHTER_CONFIG_JSON                    | Any set of Lighter config in JSON format. For permanent sessions use: `{"lighter":{"session":{"permanent-sessions":[...]}}}`. List of configurations for [permanent sessions](./permanent_sessions.md) |                                 |
 
 <sup>*</sup> default configs will be merged with configss provided in submit request, if property is defined in submit request, default will be ignored.
 Example of `LIGHTER_BATCH_DEFAULT_CONF`: `{"spark.kubernetes.driverEnv.TEST1":"test1"}`.
+
+<sup>**</sup> Lighter serves its UI from the same origin as the API, and the development server proxies
+`/lighter/api` instead of calling it cross-origin, so neither needs this. The REST API is
+unauthenticated, so every page served from a listed origin can submit applications on a visiting
+browser's behalf; keep the list as narrow as possible.
 
 ## Kubernetes configuration
 

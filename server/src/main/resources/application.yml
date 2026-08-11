@@ -54,6 +54,9 @@ micronaut:
     thread-selection: AUTO
     cors:
       enabled: true
+      configurations:
+        default:
+          allowed-origins: ${LIGHTER_CORS_ALLOWED_ORIGINS:``}
   application:
     name: lighter
   router:
