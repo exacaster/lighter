@@ -3,6 +3,7 @@ package com.exacaster.lighter.backend.yarn;
 import static com.exacaster.lighter.backend.Constants.DEPLOY_MODE_CLUSTER;
 import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.MASTER_YARN;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_AUTH_TOKEN_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
@@ -126,6 +127,9 @@ public class YarnBackend implements Backend {
                 "spark.yarn.appMasterEnv." + PY_GATEWAY_HOST_ENV_NAME, host,
                 "spark.yarn.appMasterEnv." + LIGHTER_SESSION_ID_ENV_NAME, application.getId()
         ));
+        if (conf.hasPyGatewayAuthToken()) {
+            props.put("spark.yarn.appMasterEnv." + PY_GATEWAY_AUTH_TOKEN_ENV_NAME, conf.getPyGatewayAuthToken());
+        }
         if (!props.containsKey("spark.kerberos.keytab") && yarnProperties.getKerberos() != null) {
             props.put("spark.kerberos.keytab", yarnProperties.getKerberos().getKeytab());
             props.put("spark.kerberos.principal", yarnProperties.getKerberos().getPrincipal());

@@ -8,6 +8,7 @@ public final class Constants {
     public final static String LIGHTER_SESSION_ID_ENV_NAME = "LIGHTER_SESSION_ID";
     public final static String PY_GATEWAY_HOST_ENV_NAME = "PY_GATEWAY_HOST";
     public final static String PY_GATEWAY_PORT_ENV_NAME = "PY_GATEWAY_PORT";
+    public final static String PY_GATEWAY_AUTH_TOKEN_ENV_NAME = "PY_GATEWAY_AUTH_TOKEN";
 
     private Constants() {
     }

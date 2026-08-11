@@ -9,6 +9,7 @@ import spock.lang.Subject
 @MicronautTest
 @Property(name="lighter.batch-default-conf", value='{"spark.driver.cores": "1"}')
 @Property(name="lighter.session-default-conf", value='{"spark.driver.cores": "2"}')
+@Property(name="lighter.py-gateway-auth-token", value='s3cret')
 class AppConfigurationTest extends Specification {
     @Inject
     @Subject
@@ -27,6 +28,13 @@ class AppConfigurationTest extends Specification {
         appConfiguration.batchDefaultConf != null
         appConfiguration.batchDefaultConf.get("spark.driver.cores") == "1"
         appConfiguration.sessionDefaultConf.get("spark.driver.cores") == "2"
+        appConfiguration.pyGatewayAuthToken == "s3cret"
+        appConfiguration.hasPyGatewayAuthToken()
+    }
+
+    def "keeps the gateway auth token out of toString"() {
+        expect:
+        !appConfiguration.toString().contains("s3cret")
     }
 
 }
