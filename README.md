@@ -14,8 +14,13 @@ You can read a description on how Lighter works [here](./docs/architecture.md).
 - [Installation on Kubernetes](./docs/kubernetes.md)
 - [Installation on Docker](./docs/docker.md)
 - [Configuration Properties](./docs/configuration.md)
+- [Securing a deployment](./docs/security.md)
 - [Configuring Sparkmagic](./docs/sparkmagic.md)
 - [Using REST API](./docs/rest.md)
+
+> [!IMPORTANT]
+> Lighter has no built-in authentication: anyone who can reach its REST API can run code on
+> your Spark cluster. Read [Securing a deployment](./docs/security.md) before exposing it.
 
 ## Developing Lighter
 

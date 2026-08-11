@@ -11,4 +11,8 @@ docker run ghcr.io/exacaster/lighter:0.1.6-spark3.5.8 \
   -e LIGHTER_YARN_URL=http://your_yarn.local
 ```
 
+Both published ports are unauthenticated, and the Python Gateway port grants code execution
+inside the Lighter process to anything that can connect to it. Bind them to interfaces that only
+the Spark cluster and your users' network can reach — see [Securing a deployment](./security.md).
+
 [Click here](./configuration.md) to see all possible configuration options.
