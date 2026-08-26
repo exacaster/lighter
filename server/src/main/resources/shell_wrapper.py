@@ -66,8 +66,12 @@ class GatewayController(Controller):
         port = int(os.environ.get("PY_GATEWAY_PORT"))
         host = os.environ.get("PY_GATEWAY_HOST")
         auth_token = os.environ.get("PY_GATEWAY_AUTH_TOKEN")
-        self.gateway = JavaGateway(gateway_parameters=GatewayParameters(
-            address=host, port=port, auto_convert=True, auth_token=auth_token))
+        read_timeout = int(os.environ.get("PY_GATEWAY_READ_TIMEOUT_IN_SEC", "60"))
+        self.gateway = JavaGateway(
+          gateway_parameters=GatewayParameters(
+            address=host, port=port, auto_convert=True, auth_token=auth_token, read_timeout=read_timeout
+          )
+        )
         self.endpoint = self.gateway.entry_point
 
     def read(self):
