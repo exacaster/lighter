@@ -28,6 +28,7 @@ class LocalBackendTest extends Specification {
             FOO: "bar",
             PY_GATEWAY_HOST: "localhost",
             PY_GATEWAY_PORT: "5432",
+            PY_GATEWAY_READ_TIMEOUT_IN_SEC: "60",
             LIGHTER_SESSION_ID: "1"
         ]
 

@@ -34,6 +34,7 @@ class YarnBackendTest extends Specification {
         result["spark.master"] == "yarn"
         result["spark.yarn.tags"] == "lighter,${app.id}"
         result["spark.yarn.submit.waitAppCompletion"] == "false"
+        result["spark.yarn.appMasterEnv.PY_GATEWAY_READ_TIMEOUT_IN_SEC"] == "60"
         !result.containsKey("spark.yarn.appMasterEnv.PY_GATEWAY_AUTH_TOKEN")
     }
 

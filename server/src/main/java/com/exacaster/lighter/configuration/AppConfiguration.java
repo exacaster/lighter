@@ -38,6 +38,8 @@ public class AppConfiguration {
     @JsonProperty(access = Access.WRITE_ONLY)
     private final String pyGatewayAuthToken;
     @JsonProperty(access = Access.WRITE_ONLY)
+    private final Integer pyGatewayReadTimeoutInSec;
+    @JsonProperty(access = Access.WRITE_ONLY)
     private final String url;
     private final Duration zombieInterval;
     @Nullable
@@ -54,6 +56,7 @@ public class AppConfiguration {
             @Nullable String externalLogsUrlTemplate,
             Integer pyGatewayPort,
             @Nullable String pyGatewayAuthToken,
+            Integer pyGatewayReadTimeoutInSec,
             String url,
             Duration zombieInterval,
             @Nullable Duration stateRetainInterval,
@@ -68,6 +71,7 @@ public class AppConfiguration {
         this.externalLogsUrlTemplate = externalLogsUrlTemplate;
         this.pyGatewayPort = pyGatewayPort;
         this.pyGatewayAuthToken = pyGatewayAuthToken;
+        this.pyGatewayReadTimeoutInSec = pyGatewayReadTimeoutInSec;
         this.url = url;
         this.zombieInterval = zombieInterval;
         this.stateRetainInterval = stateRetainInterval;
@@ -104,6 +108,10 @@ public class AppConfiguration {
     @Nullable
     public String getPyGatewayAuthToken() {
         return pyGatewayAuthToken;
+    }
+
+    public Integer getPyGatewayReadTimeoutInSec() {
+        return pyGatewayReadTimeoutInSec;
     }
 
     public boolean hasPyGatewayAuthToken() {
@@ -144,6 +152,7 @@ public class AppConfiguration {
                 ", externalLogsUrlTemplate='" + externalLogsUrlTemplate + '\'' +
                 ", pyGatewayPort=" + pyGatewayPort +
                 ", pyGatewayAuthToken=" + (hasPyGatewayAuthToken() ? "'[redacted]'" : null) +
+                ", pyGatewayReadTimeoutInSec=" + pyGatewayReadTimeoutInSec +
                 ", url='" + url + '\'' +
                 ", zombieInterval=" + zombieInterval +
                 ", stateRetainInterval=" + stateRetainInterval +

@@ -34,6 +34,7 @@ class KubernetesBackendTest extends Specification {
         result["spark.kubernetes.driverEnv.PY_GATEWAY_PORT"] == "${appConfig.pyGatewayPort}"
         result["spark.kubernetes.driverEnv.PY_GATEWAY_HOST"] == "lighter"
         result["spark.kubernetes.driverEnv.LIGHTER_SESSION_ID"] == app.id
+        result["spark.kubernetes.driverEnv.PY_GATEWAY_READ_TIMEOUT_IN_SEC"] == "60"
         result["spark.kubernetes.namespace"] == "spark"
         !result.containsKey("spark.kubernetes.driverEnv.PY_GATEWAY_AUTH_TOKEN")
     }

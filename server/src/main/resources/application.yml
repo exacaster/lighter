@@ -5,6 +5,7 @@ lighter:
   spark-history-server-url: http://localhost/spark-history/
   frontend-path: file:${FRONTEND_PATH:../frontend/build}
   py-gateway-port: 25333
+  py-gateway-read-timeout-in-sec: 60
   url: http://lighter.spark:8080
   zombie-interval: 30m
   session:

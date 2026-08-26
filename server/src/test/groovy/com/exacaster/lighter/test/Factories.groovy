@@ -91,6 +91,7 @@ class Factories {
                 null,
                 5432,
                 pyGatewayAuthToken,
+                60,
                 "http://lighter:8080",
                 Duration.ofMinutes(30),
                 Duration.ofMinutes(10),

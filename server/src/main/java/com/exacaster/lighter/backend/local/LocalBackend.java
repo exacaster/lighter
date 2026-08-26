@@ -21,6 +21,7 @@ import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAM
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_AUTH_TOKEN_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME;
 import static org.apache.spark.launcher.SparkLauncher.CHILD_PROCESS_LOGGER_NAME;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -99,7 +100,8 @@ public class LocalBackend implements Backend {
         env.putAll(Map.of(
                 LIGHTER_SESSION_ID_ENV_NAME, application.getId(),
                 PY_GATEWAY_PORT_ENV_NAME, conf.getPyGatewayPort().toString(),
-                PY_GATEWAY_HOST_ENV_NAME, "localhost"
+                PY_GATEWAY_HOST_ENV_NAME, "localhost",
+                PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME, conf.getPyGatewayReadTimeoutInSec().toString()
         ));
         if (conf.hasPyGatewayAuthToken()) {
             env.put(PY_GATEWAY_AUTH_TOKEN_ENV_NAME, conf.getPyGatewayAuthToken());
