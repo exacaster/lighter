@@ -1,6 +1,8 @@
 package com.exacaster.lighter.configuration
 
+import io.micronaut.context.ApplicationContext
 import io.micronaut.context.annotation.Property
+import io.micronaut.context.env.PropertySource
 import io.micronaut.test.extensions.spock.annotation.MicronautTest
 import jakarta.inject.Inject
 import spock.lang.Specification
@@ -29,7 +31,26 @@ class AppConfigurationTest extends Specification {
         appConfiguration.batchDefaultConf.get("spark.driver.cores") == "1"
         appConfiguration.sessionDefaultConf.get("spark.driver.cores") == "2"
         appConfiguration.pyGatewayAuthToken == "s3cret"
+        appConfiguration.pyGatewayReadTimeoutInSec == 60
         appConfiguration.hasPyGatewayAuthToken()
+    }
+
+    def "binds the gateway read timeout from its environment variable"() {
+        given:
+        def ctx = ApplicationContext.run(
+                PropertySource.of(
+                        "env",
+                        ["LIGHTER_PY_GATEWAY_READ_TIMEOUT_IN_SEC": "5"],
+                        PropertySource.PropertyConvention.ENVIRONMENT_VARIABLE,
+                        null
+                )
+        )
+
+        expect:
+        ctx.getBean(AppConfiguration).pyGatewayReadTimeoutInSec == 5
+
+        cleanup:
+        ctx.close()
     }
 
     def "keeps the gateway auth token out of toString"() {

@@ -9,6 +9,7 @@ public final class Constants {
     public final static String PY_GATEWAY_HOST_ENV_NAME = "PY_GATEWAY_HOST";
     public final static String PY_GATEWAY_PORT_ENV_NAME = "PY_GATEWAY_PORT";
     public final static String PY_GATEWAY_AUTH_TOKEN_ENV_NAME = "PY_GATEWAY_AUTH_TOKEN";
+    public final static String PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME = "PY_GATEWAY_READ_TIMEOUT_IN_SEC";
 
     private Constants() {
     }

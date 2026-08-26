@@ -29,6 +29,7 @@ def _do_with_retry(attempts, action):
         except Exception as e:
             last_exception = e
             attempts_left -= 1
+            log.warning("Action failed [attempts_left=%s]", attempts_left, exc_info=True)
     raise last_exception
 
 

@@ -6,6 +6,7 @@ import static com.exacaster.lighter.backend.Constants.MASTER_YARN;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_AUTH_TOKEN_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME;
 import static org.apache.hadoop.yarn.api.records.ApplicationId.fromString;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -125,6 +126,8 @@ public class YarnBackend implements Backend {
                 "spark.yarn.submit.waitAppCompletion", "false",
                 "spark.yarn.appMasterEnv." + PY_GATEWAY_PORT_ENV_NAME, String.valueOf(conf.getPyGatewayPort()),
                 "spark.yarn.appMasterEnv." + PY_GATEWAY_HOST_ENV_NAME, host,
+                "spark.yarn.appMasterEnv." + PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME,
+                String.valueOf(conf.getPyGatewayReadTimeoutInSec()),
                 "spark.yarn.appMasterEnv." + LIGHTER_SESSION_ID_ENV_NAME, application.getId()
         ));
         if (conf.hasPyGatewayAuthToken()) {

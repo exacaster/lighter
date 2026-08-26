@@ -5,6 +5,7 @@ import static com.exacaster.lighter.backend.Constants.LIGHTER_SESSION_ID_ENV_NAM
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_AUTH_TOKEN_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_HOST_ENV_NAME;
 import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_PORT_ENV_NAME;
+import static com.exacaster.lighter.backend.Constants.PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME;
 import static java.util.Optional.ofNullable;
 import static org.apache.spark.launcher.SparkLauncher.DEPLOY_MODE;
 import static org.apache.spark.launcher.SparkLauncher.SPARK_MASTER;
@@ -90,6 +91,8 @@ public class KubernetesBackend implements Backend {
                 "spark.kubernetes.executor.label." + SPARK_APP_TAG_LABEL, application.getId(),
                 "spark.kubernetes.driverEnv." + PY_GATEWAY_PORT_ENV_NAME, String.valueOf(conf.getPyGatewayPort()),
                 "spark.kubernetes.driverEnv." + PY_GATEWAY_HOST_ENV_NAME, host,
+                "spark.kubernetes.driverEnv." + PY_GATEWAY_READ_TIMEOUT_IN_SEC_ENV_NAME,
+                String.valueOf(conf.getPyGatewayReadTimeoutInSec()),
                 "spark.kubernetes.driverEnv." + LIGHTER_SESSION_ID_ENV_NAME, application.getId()
         ));
         if (conf.hasPyGatewayAuthToken()) {
