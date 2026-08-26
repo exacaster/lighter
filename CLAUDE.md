@@ -16,7 +16,7 @@ cd server
 ./gradlew build -x test      # Build without tests
 ./gradlew test               # Run tests only
 ./gradlew test --tests "com.exacaster.lighter.SomeTest"  # Run single test
-./gradlew build -PSPARK_VERSION=3.5.8  # Build with specific Spark version
+./gradlew build -PSPARK_VERSION=3.5.9  # Build with specific Spark version
 ```
 
 ### Frontend (frontend/)
