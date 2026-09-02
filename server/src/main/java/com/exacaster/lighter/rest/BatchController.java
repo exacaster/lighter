@@ -6,7 +6,6 @@ import com.exacaster.lighter.application.ApplicationState;
 import com.exacaster.lighter.application.batch.BatchService;
 import com.exacaster.lighter.log.Log;
 import com.exacaster.lighter.log.LogService;
-import com.exacaster.lighter.application.SubmitParams;
 import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.core.annotation.Nullable;
 import io.micronaut.http.annotation.Body;
@@ -38,8 +37,8 @@ public class BatchController {
     }
 
     @Post
-    public Application create(@Valid @Body SubmitParams batch) {
-        return batchService.create(batch).withRedactedConf();
+    public Application create(@Valid @Body BatchParams batch) {
+        return batchService.create(batch.toSubmitParams(), batch.getPriority()).withRedactedConf();
     }
 
     @Get
@@ -69,6 +68,11 @@ public class BatchController {
     @Delete("/{id}")
     public void delete(@PathVariable String id) {
         batchService.deleteOne(id);
+    }
+
+    @Post("/{id}/priority")
+    public Optional<Application> setPriority(@PathVariable String id, @Valid @Body PriorityParams params) {
+        return batchService.updatePriority(id, params.priority()).map(Application::withRedactedConf);
     }
 
     // For backwards compatibility with livy

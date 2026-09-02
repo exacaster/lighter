@@ -10,6 +10,7 @@ public class ApplicationBuilder {
     private String appId;
     private String appInfo;
     private SubmitParams submitParams;
+    private int priority;
     private LocalDateTime createdAt;
     private LocalDateTime contactedAt;
     private LocalDateTime finishedAt;
@@ -24,6 +25,7 @@ public class ApplicationBuilder {
         builder.setAppId(batch.getAppId());
         builder.setAppInfo(batch.getAppInfo());
         builder.setSubmitParams(batch.getSubmitParams());
+        builder.setPriority(batch.getPriority());
         builder.setState(batch.getState());
         builder.setType(batch.getType());
         builder.setId(batch.getId());
@@ -68,6 +70,11 @@ public class ApplicationBuilder {
         return this;
     }
 
+    public ApplicationBuilder setPriority(int priority) {
+        this.priority = priority;
+        return this;
+    }
+
     public ApplicationBuilder setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
         return this;
@@ -89,6 +96,8 @@ public class ApplicationBuilder {
     }
 
     public Application build() {
-        return new Application(id, type, state, appId, appInfo, submitParams, createdAt, contactedAt, finishedAt, deleted);
+        return new Application(
+            id, type, state, appId, appInfo, submitParams, priority, createdAt, contactedAt, finishedAt, deleted
+        );
     }
 }

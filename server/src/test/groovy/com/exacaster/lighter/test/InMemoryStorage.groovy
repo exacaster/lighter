@@ -1,6 +1,7 @@
 package com.exacaster.lighter.test
 
 import com.exacaster.lighter.application.Application
+import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationType
 
@@ -49,10 +50,25 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     @Override
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order, Integer offset, Integer limit) {
         return findMany({ type == it.getType() && states.contains(it.getState()) }, Application.class)
-                .sorted((app1, app2) -> order == SortOrder.DESC ? app1.createdAt <=> app2.createdAt : app2.createdAt <=> app1.createdAt)
+                .sorted((app1, app2) -> order == SortOrder.DESC ? app2.createdAt <=> app1.createdAt : app1.createdAt <=> app2.createdAt)
                 .skip(offset)
                 .limit(limit)
                 .collect(Collectors.toList())
+    }
+
+    @Override
+    List<Application> findPrioritizedApplicationsByStates(ApplicationType type, List<ApplicationState> states, Integer limit) {
+        return findMany({ type == it.getType() && states.contains(it.getState()) }, Application.class)
+                .sorted((app1, app2) -> app2.priority <=> app1.priority ?: app1.createdAt <=> app2.createdAt)
+                .limit(limit)
+                .collect(Collectors.toList())
+    }
+
+    @Override
+    void updatePriority(String internalApplicationId, int priority) {
+        findApplication(internalApplicationId)
+                .filter({ it.state == ApplicationState.NOT_STARTED })
+                .ifPresent({ storeEntity(ApplicationBuilder.builder(it).setPriority(priority).build()) })
     }
 
     @Override

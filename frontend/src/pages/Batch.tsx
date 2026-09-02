@@ -29,7 +29,7 @@ const Batch: React.FC = () => {
 
   return (
     <div>
-      <AppTitle app={batch} onDelete={onDelete} />
+      <AppTitle app={batch} onDelete={onDelete} showPriority />
       <Box textStyle="caption" mt="5">
         Logs:
       </Box>

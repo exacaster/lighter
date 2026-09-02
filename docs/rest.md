@@ -19,6 +19,7 @@ Request Exapmple:
 ```json
 {
   "name": "App name",
+  "priority": 100,
   "file": "submitted/file/path",
   "numExecutors": 4,
   "executorCores": 2,
@@ -35,6 +36,15 @@ Request Exapmple:
 }
 ```
 
+`priority` is optional and controls the order in which *waiting* batches are started:
+**a higher value is picked sooner**. It defaults to `0` (normal); negative values are started after
+normal ones. Batches sharing a priority keep first-come-first-served order, so omitting the field
+leaves ordering exactly as it was before priorities existed.
+
+Note that `priority` is accepted at the top level of the request but is **not** part of
+`submitParams`: it is stored separately because it can be changed after submission (see below), so
+responses report it at the top level only and never inside `submitParams`.
+
 **GET** */lighter/api/batches*
 
 Response example:
@@ -50,6 +60,7 @@ Response example:
       "appId":"spark-309b52606e984696a5205a2244e756b9",
       "appInfo":null,
       "kind":"pyspark",
+      "priority":0,
       "submitParams": {
         "name":"TEST_5eb9e358-c0d9-4483-8252-0be0c5269982",
         "file":"local:///opt/spark/work-dir/app.py",
@@ -88,6 +99,7 @@ Response example:
   "state":"dead",
   "appId":"spark-309b52606e984696a5205a2244e756b9",
   "kind":"pyspark",
+  "priority":0,
   "submitParams": {
     "name":"TEST_5eb9e358-c0d9-4483-8252-0be0c5269982",
     "file":"local:///opt/spark/work-dir/app.py",
@@ -118,6 +130,23 @@ Response example:
 
 Terminates & deletes application.
 
+**POST** */lighter/api/batches/{id}/priority*
+
+Changes the priority of a batch that has not started yet. **A higher value is picked sooner**; `0`
+is normal.
+
+Request example:
+```json
+{
+  "priority": -50
+}
+```
+
+Responds with the batch, in the same form as `GET /lighter/api/batches/{id}`. If the batch has
+already started (or has finished), the request is a no-op: the response is still `200` with the
+batch unchanged, never an error, because a batch can be picked up at any moment while the change is
+in flight. An unknown or deleted batch id responds `404`.
+
 **GET** */lighter/api/batches/{id}/log*
 
 Response example:
@@ -132,3 +161,6 @@ Response example:
 
 */lighter/api/sessions*
 Undocumented. Should be somewhat compatible with [Livy Sessions API](https://livy.incubator.apache.org/docs/latest/rest-api.html) when consumed with `X-Compatibility-Mode: sparkmagic` HTTP header.
+
+Sessions share their response model with batches, so session responses also carry a `priority`
+field. Sessions are not prioritized — the field is always `0` there and is ignored.

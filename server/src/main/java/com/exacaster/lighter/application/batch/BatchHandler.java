@@ -10,13 +10,11 @@ import com.exacaster.lighter.backend.Backend;
 import com.exacaster.lighter.concurrency.Waitable;
 import com.exacaster.lighter.configuration.AppConfiguration;
 import com.exacaster.lighter.storage.ApplicationStorage;
-import com.exacaster.lighter.storage.SortOrder;
 import io.micronaut.scheduling.annotation.Scheduled;
 import jakarta.inject.Singleton;
 
 import java.time.LocalDateTime;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
 import net.javacrumbs.shedlock.micronaut.SchedulerLock;
 import org.slf4j.Logger;
@@ -51,14 +49,14 @@ public class BatchHandler {
     public void processScheduledBatches() throws InterruptedException {
         assertLocked();
         var maxSlotsForNewJobs = getMaxSlotsForNewJobs();
-        var batchesToStart = batchService.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, maxSlotsForNewJobs)
+        var batchesToStart = batchService.fetchByStatePrioritized(ApplicationState.NOT_STARTED, maxSlotsForNewJobs)
                 .stream()
                 .map(batch -> {
                     LOG.info("Launching {}", batch);
                     statusTracker.processApplicationStarting(batch);
                     return launch(batch, error -> statusTracker.processApplicationError(batch, error));
                 })
-                .collect(Collectors.toList());
+                .toList();
         LOG.info("Triggered {} new batch jobs. Waiting launches to complete.", batchesToStart.size());
         for (var batchToStart : batchesToStart) {
             batchToStart.waitCompletion();
