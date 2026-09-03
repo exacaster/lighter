@@ -28,7 +28,7 @@ public interface ApplicationStorage {
         ApplicationType type, List<ApplicationState> states, Integer limit
     );
 
-    void updatePriority(String internalApplicationId, int priority);
+    void updatePriority(String internalApplicationId, ApplicationType type, int priority);
 
     List<Application> findAllApplications(ApplicationType type);
 

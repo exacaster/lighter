@@ -44,12 +44,8 @@ public class BatchService {
     }
 
     public Optional<Application> updatePriority(String id, int priority) {
-        return fetchOne(id)
-                .filter(batch -> batch.getType() == ApplicationType.BATCH)
-                .flatMap(batch -> {
-                    applicationStorage.updatePriority(id, priority);
-                    return fetchOne(id);
-                });
+        applicationStorage.updatePriority(id, ApplicationType.BATCH, priority);
+        return fetchOne(id).filter(batch -> batch.getType() == ApplicationType.BATCH);
     }
 
     public Application update(Application application) {

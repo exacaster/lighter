@@ -182,12 +182,13 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
 
     @Override
     @Transactional
-    public void updatePriority(String internalApplicationId, int priority) {
+    public void updatePriority(String internalApplicationId, ApplicationType type, int priority) {
         jdbi.withHandle(handle -> handle
                 .createUpdate("UPDATE application SET priority=:priority "
-                        + "WHERE id=:id AND state=:state AND deleted = false")
+                        + "WHERE id=:id AND type=:type AND state=:state AND deleted = false")
                 .bind("priority", priority)
                 .bind("id", internalApplicationId)
+                .bind("type", type.name())
                 .bind("state", ApplicationState.NOT_STARTED.name())
                 .execute());
     }

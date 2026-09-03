@@ -65,9 +65,9 @@ class InMemoryStorage implements ApplicationStorage, LogStorage {
     }
 
     @Override
-    void updatePriority(String internalApplicationId, int priority) {
+    void updatePriority(String internalApplicationId, ApplicationType type, int priority) {
         findApplication(internalApplicationId)
-                .filter({ it.state == ApplicationState.NOT_STARTED })
+                .filter({ it.type == type && it.state == ApplicationState.NOT_STARTED })
                 .ifPresent({ storeEntity(ApplicationBuilder.builder(it).setPriority(priority).build()) })
     }
 

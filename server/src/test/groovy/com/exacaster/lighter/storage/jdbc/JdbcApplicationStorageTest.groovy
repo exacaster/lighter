@@ -182,7 +182,7 @@ class JdbcApplicationStorageTest extends Specification {
         storage.saveApplication(waitingBatch("waiting", 0, BASE_TIME))
 
         when:
-        storage.updatePriority("waiting", 8)
+        storage.updatePriority("waiting", ApplicationType.BATCH, 8)
 
         then:
         storage.findApplication("waiting").get().priority == 8
@@ -194,7 +194,7 @@ class JdbcApplicationStorageTest extends Specification {
                 .setState(state).build())
 
         when:
-        storage.updatePriority("started", 99)
+        storage.updatePriority("started", ApplicationType.BATCH, 99)
 
         then: "the database guard rejects the write, so the stored priority is unchanged"
         storage.findApplication("started").get().priority == 1
@@ -209,10 +209,21 @@ class JdbcApplicationStorageTest extends Specification {
         storage.deleteApplication("gone")
 
         when:
-        storage.updatePriority("gone", 99)
+        storage.updatePriority("gone", ApplicationType.BATCH, 99)
 
         then:
         storage.findApplication("gone") == Optional.empty()
+    }
+
+    def "updatePriority does not touch an application of another type"() {
+        given: "a waiting session, which shares the application table with batches"
+        def session = storage.saveApplication(newSession(ApplicationState.NOT_STARTED))
+
+        when:
+        storage.updatePriority(session.id, ApplicationType.BATCH, 99)
+
+        then: "the type guard rejects the write, so the session keeps its priority"
+        storage.findApplication(session.id).get().priority == 0
     }
 
     def "keeps priority out of the stored submit params"() {
@@ -224,7 +235,7 @@ class JdbcApplicationStorageTest extends Specification {
         storage.findApplication("no-copy").get().priority == 5
 
         when: "the priority is later changed"
-        storage.updatePriority("no-copy", 9)
+        storage.updatePriority("no-copy", ApplicationType.BATCH, 9)
 
         then: "the submit params are still free of it"
         !storedSubmitParams("no-copy").contains("priority")
