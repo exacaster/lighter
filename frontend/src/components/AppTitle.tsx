@@ -28,12 +28,12 @@ const AppTitle: React.FC<Props> = ({app, onDelete, showPriority}) => {
       <Text fontSize="sm" color="gray">
         <Text as="b">Application Id: </Text> {app.id}
         {' | '}
-        {showPriority ? (
+        {showPriority && (
           <>
             <Text as="b">Priority: </Text> {app.priority}
             {' | '}
           </>
-        ) : null}
+        )}
         <Text as="b">Created: </Text>
         <DateTime>{app.createdAt}</DateTime>
         {' | '}
