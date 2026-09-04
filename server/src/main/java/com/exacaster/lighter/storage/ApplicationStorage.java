@@ -24,6 +24,12 @@ public interface ApplicationStorage {
     List<Application> findApplicationsByStates(ApplicationType type, List<ApplicationState> states, SortOrder order,
             Integer from, Integer size);
 
+    List<Application> findPrioritizedApplicationsByStates(
+        ApplicationType type, List<ApplicationState> states, Integer limit
+    );
+
+    void updatePriority(String internalApplicationId, ApplicationType type, int priority);
+
     List<Application> findAllApplications(ApplicationType type);
 
     List<Application> findFinishedApplicationsOlderThan(ApplicationType type, List<ApplicationState> states, LocalDateTime cutoffDate, Integer limit);

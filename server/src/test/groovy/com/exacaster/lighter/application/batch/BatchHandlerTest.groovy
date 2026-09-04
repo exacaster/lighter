@@ -1,6 +1,5 @@
 package com.exacaster.lighter.application.batch
 
-import com.exacaster.lighter.Application
 import com.exacaster.lighter.application.ApplicationBuilder
 import com.exacaster.lighter.application.ApplicationState
 import com.exacaster.lighter.application.ApplicationStatusHandler
@@ -8,14 +7,14 @@ import com.exacaster.lighter.backend.Backend
 import com.exacaster.lighter.concurrency.EmptyWaitable
 import com.exacaster.lighter.configuration.AppConfiguration
 import com.exacaster.lighter.storage.ApplicationStorage
-import com.exacaster.lighter.storage.SortOrder
 import net.javacrumbs.shedlock.core.LockAssert
 import spock.lang.Specification
 import spock.lang.Subject
 
 import java.time.LocalDateTime
 
-import static com.exacaster.lighter.test.Factories.*
+import static com.exacaster.lighter.test.Factories.appConfiguration
+import static com.exacaster.lighter.test.Factories.newApplication
 
 class BatchHandlerTest extends Specification {
 
@@ -45,7 +44,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> []
-        1 * service.fetchByState(ApplicationState.NOT_STARTED, *_) >> [app]
+        1 * service.fetchByStatePrioritized(ApplicationState.NOT_STARTED, _) >> [app]
         1 * handler.launch(app, _) >> EmptyWaitable.INSTANCE
     }
 
@@ -58,7 +57,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> [app]
-        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, _) >> []
+        _ * service.fetchByStatePrioritized(ApplicationState.NOT_STARTED, _) >> []
     }
 
     def "validate max running jobs limit"() {
@@ -71,7 +70,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> runningApps
-        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, config.getMaxRunningJobs() - runningApps.size()) >> [app]
+        _ * service.fetchByStatePrioritized(ApplicationState.NOT_STARTED, config.getMaxRunningJobs() - runningApps.size()) >> [app]
         (config.getMaxRunningJobs() - runningApps.size()) * handler.launch(app, _) >> EmptyWaitable.INSTANCE
     }
 
@@ -85,7 +84,7 @@ class BatchHandlerTest extends Specification {
 
         then:
         _ * service.fetchRunning() >> []
-        _ * service.fetchByState(ApplicationState.NOT_STARTED, SortOrder.ASC, 0, config.getMaxStartingJobs()) >> appsToRun
+        _ * service.fetchByStatePrioritized(ApplicationState.NOT_STARTED, config.getMaxStartingJobs()) >> appsToRun
         config.getMaxStartingJobs() * handler.launch(app, _) >> EmptyWaitable.INSTANCE
     }
 
@@ -93,7 +92,7 @@ class BatchHandlerTest extends Specification {
         given:
         def app = newApplication()
         service.fetchRunning() >> [app]
-        service.fetchByState(*_) >> []
+        service.fetchByStatePrioritized(*_) >> []
 
         when:
         handler.trackRunning()

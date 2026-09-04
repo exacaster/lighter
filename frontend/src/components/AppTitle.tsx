@@ -9,9 +9,10 @@ import PageHeading from './PageHeading';
 interface Props {
   app: Application;
   onDelete?: () => void;
+  showPriority?: boolean;
 }
 
-const AppTitle: React.FC<Props> = ({app, onDelete}) => {
+const AppTitle: React.FC<Props> = ({app, onDelete, showPriority}) => {
   return (
     <>
       <PageHeading mb="3">
@@ -27,6 +28,12 @@ const AppTitle: React.FC<Props> = ({app, onDelete}) => {
       <Text fontSize="sm" color="gray">
         <Text as="b">Application Id: </Text> {app.id}
         {' | '}
+        {showPriority && (
+          <>
+            <Text as="b">Priority: </Text> {app.priority}
+            {' | '}
+          </>
+        )}
         <Text as="b">Created: </Text>
         <DateTime>{app.createdAt}</DateTime>
         {' | '}

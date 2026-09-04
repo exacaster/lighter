@@ -31,15 +31,21 @@ public class BatchService {
         return applicationStorage.findApplications(EnumSet.of(ApplicationType.BATCH), from, size);
     }
 
-    public Application create(SubmitParams batch) {
+    public Application create(SubmitParams batch, int priority) {
         var entity = ApplicationBuilder.builder()
                 .setId(UUID.randomUUID().toString())
                 .setType(ApplicationType.BATCH)
                 .setState(ApplicationState.NOT_STARTED)
                 .setSubmitParams(batch)
+                .setPriority(priority)
                 .setCreatedAt(LocalDateTime.now())
                 .build();
         return applicationStorage.saveApplication(entity);
+    }
+
+    public Optional<Application> updatePriority(String id, int priority) {
+        applicationStorage.updatePriority(id, ApplicationType.BATCH, priority);
+        return fetchOne(id).filter(batch -> batch.getType() == ApplicationType.BATCH);
     }
 
     public Application update(Application application) {
@@ -52,6 +58,10 @@ public class BatchService {
 
     public List<Application> fetchByState(ApplicationState state, SortOrder order, Integer from, Integer limit) {
         return applicationStorage.findApplicationsByStates(ApplicationType.BATCH, List.of(state), order, from, limit);
+    }
+
+    public List<Application> fetchByStatePrioritized(ApplicationState state, Integer limit) {
+        return applicationStorage.findPrioritizedApplicationsByStates(ApplicationType.BATCH, List.of(state), limit);
     }
 
     public List<Application> fetchRunning() {

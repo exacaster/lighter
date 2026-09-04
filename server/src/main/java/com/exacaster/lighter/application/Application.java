@@ -20,21 +20,25 @@ public class Application implements Entity {
     // For Sparkmagic compatibility
     private final List<String> log = List.of();
     private final SubmitParams submitParams;
+    private final int priority;
     private final LocalDateTime createdAt;
     private final LocalDateTime contactedAt;
     private final LocalDateTime finishedAt;
 
     private final boolean deleted;
 
-    public Application(String id, ApplicationType type, ApplicationState state, String appId, String appInfo,
-                       SubmitParams submitParams,
-                       LocalDateTime createdAt, LocalDateTime contactedAt, LocalDateTime finishedAt, boolean deleted) {
+    public Application(
+        String id, ApplicationType type, ApplicationState state, String appId, String appInfo,
+        SubmitParams submitParams, int priority, LocalDateTime createdAt, LocalDateTime contactedAt,
+        LocalDateTime finishedAt, boolean deleted
+    ) {
         this.id = id;
         this.type = type;
         this.state = state;
         this.appId = appId;
         this.appInfo = appInfo;
         this.submitParams = submitParams;
+        this.priority = priority;
         this.createdAt = createdAt;
         this.contactedAt = contactedAt;
         this.finishedAt = finishedAt;
@@ -71,6 +75,10 @@ public class Application implements Entity {
         return submitParams;
     }
 
+    public int getPriority() {
+        return priority;
+    }
+
     @JsonIgnore
     public boolean isDeleted() {
         return deleted;
@@ -99,22 +107,26 @@ public class Application implements Entity {
     }
 
     public Application withRedactedConf() {
-        return new Application(id, type, state, appId, appInfo, submitParams.withRedactedConf(), createdAt, contactedAt, finishedAt, deleted);
+        return new Application(
+            id, type, state, appId, appInfo, submitParams.withRedactedConf(), priority, createdAt, contactedAt,
+            finishedAt, deleted
+        );
     }
 
     @Override
     public String toString() {
         return new StringJoiner(", ", Application.class.getSimpleName() + "[", "]")
-                .add("id='" + id + "'")
-                .add("type=" + type)
-                .add("state=" + state)
-                .add("appId='" + appId + "'")
-                .add("appInfo='" + appInfo + "'")
-                .add("submitParams=" + submitParams)
-                .add("createdAt=" + createdAt)
-                .add("contactedAt=" + contactedAt)
-                .add("finishedAt=" + finishedAt)
-                .add("deleted=" + deleted)
-                .toString();
+            .add("id='" + id + "'")
+            .add("type=" + type)
+            .add("state=" + state)
+            .add("appId='" + appId + "'")
+            .add("appInfo='" + appInfo + "'")
+            .add("submitParams=" + submitParams)
+            .add("priority=" + priority)
+            .add("createdAt=" + createdAt)
+            .add("contactedAt=" + contactedAt)
+            .add("finishedAt=" + finishedAt)
+            .add("deleted=" + deleted)
+            .toString();
     }
 }

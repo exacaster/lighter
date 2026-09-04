@@ -133,14 +133,15 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
         }
         handle
                 .createCall(
-                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, created_at, contacted_at, finished_at, deleted) "
-                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :created_at, :contacted_at, :finished_at, :deleted)")
+                        "INSERT INTO application (id, type, state, app_id, app_info, submit_params, priority, created_at, contacted_at, finished_at, deleted) "
+                                + "VALUES (:id, :type, :state, :app_id, :app_info, :submit_params, :priority, :created_at, :contacted_at, :finished_at, :deleted)")
                 .bind("id", application.getId())
                 .bind("type", application.getType().name())
                 .bind("state", application.getState().name())
                 .bind("app_id", application.getAppId())
                 .bind("app_info", application.getAppInfo())
                 .bind("submit_params", conf)
+                .bind("priority", application.getPriority())
                 .bind("created_at", application.getCreatedAt())
                 .bind("contacted_at", application.getContactedAt())
                 .bind("finished_at", application.getFinishedAt())
@@ -162,6 +163,34 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .map(this)
                 .list()
         );
+    }
+
+    @Override
+    @Transactional
+    public List<Application> findPrioritizedApplicationsByStates(ApplicationType type,
+                                                                 List<ApplicationState> states, Integer limit) {
+        return jdbi.withHandle(handle -> handle
+                .createQuery("SELECT * FROM application WHERE type=:type AND state IN (<states>) and deleted = false "
+                        + "ORDER BY priority DESC, created_at ASC LIMIT :limit")
+                .bind("type", type.name())
+                .bindList("states", states.stream().map(ApplicationState::name).collect(Collectors.toList()))
+                .bind("limit", limit)
+                .map(this)
+                .list()
+        );
+    }
+
+    @Override
+    @Transactional
+    public void updatePriority(String internalApplicationId, ApplicationType type, int priority) {
+        jdbi.withHandle(handle -> handle
+                .createUpdate("UPDATE application SET priority=:priority "
+                        + "WHERE id=:id AND type=:type AND state=:state AND deleted = false")
+                .bind("priority", priority)
+                .bind("id", internalApplicationId)
+                .bind("type", type.name())
+                .bind("state", ApplicationState.NOT_STARTED.name())
+                .execute());
     }
 
     @Override
@@ -236,6 +265,7 @@ public class JdbcApplicationStorage implements ApplicationStorage, RowMapper<App
                 .setState(ApplicationState.valueOf(rs.getString("state")))
                 .setAppInfo(rs.getString("app_info"))
                 .setSubmitParams(params)
+                .setPriority(rs.getInt("priority"))
                 .setCreatedAt(rs.getTimestamp("created_at").toLocalDateTime())
                 .setContactedAt(contactedAt)
                 .setFinishedAt(finishedAt)

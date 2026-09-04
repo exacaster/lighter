@@ -4,6 +4,7 @@ export type Application = {
   createdAt: string;
   contactedAt: string;
   appId?: string;
+  priority: number;
   submitParams: {
     name: string;
     file: string;
