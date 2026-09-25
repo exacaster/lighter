@@ -15,7 +15,7 @@ const Pagination: React.FC<PaginationProps> = ({path, size, visibleSize}) => {
   const [queryParams] = useSearchParams();
   const from = Number(queryParams.get('from')) || 0;
   const queryString = (from: number) => {
-    return toQueryString({...queryParams, from});
+    return toQueryString({...Object.fromEntries(queryParams), from});
   };
 
   if (from === 0 && visibleSize < size) {

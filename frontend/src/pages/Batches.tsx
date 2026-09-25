@@ -25,6 +25,7 @@ const Batches: React.FC = () => {
     (value: string) => {
       const newParams = new URLSearchParams(params);
       newParams.set('search', value);
+      newParams.delete('from');
       setParams(newParams);
     },
     [params, setParams],
