@@ -51,6 +51,7 @@ const Batches: React.FC = () => {
           <Table.Row>
             <Table.ColumnHeader>Id</Table.ColumnHeader>
             <Table.ColumnHeader>Name</Table.ColumnHeader>
+            <Table.ColumnHeader>Priority</Table.ColumnHeader>
             <Table.ColumnHeader>Created</Table.ColumnHeader>
             <Table.ColumnHeader>State</Table.ColumnHeader>
             <Table.ColumnHeader>Actions</Table.ColumnHeader>
@@ -63,6 +64,7 @@ const Batches: React.FC = () => {
                 <Link to={generatePath(RoutePath.BATCH, {id: batch.id})}>{batch.id}</Link>
               </Table.Cell>
               <Table.Cell>{batch.submitParams.name}</Table.Cell>
+              <Table.Cell>{batch.priority}</Table.Cell>
               <Table.Cell>
                 <DateTime>{batch.createdAt}</DateTime>
               </Table.Cell>
